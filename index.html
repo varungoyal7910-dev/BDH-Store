@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhraava Di Hatti - Online Store</title>
+    <style>
+        :root {
+            --primary-color: #e63946;
+            --success-green: #25d366;
+            --dark-bg: #1a1a1a;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        header {
+            background: black;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .card h3 { margin: 15px 0 5px; font-size: 1.2rem; }
+        .card p { color: var(--primary-color); font-size: 1.5rem; font-weight: bold; margin: 10px 0; }
+
+        .buy-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .buy-btn:active { transform: scale(0.95); }
+
+        /* Modal / Form Styling */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 99;
+        }
+
+        #formBox {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            z-index: 100;
+            width: 90%;
+            max-width: 350px;
+        }
+
+        #formBox h3 { margin-top: 0; text-align: center; color: #333; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        .submit-btn {
+            background: black;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>🛍️ Bhraava Di Hatti</header>
+
+<div class="container">
+    <!-- Product 1: Love Balloons -->
+    <div class="card">
+        <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg" alt="Love Heart Balloons">
+        <h3>Love Heart Balloon Set (12 Pcs)</h3>
+        <p>₹100</p>
+        <button class="buy-btn" onclick="openOrderForm('Love Heart Balloon Set', 100)">Buy Now</button>
+    </div>
+
+    <!-- Yahan tu aur products add kar sakta hai -->
+</div>
+
+<!-- Form & Overlay -->
+<div class="overlay" id="overlay" onclick="closeOrderForm()"></div>
+<div id="formBox">
+    <h3>Delivery Details</h3>
+    <input type="text" id="custName" placeholder="Apna Naam">
+    <input type="tel" id="custPhone" placeholder="WhatsApp Number">
+    <input type="text" id="custAddress" placeholder="Poora Address & Pincode">
+    <button class="submit-btn" onclick="processPayment()">Confirm & Pay</button>
+</div>
+
+<script>
+    let currentItem = "";
+    let currentPrice = 0;
+
+    function openOrderForm(name, price) {
+        currentItem = name;
+        currentPrice = price;
+        document.getElementById("formBox").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    }
+
+    function closeOrderForm() {
+        document.getElementById("formBox").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    function processPayment() {
+        const name = document.getElementById("custName").value;
+        const phone = document.getElementById("custPhone").value;
+        const address = document.getElementById("custAddress").value;
+
+        if(!name || !phone || !address) {
+            alert("Bhai, saari details bharna zaroori hai!");
+            return;
+        }
+
+        // UPI link configuration
+        const upiID = "varun.goyal@ptyes"; 
+        const upiUrl = `upi://pay?pa=${upiID}&pn=Varun%20Goyal&am=${currentPrice}&cu=INR&tn=Order_${encodeURIComponent(currentItem)}`;
+
+        // WhatsApp message configuration
+        const waNumber = "919417124082";
+        const waMsg = `*Naya Order Aaya Hai!*%0A%0A*Item:* ${currentItem}%0A*Price:* ₹${currentPrice}%0A%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Address:* ${address}`;
+        const waUrl = `https://wa.me/${waNumber}?text=${waMsg}`;
+
+        // Step 1: Open UPI App
+        window.location.href = upiUrl;
+
+        // Step 2: Open WhatsApp after 4 seconds to send details
+        setTimeout(() => {
+            window.open(waUrl, "_blank");
+        }, 4000);
+    }
+</script>
+
+</body>
+</html>
