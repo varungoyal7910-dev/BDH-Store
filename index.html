@@ -3,233 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Varun Store | Premium v2</title>
+    <title>Varun Store | Pro Edition</title>
     <style>
-        :root { --primary: #0f172a; --accent: #ff007a; --bg: #f1f5f9; }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: #1e293b; -webkit-tap-highlight-color: transparent; }
+        :root { --primary: #000; --accent: #ff007a; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #1e293b; -webkit-tap-highlight-color: transparent; }
         
-        /* Premium Header */
-        header { background: white; padding: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 0 0 20px 20px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--accent); letter-spacing: -1.2px; }
+        /* Header */
+        header { background: white; padding: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .logo { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
         
         /* Filter Chips */
-        .filter-container { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 5px 0; }
-        .filter-container::-webkit-scrollbar { display: none; }
-        .f-chip { background: #f8fafc; color: #64748b; padding: 10px 20px; border-radius: 100px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; border: 1px solid #e2e8f0; transition: 0.3s; }
-        .f-chip.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(255, 0, 122, 0.3); }
+        .filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px; }
+        .f-chip { background: #f1f5f9; color: #64748b; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; border: 1px solid #e2e8f0; }
+        .f-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Product Grid */
-        .container { padding: 15px; padding-bottom: 120px; }
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 20px; padding: 12px; border: 1px solid #edf2f7; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; }
-        .card-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #334155; }
-        .card-price { color: #0f172a; font-weight: 800; font-size: 18px; margin-bottom: 10px; display: block; }
-        .add-btn { width: 100%; padding: 10px; background: white; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 10px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
-        .add-btn:active { background: var(--accent); color: white; }
+        /* Products */
+        .container { padding: 15px; padding-bottom: 100px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card { background: white; border-radius: 16px; padding: 10px; border: 1px solid #eee; transition: 0.2s; }
+        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; }
+        .card-title { font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
+        .card-price { font-weight: 800; font-size: 16px; color: var(--primary); }
+        .btn { width: 100%; margin-top: 8px; padding: 10px; background: #f8fafc; border: 1px solid #eee; border-radius: 10px; font-weight: 700; font-size: 11px; cursor: pointer; }
 
-        /* Order & Payment Overlay */
-        #overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: none; flex-direction: column; animation: slideUp 0.4s ease; }
+        /* Overlays */
+        .overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: none; flex-direction: column; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        .timer-bar { background: #fff1f6; color: var(--accent); padding: 12px; text-align: center; font-weight: 800; font-size: 14px; border-bottom: 1px solid #ffe4ee; }
-        .payment-option { display: flex; align-items: center; justify-content: space-between; padding: 20px; border: 1px solid #f1f5f9; margin: 10px 20px; border-radius: 15px; cursor: pointer; }
-        .payment-option img { width: 45px; height: 45px; border-radius: 10px; }
-        
-        /* Floating Cart Icon */
-        .cart-icon { position: relative; background: #f1f5f9; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .cart-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; font-size: 10px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; font-weight: bold; }
-        
-        .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .timer-strip { background: #000; color: white; padding: 10px; text-align: center; font-size: 12px; font-weight: 600; }
+        .payment-box { display: flex; align-items: center; justify-content: space-between; padding: 18px; border: 1px solid #eee; margin: 10px 20px; border-radius: 15px; cursor: pointer; }
+        .payment-box img { width: 35px; border-radius: 8px; }
+
+        /* Footer Nav */
+        footer { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1500; }
+        .nav-item { text-align: center; font-size: 11px; color: #64748b; font-weight: 600; cursor: pointer; position: relative; }
+        .nav-item.active { color: var(--accent); }
+        .cart-dot { position: absolute; top: -5px; right: 5px; background: var(--accent); color: white; font-size: 9px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+
+        input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 12px; box-sizing: border-box; font-family: inherit; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-top">
-        <div class="logo">VARUN STORE</div>
-        <div class="cart-icon" onclick="showCart()">
-            🛒<span id="count" class="cart-badge">0</span>
-        </div>
+    <div class="nav-top">
+        <div class="logo">VARUN<span>STORE</span></div>
+        <div style="font-size: 18px;">🔍</div>
     </div>
-    <div class="filter-container">
-        <div class="f-chip active" onclick="setFilter(9999, this)">All Styles</div>
+    <div class="filters">
+        <div class="f-chip active" onclick="setFilter(9999, this)">All Collection</div>
         <div class="f-chip" onclick="setFilter(99, this)">Under ₹99</div>
         <div class="f-chip" onclick="setFilter(149, this)">Under ₹149</div>
         <div class="f-chip" onclick="setFilter(199, this)">Under ₹199</div>
     </div>
 </header>
 
-<div class="container">
-    <div class="product-grid" id="productDisplay"></div>
+<div class="container" id="main-content">
+    <!-- Products will load here -->
 </div>
 
-<!-- Order/Payment Overlay -->
-<div id="overlay"></div>
+<div id="screen" class="overlay"></div>
+
+<footer>
+    <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
+    <div class="nav-item" onclick="showCart()">🛒<br>Bag<span id="cart-count" class="cart-dot">0</span></div>
+    <div class="nav-item" onclick="showOrders()">📦<br>My Orders</div>
+</footer>
 
 <script>
     let cart = [];
-    let currentFilter = 9999;
-    
-    // Aapke Products
     const products = [
-        { id: 1, name: "Premium Phone Case", price: 95, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=300" },
-        { id: 2, name: "Super Fast Charger", price: 145, img: "https://images.unsplash.com/photo-1625517407003-89c16bc18a5e?w=300" },
-        { id: 3, name: "Wireless Earbuds", price: 195, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300" },
+        { id: 1, name: "Premium Matte Case", price: 95, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=300" },
+        { id: 2, name: "Fast Data Cable", price: 145, img: "https://images.unsplash.com/photo-1625517407003-89c16bc18a5e?w=300" },
+        { id: 3, name: "Pro Wireless Buds", price: 195, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300" },
         { id: 4, name: "Gaming Mouse Pad", price: 120, img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=300" }
     ];
 
-    function render() {
-        const filtered = products.filter(p => p.price <= currentFilter);
-        document.getElementById('productDisplay').innerHTML = filtered.map(p => `
-            <div class="card">
-                <img src="${p.img}">
-                <div class="card-title">${p.name}</div>
-                <span class="card-price">₹${p.price}</span>
-                <button class="add-btn" onclick="addToCart(${p.id})">ADD TO BAG</button>
-            </div>
-        `).join('');
+    function renderHome(max = 9999) {
+        let html = '<div class="grid">';
+        products.filter(p => p.price <= max).forEach(p => {
+            html += `
+                <div class="card">
+                    <img src="${p.img}">
+                    <div class="card-title">${p.name}</div>
+                    <div class="card-price">₹${p.price}</div>
+                    <button class="btn" onclick="addToCart(${p.id})">ADD TO BAG</button>
+                </div>`;
+        });
+        html += '</div>';
+        document.getElementById('main-content').innerHTML = html;
     }
 
     function setFilter(max, el) {
         document.querySelectorAll('.f-chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        currentFilter = max;
-        render();
+        renderHome(max);
     }
 
     function addToCart(id) {
         let p = products.find(x => x.id === id);
-        let exists = cart.find(i => i.id === id);
-        if(exists) exists.qty++; else cart.push({...p, qty: 1});
-        updateBadge();
-    }
-
-    function updateBadge() {
-        document.getElementById('count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+        let item = cart.find(i => i.id === id);
+        if(item) item.qty++; else cart.push({...p, qty: 1});
+        document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
     }
 
     function showCart() {
-        if(cart.length === 0) return alert("Bhai, bag empty hai!");
+        if(!cart.length) return alert("Bag is empty!");
         let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-        
-        const overlay = document.getElementById('overlay');
-        overlay.style.display = 'flex';
-        overlay.innerHTML = `
+        const screen = document.getElementById('screen');
+        screen.style.display = 'flex';
+        screen.innerHTML = `
             <div style="padding:20px; flex:1; overflow-y:auto;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h2 style="margin:0;">Order Summary</h2>
-                    <span onclick="closeOverlay()" style="font-size:24px; cursor:pointer;">✕</span>
+                    <h2 style="margin:0;">Bag Details</h2>
+                    <span onclick="closeScreen()" style="font-size:20px;">✕</span>
                 </div>
                 ${cart.map((item, idx) => `
-                    <div style="background:#f8fafc; padding:15px; border-radius:15px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-                        <div><b style="font-size:14px;">${item.name}</b><br><span style="color:var(--accent); font-weight:800;">₹${item.price}</span></div>
-                        <div style="display:flex; align-items:center; gap:12px; background:white; padding:5px 12px; border-radius:100px; border:1px solid #e2e8f0;">
-                            <button onclick="updateQty(${idx},-1)" style="border:none; background:none; font-weight:bold; font-size:18px;">-</button>
-                            <b style="min-width:15px; text-align:center;">${item.qty}</b>
-                            <button onclick="updateQty(${idx},1)" style="border:none; background:none; font-weight:bold; font-size:18px;">+</button>
+                    <div style="background:white; padding:12px; border-radius:12px; margin-bottom:10px; display:flex; gap:12px; border:1px solid #f1f5f9;">
+                        <img src="${item.img}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">
+                        <div style="flex:1;"><b>${item.name}</b><br><small>₹${item.price}</small></div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <button onclick="updateQty(${idx},-1)" style="border:none; background:#f1f5f9; width:25px; height:25px; border-radius:5px;">-</button>
+                            <b>${item.qty}</b>
+                            <button onclick="updateQty(${idx},1)" style="border:none; background:#f1f5f9; width:25px; height:25px; border-radius:5px;">+</button>
                         </div>
                     </div>
                 `).join('')}
-                
-                <div style="margin-top:20px; background:white; border:1px solid #f1f5f9; padding:20px; border-radius:20px;">
-                    <input type="text" id="custName" placeholder="Aapka Naam" style="width:100%; margin-bottom:10px; padding:14px; border-radius:12px; border:1px solid #e2e8f0; box-sizing:border-box;">
-                    <textarea id="custAddr" placeholder="Pura Delivery Address" style="width:100%; margin-bottom:20px; padding:14px; border-radius:12px; border:1px solid #e2e8f0; height:80px; box-sizing:border-box; font-family:inherit;"></textarea>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span style="color:#64748b;">Grand Total</span><b style="font-size:20px;">₹${total}</b></div>
-                    <button onclick="goToPayment(${total})" style="width:100%; padding:18px; background:var(--primary); color:white; border:none; border-radius:15px; font-weight:800; font-size:16px;">CONTINUE TO PAYMENT</button>
+                <div style="margin-top:20px;">
+                    <input type="text" id="cust-name" placeholder="Aapka Naam">
+                    <textarea id="cust-addr" placeholder="Address: House No, Gali, Area, City, Pin"></textarea>
+                    <div style="display:flex; justify-content:space-between; margin:15px 0;"><span>Total Bill</span><b>₹${total}</b></div>
+                    <button onclick="startPay(${total})" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:800;">CHECKOUT NOW</button>
                 </div>
-            </div>
-        `;
+            </div>`;
     }
 
     function updateQty(i, d) {
         cart[i].qty += d;
         if(cart[i].qty < 1) cart.splice(i, 1);
-        updateBadge();
-        if(cart.length === 0) closeOverlay(); else showCart();
+        document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+        if(!cart.length) closeScreen(); else showCart();
     }
 
-    function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
+    function closeScreen() { document.getElementById('screen').style.display = 'none'; }
 
-    function goToPayment(total) {
-        const name = document.getElementById('custName').value;
-        const addr = document.getElementById('custAddr').value;
-        if(!name || !addr) return alert("Bhai, details toh bharo!");
+    function startPay(total) {
+        let n = document.getElementById('cust-name').value;
+        let a = document.getElementById('cust-addr').value;
+        if(!n || !a) return alert("Puri detail bharo bhai!");
 
-        const overlay = document.getElementById('overlay');
-        overlay.innerHTML = `
-            <div class="timer-bar">Order Expires In <span id="timer">02:00</span></div>
+        const screen = document.getElementById('screen');
+        screen.innerHTML = `
+            <div class="timer-strip">COMPLETE PAYMENT IN <span id="timer">02:00</span></div>
             <div style="padding:25px;">
-                <h2 style="margin:0;">Select Payment</h2>
-                <p style="color:#64748b; font-size:12px;">Paying to: <b style="color:black;">Varun Goyal</b></p>
-                <div style="font-size:24px; font-weight:900; margin-top:10px;">₹${total}</div>
+                <h2 style="margin:0;">Payment</h2>
+                <p style="color:#64748b; font-size:12px; margin-bottom:20px;">Paying to: <b>Varun Goyal</b></p>
+                <div style="background:#f8fafc; padding:20px; border-radius:15px; text-align:center;">
+                    <small>Amount to Pay</small><br><b style="font-size:28px;">₹${total}</b>
+                </div>
             </div>
-
-            <div class="payment-option" onclick="processUPI('Paytm', ${total})">
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <img src="https://static.vecteezy.com/system/resources/previews/022/100/710/non_2x/paytm-logo-transparent-free-png.png">
-                    <div><b>Paytm</b><br><small style="color:green; font-weight:700;">Instant Pop-up</small></div>
+            <div class="payment-box" onclick="launchUPI(${total})">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/1200px-Paytm_Logo_%28standalone%29.svg.png">
+                    <div><b>Paytm / All UPI Apps</b><br><small style="color:green;">Fast Payment</small></div>
                 </div>
                 <span>❯</span>
             </div>
+            <div style="margin-top:auto; padding:30px; text-align:center; color:#94a3b8; font-size:10px;">
+                🔒 SSL Encrypted Merchant Payment<br>Verified ID: paytmqr281005050101cgeiryvx0ji@paytm
+            </div>`;
 
-            <div class="payment-option" onclick="processUPI('UPI', ${total})">
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <img src="https://w7.pngwing.com/pngs/330/703/png-transparent-phonepe-logo-thumbnail.png">
-                    <div><b>PhonePe / GPay</b><br><small style="color:#64748b;">Fast Checkout</small></div>
-                </div>
-                <span>❯</span>
-            </div>
-
-            <div style="margin-top:auto; padding:30px; text-align:center; color:#94a3b8; font-size:11px;">
-                Verified Business ID: paytmqr281005...<br>No Extra Charges Applied
-            </div>
-        `;
-
-        let time = 120;
-        let int = setInterval(() => {
-            time--;
-            let m = Math.floor(time/60), s = time%60;
+        let timeLeft = 120;
+        setInterval(() => {
+            timeLeft--;
+            let m = Math.floor(timeLeft/60), s = timeLeft%60;
             document.getElementById('timer').innerText = `${m}:${s<10?'0':''}${s}`;
-            if(time <= 0) { clearInterval(int); location.reload(); }
+            if(timeLeft <= 0) location.reload();
         }, 1000);
     }
 
-    function processUPI(app, amt) {
-        // Aapki Verified Merchant ID jo photo mein thi
-        let mID = "paytmqr281005050101cgeiryatfxt@paytm"; 
-        let upi = `upi://pay?pa=${mID}&pn=Varun%20Goyal&am=${amt}&cu=INR&mc=5411`;
+    function launchUPI(total) {
+        // Updated UPI ID
+        const upi = `upi://pay?pa=paytmqr281005050101cgeiryvx0ji@paytm&pn=Varun%20Goyal&am=${total}&cu=INR&mc=5411`;
         
-        document.getElementById('overlay').innerHTML = `
-            <div style="padding:60px 20px; text-align:center;">
-                <div class="loader"></div>
-                <h2>Awaiting Payment...</h2>
-                <p style="color:#64748b;">Hum ${app} se response ka wait kar rahe hain.</p>
-                <div style="background:#f8fafc; padding:20px; border-radius:20px; margin-top:30px; border:1px dashed #cbd5e1;">
-                   <small>Steps:</small><br>
-                   1. App mein payment pura karein.<br>
-                   2. Wapis yahan aayein.
-                </div>
-            </div>
-        `;
+        // Order History Save Logic
+        let order = {
+            id: "#VAR" + Math.floor(Math.random()*9999),
+            date: new Date().toLocaleDateString(),
+            amount: total,
+            items: cart.length,
+            status: "Processing"
+        };
+        let orders = JSON.parse(localStorage.getItem('myOrders') || '[]');
+        orders.unshift(order);
+        localStorage.setItem('myOrders', JSON.stringify(orders));
 
         window.location.href = upi;
-
+        
         setTimeout(() => {
-            document.getElementById('overlay').innerHTML = `
-                <div style="padding:60px 20px; text-align:center;">
-                    <div style="font-size:70px; margin-bottom:20px;">✅</div>
+            document.getElementById('screen').innerHTML = `
+                <div style="padding:50px 20px; text-align:center;">
+                    <div style="font-size:60px; margin-bottom:20px;">✅</div>
                     <h2 style="margin:0;">Order Placed!</h2>
-                    <p style="color:#64748b; margin-top:10px;">Bhai, payment confirm hote hi shipping shuru ho jayegi.</p>
-                    <button onclick="location.reload()" style="margin-top:30px; width:100%; padding:15px; background:black; color:white; border:none; border-radius:15px; font-weight:800;">CLOSE</button>
-                </div>
-            `;
-        }, 6000);
+                    <p style="color:#64748b; font-size:13px; margin-top:10px;">Bhai, tumhara order history mein add ho gaya hai.</p>
+                    <button onclick="location.reload()" style="margin-top:25px; width:100%; padding:15px; background:black; color:white; border:none; border-radius:12px; font-weight:800;">GO HOME</button>
+                </div>`;
+            cart = [];
+            document.getElementById('cart-count').innerText = 0;
+        }, 3000);
     }
 
-    render();
+    function showOrders() {
+        const orders = JSON.parse(localStorage.getItem('myOrders') || '[]');
+        const screen = document.getElementById('screen');
+        screen.style.display = 'flex';
+        screen.innerHTML = `
+            <div style="padding:20px; flex:1; overflow-y:auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+                    <h2 style="margin:0;">My Orders</h2>
+                    <span onclick="closeScreen()" style="font-size:20px;">✕</span>
+                </div>
+                ${orders.length === 0 ? '<p style="text-align:center; color:#666;">No orders found yet! 🛍️</p>' : 
+                    orders.map(o => `
+                    <div style="background:white; border:1px solid #eee; padding:15px; border-radius:16px; margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <b style="font-size:13px; color:#64748b;">${o.id}</b>
+                            <span style="font-size:11px; padding:4px 8px; background:#fff1f6; color:var(--accent); border-radius:5px; font-weight:700;">${o.status}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div><small>${o.date}</small><br><b>${o.items} Items</b></div>
+                            <b style="font-size:18px;">₹${o.amount}</b>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>`;
+    }
+
+    renderHome();
 </script>
 </body>
 </html>
