@@ -162,17 +162,37 @@
     }
 
     async function fetchStatus() {
-        const id = document.getElementById('track-id').value.trim();
-        if(!id) return;
-        document.getElementById('track-res').innerHTML = "<p>Checking...</p>";
+    const id = document.getElementById('track-id').value.trim();
+    if(!id) return alert("Pehle Order ID toh dalo!");
+    
+    const trackRes = document.getElementById('track-res');
+    trackRes.innerHTML = "<p style='text-align:center;'>Checking live status...</p>";
+    
+    try {
         const res = await fetch(`${scriptURL}?orderID=${id}`);
-        const status = await res.text();
-        document.getElementById('track-res').innerHTML = `
+        const statusText = await res.text();
+        
+        // --- MY ORDERS UPDATE LOGIC ---
+        // Isse "My Orders" wali memory mein bhi status badal jayega
+        let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
+        let orderIndex = history.findIndex(o => o.orderID === id);
+        if(orderIndex !== -1) {
+            history[orderIndex].status = statusText;
+            localStorage.setItem('vOrders', JSON.stringify(history));
+        }
+        
+
+        trackRes.innerHTML = `
             <div style="background:#111; padding:20px; border-radius:20px; margin-top:20px; border:1px solid #222;">
-                <p style="color:var(--sub); font-size:12px;">ID: ${id}</p>
-                <h3 style="color:var(--green); margin:0;">● ${status}</h3>
+                <p style="color:var(--sub); font-size:12px; margin-bottom:5px;">ID: ${id}</p>
+                <h3 style="color:var(--green); margin:0;">● ${statusText}</h3>
+                <p style="font-size:10px; color:#444; margin-top:10px;">Status synced with My Orders</p>
             </div>`;
+            
+    } catch(e) {
+        trackRes.innerHTML = "<p style='color:red;'>System connect nahi ho raha!</p>";
     }
+}
 
     function showMyOrders() {
         const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
