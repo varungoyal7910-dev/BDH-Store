@@ -1,227 +1,200 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Student Deals</title>
     <style>
-        :root { --primary: #e63946; --dark: #1d3557; --light: #f1faee; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; padding-bottom: 80px; color: #333; }
+        :root { --primary: #e63946; --dark: #1d3557; --success: #2a9d8f; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; }
+        header { background: var(--dark); color: white; padding: 18px; text-align: center; font-size: 22px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        /* Navigation & Header */
-        header { background: var(--dark); color: white; padding: 20px; text-align: center; font-size: 22px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav-tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
-        .nav-tabs button { flex: 1; padding: 15px; border: none; background: none; font-weight: bold; cursor: pointer; color: #666; transition: 0.3s; }
-        .nav-tabs button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        /* Navigation */
+        .nav { display: flex; background: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav button { flex: 1; padding: 15px; border: none; background: none; font-weight: bold; color: #666; cursor: pointer; }
+        .nav button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
-        /* Sections */
-        .section { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .section { display: none; padding: 15px; animation: fadeIn 0.4s; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Product Cards */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; cursor: pointer; }
-        .card img { width: 100%; border-radius: 8px; height: 130px; object-fit: cover; }
-        .card h3 { font-size: 14px; margin: 8px 0; color: #444; height: 35px; overflow: hidden; }
-        .card p { color: var(--primary); font-weight: bold; margin: 0; }
+        /* UI Components */
+        .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; text-align: center; }
+        .card img { width: 100%; border-radius: 10px; height: 180px; object-fit: cover; }
+        input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 15px; }
+        .btn-main { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-main:active { transform: scale(0.98); opacity: 0.9; }
 
-        /* Forms & Inputs */
-        .form-box { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 14px; }
-        .btn-main { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
-
-        /* Modals */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 1000; backdrop-filter: blur(3px); }
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 85%; max-width: 400px; border-radius: 20px; padding: 20px; z-index: 1001; display: none; text-align: center; }
+        /* Payment Modal Styling */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 380px; border-radius: 25px; padding: 25px; z-index: 1001; display: none; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         
-        /* Payment Buttons */
-        .pay-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: bold; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Orders */
-        .order-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--primary); position: relative; }
-        .status { position: absolute; top: 15px; right: 15px; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 10px; background: #fef3f2; color: var(--primary); }
+        .pay-option { background: #f8f9fa; border: 2px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; text-decoration: none; color: #333; }
+        .pay-option:hover { border-color: var(--primary); background: #fff1f2; }
     </style>
 </head>
 <body>
 
 <header>🛍️ Smart Student Deals</header>
 
-<div class="nav-tabs">
-    <button id="btn-shop" class="active" onclick="showTab('shop')">🏠 Shop</button>
-    <button id="btn-cart" onclick="showTab('cart')">🛒 Cart (<span id="cart-count">0</span>)</button>
-    <button id="btn-orders" onclick="showTab('orders')">📦 My Orders</button>
+<div class="nav">
+    <button onclick="showTab('shop')" class="active" id="t-shop">Shop</button>
+    <button onclick="showTab('cart')" id="t-cart">Cart (<span id="count">0</span>)</button>
+    <button onclick="showTab('orders')" id="t-orders">Orders</button>
 </div>
 
-<!-- Shop Section -->
+<!-- Shop -->
 <div id="shop" class="section active">
-    <div class="grid">
-        <div class="card" onclick="openDetails('Love Balloons Set', 100, 'https://i.postimg.cc/mD3qPz9m/love-balloons.jpg', 'Premium quality party balloons. 50 pieces set with bright colors.')">
-            <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg">
-            <h3>Love Balloons Set</h3>
-            <p>₹100</p>
-        </div>
-        <!-- Add more items here -->
+    <div class="card">
+        <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg">
+        <h3 style="margin: 10px 0;">Love Balloons Set</h3>
+        <p style="color: var(--primary); font-size: 20px; font-weight: bold; margin: 5px 0;">₹100</p>
+        <button class="btn-main" onclick="addToCart('Love Balloons', 100)">Add to Cart</button>
     </div>
 </div>
 
-<!-- Cart Section -->
+<!-- Cart -->
 <div id="cart" class="section">
-    <h3>Checkout Details</h3>
-    <div id="cartContent">Cart is empty...</div>
-    <div id="checkoutForm" style="display:none; margin-top:15px;">
-        <div class="form-box">
-            <input type="text" id="custName" placeholder="Pura Naam">
-            <input type="number" id="custPhone" placeholder="Mobile Number (Active)">
-            <textarea id="custAddress" placeholder="Pura Address aur Pincode" rows="3"></textarea>
-            <button class="btn-main" onclick="startCheckout()">Confirm & Pay Now</button>
-        </div>
+    <div id="cartItems" class="card" style="text-align: left;">Cart khali hai.</div>
+    <div id="checkoutForm" style="display:none;">
+        <input type="text" id="custName" placeholder="Apna Naam">
+        <input type="number" id="custPhone" placeholder="Mobile Number">
+        <textarea id="custAddress" placeholder="Pura Address aur Pincode" rows="3"></textarea>
+        <button class="btn-main" onclick="initiateOrder()">Confirm & Generate Payment</button>
     </div>
 </div>
 
-<!-- Orders Section -->
+<!-- Orders -->
 <div id="orders" class="section">
-    <h3>My Order History</h3>
-    <div id="orderHistory">No orders yet.</div>
+    <div id="history">No orders yet.</div>
 </div>
 
-<!-- Details Modal -->
-<div id="overlay" class="overlay" onclick="closeAll()"></div>
-<div id="prodModal" class="modal">
-    <img id="mImg" src="" style="width:100%; border-radius:10px; margin-bottom:10px;">
-    <h3 id="mTitle" style="margin:0;"></h3>
-    <p id="mPrice" style="color:var(--primary); font-size:20px; font-weight:bold; margin:10px 0;"></p>
-    <p id="mDesc" style="font-size:13px; color:#666; margin-bottom:15px;"></p>
-    <button class="btn-main" id="addBtn">Add to Cart</button>
-</div>
+<!-- Modern Payment Modal -->
+<div id="overlay" class="overlay"></div>
+<div id="paymentModal" class="modal">
+    <div id="prePay">
+        <div class="loader"></div>
+        <h4>Securing Connection...</h4>
+        <p style="font-size: 13px; color: #666;">Waiting for payment gateway response</p>
+    </div>
 
-<!-- Payment Selector Modal -->
-<div id="payModal" class="modal">
-    <h3 style="margin-top:0;">Secure Payment</h3>
-    <p style="font-size:14px; color:#666;">Select an app to pay <b>₹<span id="pAmt"></span></b></p>
-    
-    <button onclick="pay('paytm')" class="pay-btn" style="background:#00baf2;">Pay via Paytm</button>
-    <button onclick="pay('phonepe')" class="pay-btn" style="background:#5f259f;">Pay via PhonePe</button>
-    <button onclick="pay('gpay')" class="pay-btn" style="background:#4285f4;">Pay via Google Pay</button>
-    
-    <p style="font-size:11px; color:#999; border-top:1px solid #eee; padding-top:10px; margin-top:10px;">
-        Verified UPI: varungoyal7910@pnb
-    </p>
+    <div id="actualPay" style="display:none;">
+        <div style="background: var(--dark); color: white; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+            <p style="margin: 0; font-size: 12px; opacity: 0.8;">Total Payable Amount</p>
+            <h2 style="margin: 5px 0;">₹<span id="displayAmt"></span></h2>
+        </div>
+        
+        <p style="font-size: 14px; margin-bottom: 15px; font-weight: bold;">Select Payment App:</p>
+        
+        <a href="javascript:void(0)" onclick="processUPI('paytm')" class="pay-option">Pay via Paytm</a>
+        <a href="javascript:void(0)" onclick="processUPI('phonepe')" class="pay-option">Pay via PhonePe</a>
+        <a href="javascript:void(0)" onclick="processUPI('gpay')" class="pay-option">Pay via Google Pay</a>
+
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+            <p style="font-size: 11px; color: #999;">Merchant: Varun Goyal | ID: varungoyal7910@pnb</p>
+        </div>
+    </div>
 </div>
 
 <script>
     let cart = [];
     let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
-    let curTotal = 0;
-    let curOrder = "";
+    let currentTotal = 0;
+    let currentOrder = "";
 
-    // 1. Navigation Logic
-    function showTab(id) {
+    function showTab(t) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('btn-'+id).classList.add('active');
-        if(id === 'cart') renderCart();
-        if(id === 'orders') renderOrders();
-    }
-
-    // 2. Product Logic
-    function openDetails(name, price, img, desc) {
-        document.getElementById('mTitle').innerText = name;
-        document.getElementById('mPrice').innerText = "₹" + price;
-        document.getElementById('mImg').src = img;
-        document.getElementById('mDesc').innerText = desc;
-        document.getElementById('addBtn').onclick = () => { addToCart(name, price); closeAll(); };
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('prodModal').style.display = 'block';
+        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(t).classList.add('active');
+        document.getElementById('t-'+t).classList.add('active');
+        if(t==='cart') renderCart();
+        if(t==='orders') renderOrders();
     }
 
     function addToCart(name, price) {
         cart.push({name, price});
-        document.getElementById('cart-count').innerText = cart.length;
-        alert("Product added to cart!");
+        document.getElementById('count').innerText = cart.length;
+        alert("Success! Added to cart.");
     }
 
     function renderCart() {
-        let div = document.getElementById('cartContent');
+        let div = document.getElementById('cartItems');
         let form = document.getElementById('checkoutForm');
-        if(cart.length === 0) { div.innerHTML = "<p style='text-align:center;'>Cart khali hai bhai.</p>"; form.style.display='none'; }
+        if(cart.length === 0) { div.innerHTML = "Cart khali hai."; form.style.display = 'none'; }
         else {
-            div.innerHTML = cart.map(i => `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;"><span>✅ ${i.name}</span><b>₹${i.price}</b></div>`).join("");
-            form.style.display='block';
+            div.innerHTML = cart.map(i => `<div style="padding:8px 0; border-bottom:1px solid #eee;">✅ ${i.name} - <b>₹${i.price}</b></div>`).join("");
+            form.style.display = 'block';
         }
     }
 
-    // 3. Checkout Logic
-    function startCheckout() {
-        const name = document.getElementById('custName').value;
-        const phone = document.getElementById('custPhone').value;
-        const addr = document.getElementById('custAddress').value;
+    function initiateOrder() {
+        const n = document.getElementById('custName').value;
+        const p = document.getElementById('custPhone').value;
+        const a = document.getElementById('custAddress').value;
+        if(!n || !p || !a) return alert("Puri details bhariye!");
 
-        if(!name || !phone || !addr) return alert("Bhai sari details bharna zaroori hai!");
+        currentTotal = cart.reduce((s,i) => s + i.price, 0);
+        currentOrder = "#SSD" + Math.floor(1000 + Math.random() * 9000);
 
-        curTotal = cart.reduce((s, i) => s + i.price, 0);
-        curOrder = "#SSD" + Math.floor(1000 + Math.random() * 9000);
-
-        // Send to Gmail via Formspree (Notification)
+        // Notify Gmail (Silent)
         fetch("https://formspree.io/f/xknadjkb", {
             method: "POST",
-            body: JSON.stringify({ OrderID: curOrder, Name: name, Phone: phone, Address: addr, Total: curTotal }),
-            headers: { 'Content-Type': 'application/json' }
+            body: JSON.stringify({OrderID: currentOrder, Name: n, Phone: p, Address: a, Amount: currentTotal}),
+            headers: {'Content-Type': 'application/json'}
         });
 
-        // Show Payment Modal
-        document.getElementById('pAmt').innerText = curTotal;
+        // Show Modal with "Waiting" effect
+        document.getElementById('displayAmt').innerText = currentTotal;
         document.getElementById('overlay').style.display = 'block';
-        document.getElementById('payModal').style.display = 'block';
+        document.getElementById('paymentModal').style.display = 'block';
+        document.getElementById('prePay').style.display = 'block';
+        document.getElementById('actualPay').style.display = 'none';
+
+        // Simulate Bank Processing
+        setTimeout(() => {
+            document.getElementById('prePay').style.display = 'none';
+            document.getElementById('actualPay').style.display = 'block';
+        }, 2000);
     }
 
-    // 4. Payment Function (Mobile App Integration)
-    function pay(app) {
-        const upi = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${curTotal}&cu=INR&tn=Order_${curOrder}`;
-        let finalUrl = upi;
-        
-        // Deep linking logic
-        if(app === 'paytm') finalUrl = "paytmmp://" + upi;
-        if(app === 'phonepe') finalUrl = "phonepe://" + upi;
-        if(app === 'gpay') finalUrl = "googlepay://" + upi;
+    function processUPI(app) {
+        // PNB Bank Standard UPI Link
+        const upi = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${currentTotal}&cu=INR&tn=${currentOrder}`;
+        let final = upi;
 
-        // Open App
-        window.location.href = finalUrl;
+        // Force App Deep Links (Security Bypass)
+        if(app === 'paytm') final = "paytmmp://pay?" + upi.split('?')[1];
+        if(app === 'phonepe') final = "phonepe://pay?" + upi.split('?')[1];
+        if(app === 'gpay') final = "googlepay://pay?" + upi.split('?')[1];
 
-        // Save to History with "Payment Pending"
-        orders.push({ id: curOrder, items: cart.map(i=>i.name).join(", "), price: curTotal, status: "Awaiting Verification", date: new Date().toLocaleDateString() });
+        window.location.href = final;
+
+        // Save to History
+        orders.push({id: currentOrder, items: cart.map(i=>i.name).join(", "), price: currentTotal, status: "Verification Pending", date: new Date().toLocaleDateString()});
         localStorage.setItem('myOrders', JSON.stringify(orders));
 
-        // Close and cleanup
         setTimeout(() => {
-            closeAll();
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('paymentModal').style.display = 'none';
             cart = [];
-            document.getElementById('cart-count').innerText = "0";
+            document.getElementById('count').innerText = "0";
             showTab('orders');
-        }, 1500);
-    }
-
-    // 5. Utility Functions
-    function closeAll() {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('prodModal').style.display = 'none';
-        document.getElementById('payModal').style.display = 'none';
+        }, 3000);
     }
 
     function renderOrders() {
-        let hist = document.getElementById('orderHistory');
-        if(orders.length === 0) hist.innerHTML = "<p style='text-align:center; color:gray;'>No orders yet.</p>";
-        else {
-            hist.innerHTML = orders.slice().reverse().map(o => `
-                <div class="order-card">
-                    <span class="status">${o.status}</span>
-                    <b>${o.id}</b>
-                    <p style="margin:8px 0; font-size:13px; color:#555;">${o.items}</p>
-                    <small>₹${o.price} | ${o.date}</small>
-                </div>
-            `).join("");
-        }
+        let div = document.getElementById('history');
+        div.innerHTML = orders.length === 0 ? "No orders." : orders.slice().reverse().map(o => `
+            <div class="card" style="text-align: left; border-left: 5px solid var(--primary);">
+                <span style="float: right; font-size: 11px; color: var(--primary); font-weight: bold;">${o.status}</span>
+                <b>${o.id}</b><br>
+                <small style="color: #666;">${o.items}</small><br>
+                <div style="margin-top: 10px; font-size: 13px;">Total: <b>₹${o.price}</b> | ${o.date}</div>
+            </div>
+        `).join("");
     }
 </script>
 </body>
