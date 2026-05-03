@@ -3,150 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Varun Store | Premium Shop</title>
+    <title>Varun Store | Premium Collective</title>
     <style>
-        :root { --primary: #000; --accent: #ff007a; --bg: #f8fafc; }
-        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; background: var(--bg); color: #1e293b; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #ffffff; --surface: #f5f5f7; --text: #1d1d1f; --accent: #0071e3; --border: #d2d2d7; --error: #ff3b30; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
         
-        /* Modern Header */
-        header { background: white; padding: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
-        
-        /* Product Layout */
-        .container { padding: 15px; padding-bottom: 100px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: white; border-radius: 18px; padding: 12px; border: 1px solid #eee; position: relative; }
-        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 14px; }
-        .card h4 { margin: 10px 0 5px; font-size: 14px; }
-        .card b { color: var(--primary); font-size: 16px; }
-        .add-btn { width: 100%; margin-top: 10px; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        header { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); padding: 18px; position: sticky; top: 0; z-index: 1000; text-align: center; border-bottom: 0.5px solid var(--border); }
+        .logo { font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* Bottom Nav */
-        footer { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1500; }
-        .nav-item { text-align: center; font-size: 11px; color: #64748b; font-weight: 600; cursor: pointer; position: relative; }
-        .nav-item.active { color: var(--accent); }
-        .badge { position: absolute; top: -5px; right: 5px; background: var(--accent); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+        .container { padding: 20px; padding-bottom: 120px; max-width: 600px; margin: auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .product-card { background: var(--surface); border-radius: 24px; padding: 10px; cursor: pointer; transition: transform 0.2s ease; }
+        .product-card img { width: 100%; border-radius: 20px; display: block; }
+        .product-info { padding: 12px 5px; text-align: center; }
+        .product-info h4 { margin: 0; font-size: 14px; font-weight: 600; }
+        .price { color: #86868b; font-size: 13px; margin-top: 4px; display: block; }
 
-        /* Overlay Screens */
-        .overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: none; flex-direction: column; animation: slideUp 0.3s ease; }
+        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(29, 29, 31, 0.95); backdrop-filter: blur(20px); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; z-index: 1500; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .nav-item { color: white; text-align: center; font-size: 10px; cursor: pointer; opacity: 0.6; position: relative; }
+        .nav-item.active { opacity: 1; }
+        .badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        .overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: none; flex-direction: column; animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        .box { padding: 20px; flex: 1; overflow-y: auto; }
-        input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #eee; margin-bottom: 12px; box-sizing: border-box; }
-        .pay-btn { width: 100%; padding: 18px; background: black; color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 16px; margin-top: 10px; }
+        .header-modal { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f2f2f2; }
+        .content { padding: 25px; overflow-y: auto; flex: 1; }
 
-        /* Payment Help Box */
-        .help-card { background: #fff5f8; border: 1.5px dashed var(--accent); padding: 15px; border-radius: 15px; margin-top: 20px; text-align: center; }
-        .copy-chip { background: white; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; margin: 10px 0; border: 1px solid #ddd; word-break: break-all; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 15px; border-radius: 20px; margin-bottom: 12px; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; background: white; padding: 6px 12px; border-radius: 30px; border: 1px solid #eee; }
+        .qty-btn { cursor: pointer; font-size: 18px; border: none; background: none; padding: 0 5px; color: var(--accent); }
+
+        input, textarea { width: 100%; background: var(--surface); border: 1.5px solid transparent; padding: 16px; border-radius: 14px; margin-bottom: 12px; font-size: 15px; box-sizing: border-box; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--accent); background: white; }
+        .error-text { color: var(--error); font-size: 12px; margin-top: -8px; margin-bottom: 10px; display: none; }
+
+        .action-btn { width: 100%; padding: 18px; background: var(--text); color: white; border: none; border-radius: 18px; font-weight: 600; font-size: 16px; transition: 0.3s; }
+        .action-btn:disabled { background: #d2d2d7; cursor: not-allowed; }
+
+        .loader { width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">VARUN<span>STORE</span></div>
-</header>
+<header><div class="logo">VARUN<span>STORE</span></div></header>
 
 <div class="container" id="main-view"></div>
-
 <div id="modal" class="overlay"></div>
 
-<footer>
-    <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
-    <div class="nav-item" onclick="openCart()">🛒<br>Bag<span id="cart-badge" class="badge">0</span></div>
-    <div class="nav-item" onclick="openOrders()">📦<br>Orders</div>
-</footer>
+<nav>
+    <div class="nav-item" onclick="location.reload()">🏠<br>Shop</div>
+    <div class="nav-item" onclick="openBag()">🛍️<br>Bag <span id="cart-count" class="badge">0</span></div>
+    <div class="nav-item" onclick="trackOrder()">📦<br>Track</div>
+</nav>
 
 <script>
     let cart = [];
     const upiID = "paytmqr281005050101cgeiryavx0ji@paytm";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyHxyqsYCvwKlrp7j4VcOLiCOYutL518TOm4XoD51gTT9KH2DUoxgI4mxtef6NPiOCo/exec";
+
     const products = [
-        { id: 1, name: "Matte Black Case", price: 95, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=300" },
-        { id: 2, name: "Fast Charging Cable", price: 145, img: "https://images.unsplash.com/photo-1625517407003-89c16bc18a5e?w=300" },
-        { id: 3, name: "Wireless Earbuds", price: 195, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300" }
+        { id: 1, name: "Premium Silicone Case", price: 95, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=300" },
+        { id: 2, name: "Super Fast Charger", price: 145, img: "https://images.unsplash.com/photo-1625517407003-89c16bc18a5e?w=300" }
     ];
 
     function renderHome() {
         let html = '<div class="grid">';
         products.forEach(p => {
-            html += `<div class="card"><img src="${p.img}"><h4>${p.name}</h4><b>₹${p.price}</b><button class="add-btn" onclick="addToCart(${p.id})">ADD TO BAG</button></div>`;
+            html += `
+                <div class="product-card" onclick="addToBag(${p.id})">
+                    <img src="${p.img}">
+                    <div class="product-info">
+                        <h4>${p.name}</h4>
+                        <span class="price">₹${p.price}</span>
+                    </div>
+                </div>`;
         });
         document.getElementById('main-view').innerHTML = html + '</div>';
     }
 
-    function addToCart(id) {
+    function addToBag(id) {
         let p = products.find(x => x.id === id);
         let item = cart.find(i => i.id === id);
         if(item) item.qty++; else cart.push({...p, qty: 1});
-        document.getElementById('cart-badge').innerText = cart.reduce((s, i) => s + i.qty, 0);
+        updateBadge();
     }
 
-    function openCart() {
-        if(!cart.length) return alert("Bag is empty!");
-        let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    function updateBadge() {
+        document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+    }
+
+    function changeQty(id, delta) {
+        let item = cart.find(i => i.id === id);
+        if(item) {
+            item.qty += delta;
+            if(item.qty < 1) cart = cart.filter(i => i.id !== id);
+        }
+        updateBadge();
+        openBag();
+    }
+
+    function validateFields() {
+        const phone = document.getElementById('v-phone').value;
+        const pin = document.getElementById('v-pin').value;
+        const btn = document.getElementById('checkout-btn');
+        const phoneErr = document.getElementById('phone-err');
+        
+        const isPhoneValid = phone.length === 10;
+        const isPinValid = pin.length >= 5;
+
+        phoneErr.style.display = (phone.length > 0 && !isPhoneValid) ? 'block' : 'none';
+        btn.disabled = !(isPhoneValid && isPinValid && document.getElementById('v-name').value && document.getElementById('v-addr').value);
+    }
+
+    function openBag() {
+        if(!cart.length) return alert("Bag khali hai bhai!");
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
+        let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        
         modal.innerHTML = `
-            <div class="box">
-                <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Your Bag</h2><span onclick="closeModal()" style="font-size:24px;">✕</span></div>
-                ${cart.map(i => `<div style="padding:10px 0; border-bottom:1px solid #eee;">${i.name} (${i.qty}) - ₹${i.price * i.qty}</div>`).join('')}
-                <div style="margin-top:20px;">
-                    <input type="text" id="cust-name" placeholder="Name">
-                    <textarea id="cust-addr" placeholder="Address"></textarea>
-                    <div style="display:flex; justify-content:space-between; margin:15px 0;"><b>Total Bill</b><b>₹${total}</b></div>
-                    <button onclick="startPayment(${total})" class="pay-btn">CHECKOUT</button>
+            <div class="header-modal"><h3>Bag</h3><span onclick="closeModal()" style="font-size:24px;">✕</span></div>
+            <div class="content">
+                ${cart.map(i => `
+                    <div class="cart-item">
+                        <div><b>${i.name}</b><br><small>₹${i.price}</small></div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="changeQty(${i.id}, -1)">−</button>
+                            <span>${i.qty}</span>
+                            <button class="qty-btn" onclick="changeQty(${i.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `).join('')}
+                
+                <h4 style="margin:30px 0 15px;">Shipping Information</h4>
+                <input type="text" id="v-name" placeholder="Full Name" oninput="validateFields()">
+                <input type="tel" id="v-phone" placeholder="Phone Number (10 Digits)" maxlength="10" oninput="validateFields()">
+                <div id="phone-err" class="error-text">Bhai, kam se kam 10 number zaruri hain!</div>
+                <textarea id="v-addr" placeholder="Full Address" rows="3" oninput="validateFields()"></textarea>
+                <input type="number" id="v-pin" placeholder="Pin Code (Min 5 Digits)" oninput="validateFields()">
+                
+                <div style="background:var(--surface); padding:20px; border-radius:20px; margin:20px 0; display:flex; justify-content:space-between; align-items:center;">
+                    <span>Total Amount</span><b style="font-size:20px;">₹${total}</b>
                 </div>
+                <button id="checkout-btn" class="action-btn" onclick="placeOrder(${total})" disabled>Place Order</button>
             </div>`;
     }
 
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-    function startPayment(total) {
-        if(!document.getElementById('cust-name').value || !document.getElementById('cust-addr').value) return alert("Details bharo!");
+    async function placeOrder(total) {
+        const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
+        const data = {
+            name: document.getElementById('v-name').value,
+            phone: document.getElementById('v-phone').value,
+            address: document.getElementById('v-addr').value,
+            pincode: document.getElementById('v-pin').value,
+            total: total,
+            orderID: orderID
+        };
 
-        // SIMPLE UPI LINK - To avoid "Invalid ID" error
-        const simpleLink = `upi://pay?pa=${upiID}&pn=Varun%20Goyal&am=${total}&cu=INR`;
-        
-        // Save Order to History
-        let order = { id: "#VAR"+Math.floor(Math.random()*9000), date: new Date().toLocaleDateString(), amt: total, status: "Processing" };
+        // Data to Sheet
+        fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+
+        // Local Tracking
         let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
-        history.unshift(order);
+        history.unshift({ ...data, date: new Date().toLocaleDateString(), status: "Wait for order confirming" });
         localStorage.setItem('vOrders', JSON.stringify(history));
 
-        // Open App
-        window.location.href = simpleLink;
+        // Start UPI
+        window.location.href = `upi://pay?pa=${upiID}&pn=Varun%20Goyal&am=${total}&cu=INR`;
 
-        // Show Help Screen
-        const modal = document.getElementById('modal');
-        modal.innerHTML = `
-            <div class="box" style="text-align:center; padding-top:40px;">
-                <h2>Opening Payment App...</h2>
-                <div class="help-card">
-                    <p style="font-size:13px;">Bhai, agar app mein error aaye toh ye ID copy karke Paytm mein manually paste karein:</p>
-                    <div class="copy-chip" id="copy-id">${upiID}</div>
-                    <button onclick="copyID()" style="background:var(--accent); color:white; border:none; padding:8px 15px; border-radius:8px; font-weight:700;">COPY ID</button>
-                </div>
-                <p style="margin-top:20px; font-weight:700;">Total to Pay: ₹${total}</p>
-                <button onclick="location.reload()" style="background:black; color:white; border:none; width:100%; padding:15px; border-radius:12px; margin-top:20px;">DONE / GO HOME</button>
-            </div>`;
+        // Success Screen
+        setTimeout(() => {
+            document.getElementById('modal').innerHTML = `
+                <div class="content" style="text-align:center; padding-top:60px;">
+                    <div class="loader"></div>
+                    <h2 style="letter-spacing:-0.5px;">Wait for order confirming</h2>
+                    <p style="color:#86868b; line-height:1.5;">Humare system mein aapka order verify ho raha hai. Hum jald hi aapse sampark karenge.</p>
+                    <div style="background:var(--surface); padding:25px; border-radius:24px; margin-top:40px; text-align:left;">
+                        <p style="margin:0; font-size:13px; color:#86868b;">Order ID</p>
+                        <b style="font-size:18px;">${orderID}</b>
+                        <hr style="border:0; border-top:1px solid #e2e2e2; margin:15px 0;">
+                        <p style="margin:0; font-size:13px; color:#86868b;">Current Status</p>
+                        <b style="color:var(--accent);">System Checking...</b>
+                    </div>
+                    <button class="action-btn" onclick="location.reload()" style="margin-top:40px; background:#000;">Back to Shop</button>
+                </div>`;
+        }, 3000);
     }
 
-    function copyID() {
-        navigator.clipboard.writeText(upiID);
-        alert("UPI ID Copied! Ab Paytm mein paste karke pay karein.");
-    }
-
-    function openOrders() {
+    function trackOrder() {
         const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
         modal.innerHTML = `
-            <div class="box">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h2>My Orders</h2><span onclick="closeModal()" style="font-size:24px;">✕</span></div>
-                ${history.length === 0 ? '<p>No orders yet!</p>' : history.map(o => `
-                    <div style="background:white; border:1px solid #eee; padding:15px; border-radius:15px; margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between;"><small>${o.id}</small> <b style="color:green; font-size:10px;">${o.status}</b></div>
-                        <div style="display:flex; justify-content:space-between; margin-top:8px;"><span>${o.date}</span><b>₹${o.amt}</b></div>
+            <div class="header-modal"><h3>Track Orders</h3><span onclick="closeModal()">✕</span></div>
+            <div class="content">
+                ${history.length === 0 ? '<p style="color:#86868b; text-align:center;">Abhi koi order nahi hai bhai.</p>' : history.map(o => `
+                    <div style="background:var(--surface); padding:20px; border-radius:24px; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b>${o.orderID}</b>
+                            <span style="font-weight:600;">₹${o.total}</span>
+                        </div>
+                        <div style="margin-top:12px; font-size:13px; color:var(--accent); font-weight:600;">
+                            Status: ${o.status}
+                        </div>
+                        <p style="font-size:11px; color:#86868b; margin-top:8px;">Placed on: ${o.date}</p>
                     </div>
                 `).join('')}
             </div>`;
