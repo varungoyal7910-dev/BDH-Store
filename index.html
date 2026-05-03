@@ -127,6 +127,42 @@
 <body>
 
 <header>🛍️ Bhraava Di Hatti</header>
+    <!-- Floating Cart Icon -->
+<div class="cart-float" onclick="toggleSidebar()">
+    🛒 <span id="cart-count" style="font-size: 14px; background: black; border-radius: 50%; padding: 2px 6px; position: absolute; top: 5px; right: 5px;">0</span>
+</div>
+
+<!-- Sidebar for Cart & History -->
+<div id="sideMenu" class="sidebar">
+    <span onclick="toggleSidebar()" style="font-size: 30px; cursor: pointer;">&times;</span>
+    
+    <h3>🛍️ Tera Cart</h3>
+    <div id="cartItems">Khali hai bhai...</div>
+    <hr>
+    
+    <h3>📜 Purane Orders</h3>
+    <div id="orderHistory">Abhi tak koi order nahi kiya.</div>
+    
+    <button id="checkoutBtn" class="buy-btn" style="display:none; margin-top: 20px;" onclick="openOrderFormFromCart()">Place Order</button>
+</div>
+    
+    <!-- Search and Filter Section -->
+<div style="padding: 15px; max-width: 1100px; margin: auto;">
+    <!-- Search Bar -->
+    <div style="position: relative; margin-bottom: 20px;">
+        <input type="text" id="searchInput" onkeyup="searchProduct()" placeholder="🔍 Products search karein..." 
+               style="width: 100%; padding: 15px; border-radius: 25px; border: 2px solid #ddd; font-size: 16px; outline: none;">
+    </div>
+
+    <!-- Quick Filters -->
+    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none;">
+        <button onclick="filterPrice(99)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹99</button>
+         <button onclick="filterPrice(149)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹149</button>
+        <button onclick="filterPrice(199)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹199</button>
+        <button onclick="filterPrice(499)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹499</button>
+        <button onclick="showAll()" style="background: #e63946; border: none; color: white; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Show All</button>
+    </div>
+</div>
 
 <div class="container">
     <!-- Product 1: Love Balloons -->
