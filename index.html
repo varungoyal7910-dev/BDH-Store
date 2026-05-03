@@ -3,142 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Varun Store | Premium Collective</title>
+    <title>Varun Store | Exclusive</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000000; --card: #111111; --accent: #ffffff; --sub: #888888; --green: #34c759; }
+        :root { --bg: #000; --card: #111; --accent: #fff; --sub: #888; --green: #34c759; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; background: var(--bg); color: #fff; -webkit-font-smoothing: antialiased; }
         
-        /* Glassmorphism Header */
-        header { background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); padding: 25px; position: sticky; top: 0; z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 22px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; }
-        .logo span { color: #555; }
+        header { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); padding: 20px; position: sticky; top: 0; z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
+        .logo { font-size: 20px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
 
-        /* Premium Grid */
         .container { padding: 20px; padding-bottom: 120px; max-width: 500px; margin: auto; }
-        .welcome-text { margin-bottom: 30px; }
-        .welcome-text h1 { font-size: 28px; margin: 0; font-weight: 800; }
-        .welcome-text p { color: var(--sub); font-size: 14px; margin-top: 5px; }
-
-        .product-card { background: var(--card); border-radius: 30px; padding: 12px; margin-bottom: 20px; border: 1px solid #222; transition: 0.3s; cursor: pointer; }
-        .product-card:active { transform: scale(0.96); }
-        .product-card img { width: 100%; border-radius: 22px; height: 350px; object-fit: cover; }
-        .p-info { padding: 15px 5px; display: flex; justify-content: space-between; align-items: center; }
-        .p-info h4 { margin: 0; font-size: 18px; font-weight: 600; }
-        .price-tag { background: #fff; color: #000; padding: 6px 14px; border-radius: 50px; font-weight: 800; font-size: 14px; }
-
-        /* Bottom Nav - Floating Style */
-        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 320px; background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px; z-index: 1500; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .nav-item { color: white; text-align: center; font-size: 10px; cursor: pointer; opacity: 0.5; transition: 0.3s; }
-        .nav-item.active { opacity: 1; transform: translateY(-2px); }
-        .badge { position: absolute; top: -8px; right: -8px; background: #fff; color: #000; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-
-        /* Full Screen Overlay */
-        .overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; flex-direction: column; overflow-y: auto; padding: 25px; }
-        .close-btn { align-self: flex-end; font-size: 30px; padding: 10px; cursor: pointer; }
-
-        /* Inputs - Dark Premium */
-        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 20px; border-radius: 20px; margin-bottom: 15px; color: #fff; font-size: 15px; box-sizing: border-box; outline: none; }
-        input:focus { border-color: #fff; }
         
-        .buy-btn { width: 100%; padding: 22px; background: #fff; color: #000; border: none; border-radius: 22px; font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
+        /* Product List Style */
+        .product-card { background: var(--card); border-radius: 25px; padding: 10px; margin-bottom: 20px; border: 1px solid #222; cursor: pointer; }
+        .product-card img { width: 100%; border-radius: 20px; height: 300px; object-fit: cover; }
+        .p-info { padding: 15px 5px; }
+        .p-info h4 { margin: 0; font-size: 18px; }
+        .price-row { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+        .sale-price { font-size: 20px; font-weight: 800; color: #fff; }
+        .mrp-price { font-size: 14px; color: var(--sub); text-decoration: line-through; }
+
+        /* Full Screen Product Page */
+        .product-view { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; overflow-y: auto; }
+        .img-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; padding: 10px; }
+        .img-slider img { flex: 0 0 90%; height: 400px; object-fit: cover; border-radius: 25px; scroll-snap-align: center; }
+        .details-box { padding: 25px; }
+        .badge-row { display: flex; gap: 10px; margin: 15px 0; }
+        .badge { background: #222; padding: 6px 12px; border-radius: 50px; font-size: 12px; color: var(--sub); border: 1px solid #333; }
         
-        /* Status Card */
-        .status-box { background: #111; border: 1px solid #222; padding: 25px; border-radius: 30px; margin-bottom: 20px; }
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .color-opt { display: flex; gap: 15px; margin: 20px 0; }
+        .color-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+        .color-dot.active { border-color: #fff; }
+
+        /* Common Styles */
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; padding: 25px; }
+        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80%; background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-item { color: white; text-align: center; font-size: 10px; cursor: pointer; opacity: 0.6; }
+        .buy-btn { width: 100%; padding: 22px; background: #fff; color: #000; border: none; border-radius: 20px; font-weight: 800; font-size: 16px; position: sticky; bottom: 20px; }
+        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 20px; border-radius: 18px; margin-bottom: 15px; color: #fff; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
 <header><div class="logo">VARUN<span>STORE</span></div></header>
 
-<div class="container">
-    <div class="welcome-text">
-        <p>Sunday, May 3</p>
-        <h1>Exclusive Drop</h1>
-    </div>
-    <div id="main-view"></div>
-</div>
+<div class="container" id="main-list"></div>
 
+<!-- Live Status/Cart Overlay -->
 <div id="modal" class="overlay"></div>
 
+<!-- Full Product View -->
+<div id="product-page" class="product-view"></div>
+
 <nav>
-    <div class="nav-item active" onclick="location.reload()">HOME</div>
-    <div class="nav-item" style="position:relative;" onclick="openBag()">BAG <span id="cart-count" class="badge">0</span></div>
+    <div class="nav-item" onclick="location.reload()">HOME</div>
     <div class="nav-item" onclick="trackOrder()">TRACK</div>
 </nav>
 
 <script>
-    let cart = [];
     const upiID = "paytmqr281005050101cgeiryavx0ji@paytm";
-    const scriptURL = "PASTE_YOUR_URL_HERE"; // Apni URL yahan dalo
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxBR_vkG3tEHSZ1gbHEbYfx1rm1Jom9M99Q3BzU-ta8ULI5VECPalz8yTelHJyq-p8z/exec";
 
     const products = [
-        { id: 1, name: "Luxury Case", price: 95, img: "https://images.unsplash.com/photo-1603313011101-31c726a55ad8?w=500" },
-        { id: 2, name: "Charging Dock", price: 145, img: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=500" }
+        { 
+            id: 1, 
+            name: "Premium Silicone Case", 
+            price: 95, 
+            mrp: 499,
+            imgs: ["https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500", "https://images.unsplash.com/photo-1592890288564-76628a30a657?w=500"],
+            desc: "High quality liquid silicone case with soft microfiber lining inside. Protects from scratches and drops.",
+            colors: ["#FF3B30", "#007AFF", "#000000"]
+        }
     ];
 
     function renderHome() {
         let html = '';
         products.forEach(p => {
             html += `
-                <div class="product-card" onclick="addToBag(${p.id})">
-                    <img src="${p.img}">
+                <div class="product-card" onclick="openProduct(${p.id})">
+                    <img src="${p.imgs[0]}">
                     <div class="p-info">
                         <h4>${p.name}</h4>
-                        <div class="price-tag">₹${p.price}</div>
+                        <div class="price-row">
+                            <span class="sale-price">₹${p.price}</span>
+                            <span class="mrp-price">₹${p.mrp}</span>
+                        </div>
                     </div>
                 </div>`;
         });
-        document.getElementById('main-view').innerHTML = html;
+        document.getElementById('main-list').innerHTML = html;
     }
 
-    function addToBag(id) {
-        let p = products.find(x => x.id === id);
-        let item = cart.find(i => i.id === id);
-        if(item) item.qty++; else cart.push({...p, qty: 1});
-        document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+    function openProduct(id) {
+        const p = products.find(x => x.id === id);
+        const view = document.getElementById('product-page');
+        view.style.display = 'flex';
+        view.innerHTML = `
+            <div style="padding:20px; font-size:30px;" onclick="this.parentElement.style.display='none'">✕</div>
+            <div class="img-slider">
+                ${p.imgs.map(img => `<img src="${img}">`).join('')}
+            </div>
+            <div class="details-box">
+                <h1>${p.name}</h1>
+                <div class="price-row">
+                    <span style="font-size:28px;" class="sale-price">₹${p.price}</span>
+                    <span style="font-size:18px;" class="mrp-price">₹${p.mrp}</span>
+                    <span style="color:var(--green); font-weight:800;">${Math.round((p.mrp-p.price)/p.mrp*100)}% OFF</span>
+                </div>
+                
+                <div class="badge-row">
+                    <div class="badge">🚚 Free Delivery</div>
+                    <div class="badge">🔄 7 Days Replacement</div>
+                </div>
+
+                <p style="color:var(--sub); line-height:1.6; margin:20px 0;">${p.desc}</p>
+                
+                <h3>Select Color</h3>
+                <div class="color-opt">
+                    ${p.colors.map(c => `<div class="color-dot" style="background:${c}" onclick="selectColor(this)"></div>`).join('')}
+                </div>
+
+                <button class="buy-btn" onclick="openCheckout(${p.id})">Buy Now</button>
+            </div>
+        `;
     }
 
-    function openBag() {
-        if(!cart.length) return alert("Bag is empty");
+    function selectColor(el) {
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function openCheckout(id) {
+        const p = products.find(x => x.id === id);
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
-        let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-        
         modal.innerHTML = `
-            <div class="close-btn" onclick="closeModal()">✕</div>
-            <h2>Order Details</h2>
-            <div style="margin-bottom:30px;">
-                ${cart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>${i.name} x ${i.qty}</span><b>₹${i.price * i.qty}</b></div>`).join('')}
-            </div>
+            <div style="font-size:30px; margin-bottom:20px;" onclick="this.parentElement.style.display='none'">✕</div>
+            <h2>Delivery Details</h2>
             <input type="text" id="v-name" placeholder="Full Name">
             <input type="tel" id="v-phone" placeholder="Mobile (10 Digits)" maxlength="10">
-            <textarea id="v-addr" placeholder="Full Address" rows="3"></textarea>
-            <input type="number" id="v-pin" placeholder="Pincode (Min 5 Digits)">
-            <div style="font-size:24px; font-weight:800; margin:20px 0;">Total: ₹${total}</div>
-            <button class="buy-btn" onclick="placeOrder(${total})">Complete Checkout</button>`;
+            <textarea id="v-addr" placeholder="Full Address with Pincode" rows="4"></textarea>
+            <div style="padding:20px; background:#111; border-radius:20px; margin-bottom:20px;">
+                <span>Payable Amount:</span> <b style="float:right">₹${p.price}</b>
+            </div>
+            <button class="buy-btn" onclick="placeOrder(${p.price})">Confirm & Pay</button>
+        `;
     }
 
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
     async function placeOrder(total) {
+        const name = document.getElementById('v-name').value;
         const phone = document.getElementById('v-phone').value;
-        const pin = document.getElementById('v-pin').value;
-        if(phone.length < 10 || pin.length < 5) return alert("Bhai, details sahi daalo!");
-
+        const addr = document.getElementById('v-addr').value;
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
-        const data = {
-            name: document.getElementById('v-name').value,
-            phone: phone,
-            address: document.getElementById('v-addr').value,
-            pincode: pin,
-            total: total,
-            orderID: orderID
-        };
 
-        fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+        if(!name || phone.length < 10) return alert("Sahi detail dalo bahi!");
+
+        const data = { name, phone, address: addr, total, orderID };
+        fetch(scriptURL, { method: "POST", body: JSON.stringify(data) });
         
         let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
         history.unshift({ ...data, status: "Wait for order confirming" });
@@ -152,29 +173,19 @@
         const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
-        
-        let html = `<div class="close-btn" onclick="closeModal()">✕</div><h2>Your Orders</h2>`;
+        let html = `<div style="font-size:30px; margin-bottom:20px;" onclick="this.parentElement.style.display='none'">✕</div><h2>My Orders</h2>`;
         
         for(let o of history) {
-            let liveStatus = "Wait for order confirming";
+            let status = "Wait for order confirming";
             try {
                 const res = await fetch(`${scriptURL}?orderID=${o.orderID}`);
-                liveStatus = await res.text();
+                status = await res.text();
             } catch(e) {}
-
-            const isPending = liveStatus.toLowerCase().includes("wait") || liveStatus.toLowerCase().includes("pending");
             
             html += `
-                <div class="status-box">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                        <b>${o.orderID}</b>
-                        <span>₹${o.total}</span>
-                    </div>
-                    <div style="color:${isPending ? '#ff9500' : '#34c759'}; font-weight:700;">
-                        <span class="status-dot" style="background:${isPending ? '#ff9500' : '#34c759'}"></span>
-                        ${liveStatus}
-                    </div>
-                    <p style="font-size:12px; color:#555; margin-top:10px;">${isPending ? 'Store team ki verification pending hai.' : 'Aapka order confirm ho gaya hai!'}</p>
+                <div style="background:#111; padding:20px; border-radius:25px; margin-bottom:15px; border:1px solid #222;">
+                    <div style="display:flex; justify-content:space-between;"><b>${o.orderID}</b> <span>₹${o.total}</span></div>
+                    <div style="margin-top:15px; color:#34c759; font-weight:800;">● ${status}</div>
                 </div>`;
         }
         modal.innerHTML = html;
