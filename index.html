@@ -3,233 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhraava Di Hatti - Online Store</title>
+    <title>Smart Student Deals</title>
     <style>
-        :root {
-            --primary-color: #e63946;
-            --success-green: #25d366;
-            --dark-bg: #1a1a1a;
-        }
+        :root { --primary: #e63946; --dark: #1d3557; --light: #f1faee; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; padding-bottom: 70px; }
+        
+        /* Header & Nav */
+        header { background: var(--dark); color: white; padding: 20px; text-align: center; font-size: 22px; font-weight: bold; }
+        .nav-tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
+        .nav-tabs button { flex: 1; padding: 15px; border: none; background: none; font-weight: bold; cursor: pointer; color: #666; }
+        .nav-tabs button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background: #f8f9fa;
-            color: #333;
-        }
+        /* Search & Filters */
+        .search-sec { padding: 15px; }
+        #searchInput { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #ddd; box-sizing: border-box; }
+        .filters { display: flex; gap: 10px; overflow-x: auto; padding: 10px 15px; scrollbar-width: none; }
+        .filters button { background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
 
-        header {
-            background: black;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
+        /* Product Grid */
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .card img { width: 100%; border-radius: 8px; height: 150px; object-fit: cover; }
+        .card h3 { font-size: 14px; margin: 10px 0 5px; height: 35px; overflow: hidden; }
+        .card p { color: var(--primary); font-weight: bold; margin: 5px 0; }
+        .buy-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1100px;
-            margin: auto;
-        }
+        /* Modal & Sidebars */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 1000; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 400px; border-radius: 20px; padding: 20px; z-index: 1001; display: none; max-height: 85vh; overflow-y: auto; }
+        .badge { background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; }
 
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-
-        .card:hover { transform: translateY(-5px); }
-
-        .card img {
-            width: 100%;
-            height: 250px;
-            object-fit: contain;
-            border-radius: 10px;
-            background: #fff;
-        }
-
-        .card h3 { margin: 15px 0 5px; font-size: 1.2rem; }
-        .card p { color: var(--primary-color); font-size: 1.5rem; font-weight: bold; margin: 10px 0; }
-
-        .buy-btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--success-green);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .buy-btn:active { transform: scale(0.95); }
-
-        /* Modal / Form Styling */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 99;
-        }
-
-        #formBox {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
-            z-index: 100;
-            width: 90%;
-            max-width: 350px;
-        }
-
-        #formBox h3 { margin-top: 0; text-align: center; color: #333; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-
-        .submit-btn {
-            background: black;
-            color: white;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+        /* Sections */
+        .section { display: none; padding: 15px; }
+        .section.active { display: block; }
+        .order-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--primary); }
     </style>
 </head>
 <body>
 
-<header>🛍️ Bhraava Di Hatti</header>
-    <!-- Floating Cart Icon -->
-<div class="cart-float" onclick="toggleSidebar()">
-    🛒 <span id="cart-count" style="font-size: 14px; background: black; border-radius: 50%; padding: 2px 6px; position: absolute; top: 5px; right: 5px;">0</span>
+<header>🛍️ Smart Student Deals</header>
+
+<div class="nav-tabs">
+    <button id="btn-shop" class="active" onclick="showTab('shop')">🏠 Shop</button>
+    <button id="btn-cart" onclick="showTab('cart')">🛒 Cart (<span id="cart-count">0</span>)</button>
+    <button id="btn-orders" onclick="showTab('orders')">📦 My Orders</button>
 </div>
 
-<!-- Sidebar for Cart & History -->
-<div id="sideMenu" class="sidebar">
-    <span onclick="toggleSidebar()" style="font-size: 30px; cursor: pointer;">&times;</span>
-    
-    <h3>🛍️ Tera Cart</h3>
-    <div id="cartItems">Khali hai bhai...</div>
-    <hr>
-    
-    <h3>📜 Purane Orders</h3>
-    <div id="orderHistory">Abhi tak koi order nahi kiya.</div>
-    
-    <button id="checkoutBtn" class="buy-btn" style="display:none; margin-top: 20px;" onclick="openOrderFormFromCart()">Place Order</button>
-</div>
-    
-    <!-- Search and Filter Section -->
-<div style="padding: 15px; max-width: 1100px; margin: auto;">
-    <!-- Search Bar -->
-    <div style="position: relative; margin-bottom: 20px;">
-        <input type="text" id="searchInput" onkeyup="searchProduct()" placeholder="🔍 Products search karein..." 
-               style="width: 100%; padding: 15px; border-radius: 25px; border: 2px solid #ddd; font-size: 16px; outline: none;">
+<!-- Shop Section -->
+<div id="shop" class="section active">
+    <div class="search-sec">
+        <input type="text" id="searchInput" onkeyup="searchProduct()" placeholder="🔍 Search products...">
     </div>
-
-    <!-- Quick Filters -->
-    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none;">
-        <button onclick="filterPrice(99)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹99</button>
-         <button onclick="filterPrice(149)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹149</button>
-        <button onclick="filterPrice(199)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹199</button>
-        <button onclick="filterPrice(499)" style="background: white; border: 1px solid #e63946; color: #e63946; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Under ₹499</button>
-        <button onclick="showAll()" style="background: #e63946; border: none; color: white; padding: 8px 20px; border-radius: 20px; white-space: nowrap; font-weight: bold; cursor: pointer;">Show All</button>
+    <div class="filters">
+        <button onclick="filterPrice(99)">Under ₹99</button>
+        <button onclick="filterPrice(149)">Under ₹149</button>
+        <button onclick="filterPrice(199)">Under ₹199</button>
+        <button onclick="showAll()">Show All</button>
+    </div>
+    <div class="container" id="productGrid">
+        <!-- Product 1 -->
+        <div class="card" data-price="100">
+            <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg" onclick="openDetails('Love Balloons', 100, 'https://i.postimg.cc/mD3qPz9m/love-balloons.jpg', 'High quality decoration balloons for parties.')">
+            <h3>Love Balloons Set</h3>
+            <p>₹100</p>
+            <button class="buy-btn" onclick="addToCart('Love Balloons', 100)">Add to Cart</button>
+        </div>
+        <!-- Product 2 -->
+        <div class="card" data-price="150">
+            <img src="https://via.placeholder.com/150" onclick="openDetails('Student Gadget', 150, 'https://via.placeholder.com/150', 'Essential gadget for students.')">
+            <h3>Student Gadget</h3>
+            <p>₹150</p>
+            <button class="buy-btn" onclick="addToCart('Student Gadget', 150)">Add to Cart</button>
+        </div>
     </div>
 </div>
 
-<div class="container">
-    <!-- Product 1: Love Balloons -->
-    <div class="card">
-        <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg" alt="Love Heart Balloons">
-        <h3>Love Heart Balloon Set (12 Pcs)</h3>
-        <p>₹1</p>
-        <button class="buy-btn" onclick="openOrderForm('Love Heart Balloon Set', 1)">Buy Now</button>
+<!-- Cart Section -->
+<div id="cart" class="section">
+    <h3>Your Shopping Cart</h3>
+    <div id="cartContent">Khali hai bhai...</div>
+    <div id="checkoutForm" style="display:none; margin-top:20px;">
+        <input type="text" id="custName" placeholder="Full Name" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+        <textarea id="custAddress" placeholder="Full Address with Pincode" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
+        <button class="buy-btn" style="margin-top:10px;" onclick="processOrder()">Confirm & Pay</button>
     </div>
-
-    <!-- Yahan tu aur products add kar sakta hai -->
 </div>
 
-<!-- Form & Overlay -->
-<div class="overlay" id="overlay" onclick="closeOrderForm()"></div>
-<div id="formBox">
-    <h3>Delivery Details</h3>
-    <input type="text" id="custName" placeholder="Apna Naam">
-    <input type="tel" id="custPhone" placeholder="WhatsApp Number">
-    <input type="text" id="custAddress" placeholder="Poora Address & Pincode">
-    <button class="submit-btn" onclick="processPayment()">Confirm & Pay</button>
+<!-- My Orders Section -->
+<div id="orders" class="section">
+    <h3>Track Your Orders</h3>
+    <div id="orderList">No orders yet.</div>
+</div>
+
+<!-- Product Details Modal -->
+<div id="overlay" class="overlay" onclick="closeDetails()"></div>
+<div id="productModal" class="modal">
+    <img id="mImg" src="" style="width:100%; border-radius:10px;">
+    <h2 id="mTitle" style="margin:15px 0 5px;"></h2>
+    <p id="mPrice" style="font-size:22px; color:var(--primary); font-weight:bold; margin:0;"></p>
+    <div style="margin:10px 0;">
+        <span class="badge">⭐ 4.5 Rating</span>
+        <span class="badge">🔄 7 Days Replace</span>
+    </div>
+    <p id="mDesc" style="color:#555; font-size:14px; line-height:1.4;"></p>
+    <p style="font-size:12px; color:gray; border-top:1px solid #eee; pt:10px;">🚫 No COD | ✅ Prepaid Only</p>
+    <button class="buy-btn" id="mAddBtn">Add to Cart</button>
 </div>
 
 <script>
-    let currentItem = "";
-    let currentPrice = 0;
+    let cart = [];
+    let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
 
-    function openOrderForm(name, price) {
-        currentItem = name;
-        currentPrice = price;
-        document.getElementById("formBox").style.display = "block";
-        document.getElementById("overlay").style.display = "block";
+    function showTab(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('btn-'+id).classList.add('active');
+        if(id === 'cart') renderCart();
+        if(id === 'orders') renderOrders();
     }
 
-    function closeOrderForm() {
-        document.getElementById("formBox").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
+    function openDetails(name, price, img, desc) {
+        document.getElementById('mTitle').innerText = name;
+        document.getElementById('mPrice').innerText = "₹" + price;
+        document.getElementById('mImg').src = img;
+        document.getElementById('mDesc').innerText = desc;
+        document.getElementById('mAddBtn').onclick = () => { addToCart(name, price); closeDetails(); };
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('productModal').style.display = 'block';
     }
 
-    function processPayment() {
-        const name = document.getElementById("custName").value;
-        const phone = document.getElementById("custPhone").value;
-        const address = document.getElementById("custAddress").value;
+    function closeDetails() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('productModal').style.display = 'none';
+    }
 
-        if(!name || !phone || !address) {
-            alert("Bhai, saari details bharna zaroori hai!");
-            return;
+    function addToCart(name, price) {
+        cart.push({name, price});
+        document.getElementById('cart-count').innerText = cart.length;
+        alert("Item add ho gaya!");
+    }
+
+    function renderCart() {
+        let cont = document.getElementById('cartContent');
+        let form = document.getElementById('checkoutForm');
+        if(cart.length === 0) {
+            cont.innerHTML = "Cart khali hai bhai...";
+            form.style.display = 'none';
+        } else {
+            cont.innerHTML = cart.map((item, idx) => `<p>✅ ${item.name} - ₹${item.price}</p>`).join("");
+            form.style.display = 'block';
         }
-
-        // UPI link configuration
-        const upiID = "varun.goyal@ptyes"; 
-        const upiUrl = `upi://pay?pa=${upiID}&pn=Varun%20Goyal&am=${currentPrice}&cu=INR&tn=Order_${encodeURIComponent(currentItem)}&mc=0000&mode=02&purpose=00`;
-
-        // WhatsApp message configuration
-        const waNumber = "919417124082";
-        const waMsg = `*Naya Order Aaya Hai!*%0A%0A*Item:* ${currentItem}%0A*Price:* ₹${currentPrice}%0A%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Address:* ${address}`;
-        const waUrl = `https://wa.me/${waNumber}?text=${waMsg}`;
-
-        // Step 1: Open UPI App
-        window.location.href = upiUrl;
-
-        // Step 2: Open WhatsApp after 4 seconds to send details
-        setTimeout(() => {
-            window.open(waUrl, "_blank");
-        }, 4000);
     }
-</script>
 
+    function processOrder() {
+        let name = document.getElementById('custName').value;
+        let addr = document.getElementById('custAddress').value;
+        if(!name || !addr) return alert("Pura details bharo!");
+
+        let total = cart.reduce((sum, item) => sum + item.price, 0);
+        let orderId = "#SSD" + Math.floor(1000 + Math.random() * 9000);
+        
+        let newOrder = { id: orderId, item: cart[0].name + (cart.length > 1 ? "..." : ""), price: total, date: new Date().toLocaleDateString(), status: "In Transit" };
+        orders.push(newOrder);
+        localStorage.setItem('myOrders', JSON.stringify(orders));
+
+        // Payment Redirect (Simple UPI Link to avoid Alert)
+        let upi = `upi://pay?pa=varun.goyal@ptyes&pn=VarunGoyal&am=${total}&cu=INR&tn=Order${orderId}`;
+        window.location.href = upi;
+
+        // Message to you
+        let msg = `Naya Order! ID: ${orderId}%0AName: ${name}%0AAddr: ${addr}`;
+        setTimeout(() => { window.open(`https://wa.me/919417124082?text=${msg}`, '_blank'); }, 2000);
+
+        cart = [];
+        document.getElementById('cart-count').innerText = "0";
+        showTab('orders');
+    }
+
+    function renderOrders() {
+        let list = document.getElementById('orderList');
+        if(orders.length === 0) {
+            list.innerHTML = "Abhi tak koi order nahi kiya.";
+        } else {
+            list.innerHTML = orders.reverse().map(o => `
+                <div class="order-item">
+                    <div style="display:flex; justify-content:space-between;"><b>${o.id}</b> <span style="color:var(--primary)">${o.status}</span></div>
+                    <p style="margin:5px 0;">${o.item}</p>
+                    <small style="color:gray;">Date: ${o.date} | ₹${o.price}</small>
+                    <div style="margin-top:10px; font-size:12px; color:green;">🚚 Live Tracking: Processing from Warehouse</div>
+                </div>
+            `).join("");
+        }
+    }
+
+    function searchProduct() {
+        let val = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('.card').forEach(c => {
+            let title = c.querySelector('h3').innerText.toLowerCase();
+            c.style.display = title.includes(val) ? "block" : "none";
+        });
+    }
+
+    function filterPrice(max) {
+        document.querySelectorAll('.card').forEach(c => {
+            let p = parseInt(c.getAttribute('data-price'));
+            c.style.display = (p <= max) ? "block" : "none";
+        });
+    }
+
+    function showAll() { document.querySelectorAll('.card').forEach(c => c.style.display = "block"); }
+</script>
 </body>
 </html>
