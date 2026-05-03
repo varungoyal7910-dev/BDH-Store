@@ -107,105 +107,66 @@
 </div>
 
 <script>
-    let cart = [];
-    let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+    let currentTotal = 0;
+let currentOrder = "";
 
-    function showTab(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('btn-'+id).classList.add('active');
-        if(id === 'cart') renderCart();
-        if(id === 'orders') renderOrders();
-    }
+function placeOrder() {
+    const name = document.getElementById('custName').value;
+    const phone = document.getElementById('custPhone').value;
+    const addr = document.getElementById('custAddress').value;
 
-    function openDetails(name, price, img, desc) {
-        document.getElementById('modalTitle').innerText = name;
-        document.getElementById('modalPrice').innerText = "₹" + price;
-        document.getElementById('modalImg').src = img;
-        document.getElementById('modalDesc').innerText = desc;
-        document.getElementById('modalAddBtn').onclick = () => { addToCart(name, price); closeDetails(); };
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('productModal').style.display = 'block';
-    }
+    if(!name || !phone || !addr) return alert("Details bharo bhai!");
 
-    function closeDetails() {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('productModal').style.display = 'none';
-    }
+    currentTotal = cart.reduce((s, i) => s + i.price, 0);
+    currentOrder = "#SSD" + Math.floor(1000 + Math.random() * 9000);
 
-    function addToCart(name, price) {
-        cart.push({name, price});
-        document.getElementById('cart-count').innerText = cart.length;
-        alert(name + " cart mein add ho gaya!");
-    }
+    // 1. Gmail par data bhejna (Back-end)
+    fetch("https://formspree.io/f/xknadjkb", {
+        method: "POST",
+        body: JSON.stringify({ OrderID: currentOrder, Name: name, Phone: phone, Address: addr, Total: currentTotal }),
+        headers: { 'Content-Type': 'application/json' }
+    });
 
-    function renderCart() {
-        let itemsDiv = document.getElementById('cartItems');
-        let area = document.getElementById('checkoutArea');
-        if(cart.length === 0) {
-            itemsDiv.innerHTML = "<p style='text-align:center; color:#999;'>Kuch add karo pehle...</p>";
-            area.style.display = 'none';
-        } else {
-            itemsDiv.innerHTML = cart.map((i, idx) => `
-                <div style="background:white; padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between;">
-                    <span>✅ ${i.name}</span> <b>₹${i.price}</b>
-                </div>
-            `).join("");
-            area.style.display = 'block';
-        }
-    }
+    // 2. Payment Modal dikhao
+    document.getElementById('pAmt').innerText = currentTotal;
+    document.getElementById('payOverlay').style.display = 'block';
+    document.getElementById('payModal').style.display = 'block';
+}
 
-    function placeOrder() {
-        const name = document.getElementById('custName').value;
-        const phone = document.getElementById('custPhone').value;
-        const addr = document.getElementById('custAddress').value;
+function pay(app) {
+    let baseUrl = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${currentTotal}&cu=INR&tn=${currentOrder}`;
+    
+    // Alag alag apps ke liye deep links
+    let finalUrl = baseUrl;
+    if(app === 'paytm') finalUrl = "paytmmp://" + baseUrl;
+    if(app === 'phonepe') finalUrl = "phonepe://" + baseUrl;
+    if(app === 'gpay') finalUrl = "googlepay://" + baseUrl;
 
-        if(!name || !phone || !addr) return alert("Bhai, sari details bharna zaroori hai!");
+    window.location.href = finalUrl;
 
-        const orderId = "#SSD" + Math.floor(1000 + Math.random() * 9000);
-        const total = cart.reduce((s, i) => s + i.price, 0);
-        const items = cart.map(i => i.name).join(", ");
-
-        // 1. Gmail par Data bhejna (Formspree)
-        // Note: 'xknadjkb' ki jagah apni Formspree ID dalo agar email na aaye
-        fetch("https://formspree.io/f/xknadjkb", {
-            method: "POST",
-            body: JSON.stringify({ OrderID: orderId, Customer: name, Mobile: phone, Address: addr, Items: items, Total: total }),
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        // 2. Local History update
-        orders.push({ id: orderId, items: items, price: total, date: new Date().toLocaleDateString(), status: "In Transit" });
-        localStorage.setItem('myOrders', JSON.stringify(orders));
-
-        // 3. AUTOMATIC PAYMENT (Direct PNB Bank UPI)
-        const upiLink = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${total}&cu=INR&tn=Order_${orderId}`;
-        window.location.href = upiLink;
-
-        // 4. Cleanup
+    // Order History mein save karo
+    orders.push({ id: currentOrder, items: cart.map(i=>i.name).join(","), price: currentTotal, date: new Date().toLocaleDateString(), status: "Awaiting Payment" });
+    localStorage.setItem('myOrders', JSON.stringify(orders));
+    
+    setTimeout(() => { 
+        document.getElementById('payOverlay').style.display = 'none';
+        document.getElementById('payModal').style.display = 'none';
         cart = [];
-        document.getElementById('cart-count').innerText = "0";
-        setTimeout(() => { showTab('orders'); }, 1500);
-    }
-
-    function renderOrders() {
-        let hist = document.getElementById('orderHistory');
-        if(orders.length === 0) {
-            hist.innerHTML = "<p style='text-align:center;'>No orders yet.</p>";
-        } else {
-            hist.innerHTML = orders.reverse().map(o => `
-                <div class="order-card">
-                    <span class="status-badge">${o.status}</span>
-                    <b style="font-size:16px;">${o.id}</b>
-                    <p style="margin:10px 0 5px 0; font-size:14px; color:#555;">${o.items}</p>
-                    <small style="color:#888;">Date: ${o.date} | Total Paid: <b>₹${o.price}</b></small>
-                    <div style="margin-top:10px; color:green; font-size:12px; font-weight:bold;">📦 Processing from PNB Verified Account</div>
-                </div>
-            `).join("");
-        }
-    }
+        showTab('orders'); 
+    }, 2000);
+}
 </script>
-
+<div id="payOverlay" class="overlay"></div>
+<div id="payModal" class="modal" style="text-align:center;">
+    <h3 style="margin-top:0;">Secure Payment</h3>
+    <p>Select your app to pay <b>₹<span id="pAmt"></span></b></p>
+    
+    <!-- Professional App Buttons -->
+    <button onclick="pay('paytm')" style="background:#00baf2; color:white; border:none; width:100%; padding:12px; border-radius:10px; margin-bottom:10px; font-weight:bold;">Pay via Paytm</button>
+    <button onclick="pay('phonepe')" style="background:#5f259f; color:white; border:none; width:100%; padding:12px; border-radius:10px; margin-bottom:10px; font-weight:bold;">Pay via PhonePe</button>
+    <button onclick="pay('gpay')" style="background:#4285f4; color:white; border:none; width:100%; padding:12px; border-radius:10px; font-weight:bold;">Pay via Google Pay</button>
+    
+    <p style="font-size:11px; color:gray; margin-top:10px;">ID: varungoyal7910@pnb</p>
+</div>
 </body>
 </html>
