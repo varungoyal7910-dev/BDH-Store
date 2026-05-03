@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Varun Store | Exclusive</title>
+    <title>Varun Store | Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #000; --card: #111; --accent: #fff; --sub: #888; --green: #34c759; }
@@ -14,33 +14,28 @@
 
         .container { padding: 20px; padding-bottom: 120px; max-width: 500px; margin: auto; }
         
-        /* Product List Style */
-        .product-card { background: var(--card); border-radius: 25px; padding: 10px; margin-bottom: 20px; border: 1px solid #222; cursor: pointer; }
-        .product-card img { width: 100%; border-radius: 20px; height: 300px; object-fit: cover; }
-        .p-info { padding: 15px 5px; }
-        .p-info h4 { margin: 0; font-size: 18px; }
-        .price-row { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
-        .sale-price { font-size: 20px; font-weight: 800; color: #fff; }
-        .mrp-price { font-size: 14px; color: var(--sub); text-decoration: line-through; }
+        /* Product Design */
+        .product-card { background: var(--card); border-radius: 25px; padding: 12px; margin-bottom: 20px; border: 1px solid #222; }
+        .product-card img { width: 100%; border-radius: 20px; height: 320px; object-fit: cover; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-cart { flex: 1; padding: 15px; border-radius: 15px; background: #222; color: #fff; border: 1px solid #333; font-weight: 600; cursor: pointer; }
+        .btn-buy { flex: 1; padding: 15px; border-radius: 15px; background: #fff; color: #000; border: none; font-weight: 800; cursor: pointer; }
 
-        /* Full Screen Product Page */
-        .product-view { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; overflow-y: auto; }
-        .img-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; padding: 10px; }
-        .img-slider img { flex: 0 0 90%; height: 400px; object-fit: cover; border-radius: 25px; scroll-snap-align: center; }
-        .details-box { padding: 25px; }
-        .badge-row { display: flex; gap: 10px; margin: 15px 0; }
-        .badge { background: #222; padding: 6px 12px; border-radius: 50px; font-size: 12px; color: var(--sub); border: 1px solid #333; }
+        /* Overlays (Cart/Tracking/Checkout) */
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
+        .close-icon { font-size: 30px; margin-bottom: 20px; cursor: pointer; align-self: flex-end; }
+
+        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 18px; border-radius: 15px; margin-bottom: 15px; color: #fff; font-size: 15px; box-sizing: border-box; outline: none; }
         
-        .color-opt { display: flex; gap: 15px; margin: 20px 0; }
-        .color-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
-        .color-dot.active { border-color: #fff; }
+        .upi-box { background: #111; border: 2px dashed #333; padding: 20px; border-radius: 20px; text-align: center; margin: 20px 0; }
+        .upi-id { font-size: 18px; font-weight: 800; color: var(--green); letter-spacing: 1px; }
 
-        /* Common Styles */
-        .overlay { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; padding: 25px; }
-        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80%; background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1); }
-        .nav-item { color: white; text-align: center; font-size: 10px; cursor: pointer; opacity: 0.6; }
-        .buy-btn { width: 100%; padding: 22px; background: #fff; color: #000; border: none; border-radius: 20px; font-weight: 800; font-size: 16px; position: sticky; bottom: 20px; }
-        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 20px; border-radius: 18px; margin-bottom: 15px; color: #fff; box-sizing: border-box; }
+        .status-card { background: #111; border: 1px solid #222; padding: 20px; border-radius: 20px; margin-top: 20px; text-align: left; }
+
+        /* Navigation */
+        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-item { color: white; text-align: center; font-size: 10px; cursor: pointer; opacity: 0.6; position: relative; }
+        .badge { position: absolute; top: -8px; right: -5px; background: #fff; color: #000; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -49,44 +44,42 @@
 
 <div class="container" id="main-list"></div>
 
-<!-- Live Status/Cart Overlay -->
+<!-- Single Modal for everything -->
 <div id="modal" class="overlay"></div>
-
-<!-- Full Product View -->
-<div id="product-page" class="product-view"></div>
 
 <nav>
     <div class="nav-item" onclick="location.reload()">HOME</div>
-    <div class="nav-item" onclick="trackOrder()">TRACK</div>
+    <div class="nav-item" onclick="openCart()">CART <span id="cart-count" class="badge">0</span></div>
+    <div class="nav-item" onclick="openJ1()">TRACK</div>
 </nav>
 
 <script>
-    const upiID = "paytmqr281005050101cgeiryavx0ji@paytm";
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxBR_vkG3tEHSZ1gbHEbYfx1rm1Jom9M99Q3BzU-ta8ULI5VECPalz8yTelHJyq-p8z/exec";
+    // 1. APNA NAYA URL YAHAN DALO
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwFuATW-egCFrwciXjexSyggNxzEWcdVgbxp3MMVuCHnuELc36oedJPxxHlYfbZKTQ1/exec"; 
+    
+    let cart = [];
 
+    // 2. PRODUCTS LIST
     const products = [
-        { 
-            id: 1, 
-            name: "Premium Silicone Case", 
-            price: 95, 
-            mrp: 499,
-            imgs: ["https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500", "https://images.unsplash.com/photo-1592890288564-76628a30a657?w=500"],
-            desc: "High quality liquid silicone case with soft microfiber lining inside. Protects from scratches and drops.",
-            colors: ["#FF3B30", "#007AFF", "#000000"]
-        }
+        { id: 1, name: "Premium Silicone Case", price: 95, mrp: 499, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500" },
+        { id: 2, name: "Super Fast Adapter", price: 145, mrp: 699, img: "https://images.unsplash.com/photo-1625517407003-89c16bc18a5e?w=500" }
     ];
 
     function renderHome() {
         let html = '';
         products.forEach(p => {
             html += `
-                <div class="product-card" onclick="openProduct(${p.id})">
-                    <img src="${p.imgs[0]}">
-                    <div class="p-info">
-                        <h4>${p.name}</h4>
-                        <div class="price-row">
-                            <span class="sale-price">₹${p.price}</span>
-                            <span class="mrp-price">₹${p.mrp}</span>
+                <div class="product-card">
+                    <img src="${p.img}">
+                    <div style="padding:15px 5px;">
+                        <h3>${p.name}</h3>
+                        <div style="margin-bottom:15px;">
+                            <span style="font-size:22px; font-weight:800;">₹${p.price}</span>
+                            <span style="color:#555; text-decoration:line-through; margin-left:10px;">₹${p.mrp}</span>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
+                            <button class="btn-buy" onclick="quickBuy(${p.id})">Buy Now</button>
                         </div>
                     </div>
                 </div>`;
@@ -94,102 +87,112 @@
         document.getElementById('main-list').innerHTML = html;
     }
 
-    function openProduct(id) {
-        const p = products.find(x => x.id === id);
-        const view = document.getElementById('product-page');
-        view.style.display = 'flex';
-        view.innerHTML = `
-            <div style="padding:20px; font-size:30px;" onclick="this.parentElement.style.display='none'">✕</div>
-            <div class="img-slider">
-                ${p.imgs.map(img => `<img src="${img}">`).join('')}
-            </div>
-            <div class="details-box">
-                <h1>${p.name}</h1>
-                <div class="price-row">
-                    <span style="font-size:28px;" class="sale-price">₹${p.price}</span>
-                    <span style="font-size:18px;" class="mrp-price">₹${p.mrp}</span>
-                    <span style="color:var(--green); font-weight:800;">${Math.round((p.mrp-p.price)/p.mrp*100)}% OFF</span>
-                </div>
-                
-                <div class="badge-row">
-                    <div class="badge">🚚 Free Delivery</div>
-                    <div class="badge">🔄 7 Days Replacement</div>
-                </div>
+    // CART LOGIC
+    function addToCart(id) {
+        cart.push(products.find(x => x.id === id));
+        document.getElementById('cart-count').innerText = cart.length;
+    }
 
-                <p style="color:var(--sub); line-height:1.6; margin:20px 0;">${p.desc}</p>
-                
-                <h3>Select Color</h3>
-                <div class="color-opt">
-                    ${p.colors.map(c => `<div class="color-dot" style="background:${c}" onclick="selectColor(this)"></div>`).join('')}
-                </div>
+    function quickBuy(id) {
+        cart = [products.find(x => x.id === id)];
+        openCheckout();
+    }
 
-                <button class="buy-btn" onclick="openCheckout(${p.id})">Buy Now</button>
+    function openCart() {
+        if(cart.length === 0) return alert("Cart khali hai bhai!");
+        openCheckout();
+    }
+
+    // CHECKOUT PAGE
+    function openCheckout() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'flex';
+        let total = cart.reduce((s, i) => s + i.price, 0);
+        modal.innerHTML = `
+            <div class="close-icon" onclick="closeModal()">✕</div>
+            <h2>Order Details</h2>
+            <p style="color:var(--sub); margin-bottom:20px;">Items: ${cart.map(i => i.name).join(', ')}</p>
+            
+            <input type="text" id="v-name" placeholder="Full Name">
+            <input type="tel" id="v-phone" placeholder="Phone Number" maxlength="10">
+            <textarea id="v-addr" placeholder="Full Address (House, Street, Area)" rows="3"></textarea>
+            <input type="number" id="v-pin" placeholder="Pincode (6 Digits)" maxlength="6">
+            
+            <div class="upi-box">
+                <p style="font-size:12px; color:var(--sub); margin-bottom:5px;">Transfer ₹${total} to UPI:</p>
+                <div class="upi-id">varungoyal7910@pnb</div>
+                <p style="font-size:10px; color:#555; margin-top:10px;">Payment karke niche details bharein</p>
             </div>
+            
+            <input type="text" id="v-pay-ref" placeholder="Payment Phone No. / Ref ID" required>
+            <button class="btn-buy" style="width:100%; padding:20px;" onclick="placeOrder(${total})">Place Order Now</button>
         `;
     }
 
-    function selectColor(el) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function openCheckout(id) {
-        const p = products.find(x => x.id === id);
+    // J1 TRACKING SYSTEM
+    function openJ1() {
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
         modal.innerHTML = `
-            <div style="font-size:30px; margin-bottom:20px;" onclick="this.parentElement.style.display='none'">✕</div>
-            <h2>Delivery Details</h2>
-            <input type="text" id="v-name" placeholder="Full Name">
-            <input type="tel" id="v-phone" placeholder="Mobile (10 Digits)" maxlength="10">
-            <textarea id="v-addr" placeholder="Full Address with Pincode" rows="4"></textarea>
-            <div style="padding:20px; background:#111; border-radius:20px; margin-bottom:20px;">
-                <span>Payable Amount:</span> <b style="float:right">₹${p.price}</b>
-            </div>
-            <button class="buy-btn" onclick="placeOrder(${p.price})">Confirm & Pay</button>
+            <div class="close-icon" onclick="closeModal()">✕</div>
+            <h1>Track Order</h1>
+            <p style="color:var(--sub); margin-bottom:25px;">Enter your Order ID below</p>
+            <input type="text" id="track-id" placeholder="VARXXXX" style="text-align:center; letter-spacing:2px; font-weight:800;">
+            <button class="btn-buy" style="width:100%; padding:20px;" onclick="fetchStatus()">Check Status</button>
+            <div id="track-result"></div>
         `;
     }
 
+    async function fetchStatus() {
+        const id = document.getElementById('track-id').value.trim();
+        const resDiv = document.getElementById('track-result');
+        if(!id) return alert("ID toh dalo!");
+        
+        resDiv.innerHTML = "<p style='text-align:center; margin-top:20px; color:var(--sub);'>Searching...</p>";
+        
+        try {
+            const res = await fetch(`${scriptURL}?orderID=${id}`);
+            const status = await res.text();
+            resDiv.innerHTML = `
+                <div class="status-card">
+                    <div style="color:var(--sub); font-size:11px; margin-bottom:10px;">ORDER ID: ${id}</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--green);">● ${status}</div>
+                </div>`;
+        } catch(e) {
+            resDiv.innerHTML = "<p style='color:red; text-align:center; margin-top:10px;'>ID nahi mili!</p>";
+        }
+    }
+
+    // PLACE ORDER TO SHEET
     async function placeOrder(total) {
         const name = document.getElementById('v-name').value;
         const phone = document.getElementById('v-phone').value;
         const addr = document.getElementById('v-addr').value;
+        const pin = document.getElementById('v-pin').value;
+        const payRef = document.getElementById('v-pay-ref').value;
+
+        if(!name || !phone || !payRef) return alert("Bhai, Details aur Payment Number zaruri hai!");
+
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
+        const data = { name, phone, address: addr, pincode: pin, payRef, total, orderID };
 
-        if(!name || phone.length < 10) return alert("Sahi detail dalo bahi!");
-
-        const data = { name, phone, address: addr, total, orderID };
+        // Data bhej rahe hain
         fetch(scriptURL, { method: "POST", body: JSON.stringify(data) });
-        
-        let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
-        history.unshift({ ...data, status: "Wait for order confirming" });
-        localStorage.setItem('vOrders', JSON.stringify(history));
 
-        window.location.href = `upi://pay?pa=${upiID}&pn=Varun%20Goyal&am=${total}&cu=INR`;
-        setTimeout(() => location.reload(), 3000);
-    }
-
-    async function trackOrder() {
-        const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
+        // Show Success Screen
         const modal = document.getElementById('modal');
-        modal.style.display = 'flex';
-        let html = `<div style="font-size:30px; margin-bottom:20px;" onclick="this.parentElement.style.display='none'">✕</div><h2>My Orders</h2>`;
-        
-        for(let o of history) {
-            let status = "Wait for order confirming";
-            try {
-                const res = await fetch(`${scriptURL}?orderID=${o.orderID}`);
-                status = await res.text();
-            } catch(e) {}
-            
-            html += `
-                <div style="background:#111; padding:20px; border-radius:25px; margin-bottom:15px; border:1px solid #222;">
-                    <div style="display:flex; justify-content:space-between;"><b>${o.orderID}</b> <span>₹${o.total}</span></div>
-                    <div style="margin-top:15px; color:#34c759; font-weight:800;">● ${status}</div>
-                </div>`;
-        }
-        modal.innerHTML = html;
+        modal.innerHTML = `
+            <div style="text-align:center; padding-top:60px;">
+                <div style="font-size:60px; color:var(--green); margin-bottom:20px;">✔</div>
+                <h1 style="margin-bottom:10px;">Order Placed!</h1>
+                <p style="color:var(--sub);">Order ID: <b style="color:#fff;">${orderID}</b></p>
+                <p style="font-size:12px; color:#555; margin-top:20px; padding:0 20px;">Is ID ko save kar lo, baad mein track karne ke kaam aayegi.</p>
+                <button class="btn-buy" style="margin-top:40px; width:80%;" onclick="location.reload()">Back to Shop</button>
+            </div>
+        `;
     }
+
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
     renderHome();
 </script>
