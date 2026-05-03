@@ -2,218 +2,208 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varun Store | Smart Shopping</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Varun Store | Premium Deals</title>
     <style>
-        :root { --primary: #1d3557; --secondary: #457b9d; --accent: #e63946; --success: #2a9d8f; --bg: #f1faee; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--bg); color: #333; }
-        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .search-box { width: 100%; padding: 10px; border-radius: 20px; border: none; margin-top: 10px; outline: none; }
-        .nav-tabs { display: flex; justify-content: space-around; background: white; padding: 10px 0; border-bottom: 1px solid #ddd; }
-        .tab-btn { border: none; background: none; font-weight: bold; color: var(--secondary); cursor: pointer; padding: 5px 15px; border-radius: 15px; }
-        .tab-btn.active { background: var(--primary); color: white; }
-        .container { padding: 15px; margin-bottom: 70px; }
+        :root { --primary: #0f172a; --accent: #3b82f6; --success: #10b981; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--text); -webkit-tap-highlight-color: transparent; }
+        
+        /* Header & Search */
+        header { background: var(--primary); color: white; padding: 20px 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 0 0 20px 20px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: -1px; }
+        .cart-icon { position: relative; background: rgba(255,255,255,0.1); padding: 8px; border-radius: 12px; cursor: pointer; }
+        #count { position: absolute; top: -5px; right: -5px; background: var(--accent); font-size: 10px; padding: 2px 6px; border-radius: 50%; border: 2px solid var(--primary); }
+        .search-container { background: white; border-radius: 12px; display: flex; align-items: center; padding: 0 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .search-box { width: 100%; border: none; padding: 12px; outline: none; font-size: 14px; color: var(--text); }
+
+        /* Category Tabs */
+        .tabs { display: flex; gap: 10px; padding: 15px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { background: white; border: 1px solid #e2e8f0; padding: 8px 20px; border-radius: 100px; font-weight: 600; font-size: 13px; color: #64748b; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+
+        /* Grid & Cards */
+        .container { padding: 0 15px 100px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 150px; object-fit: cover; }
-        .card-body { padding: 10px; }
-        .card-price { color: var(--accent); font-weight: bold; font-size: 18px; }
-        .btn-add { width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; margin-top: 5px; }
-        
-        /* Modal & Verification Styling */
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 1000; }
-        #paymentModal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 400px; border-radius: 20px; display: none; z-index: 1001; overflow: hidden; text-align: center; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: auto; }
+        .card { background: white; border-radius: 16px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; transition: 0.3s; }
+        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; }
+        .card-title { font-size: 14px; font-weight: 600; height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .card-price { color: var(--accent); font-weight: 800; font-size: 18px; margin: 5px 0; }
+        .btn-add { background: var(--primary); color: white; border: none; width: 100%; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; }
+
+        /* Payment Modal (Amazon/Meesho Style) */
+        #overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; z-index: 2000; backdrop-filter: blur(4px); }
+        #modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 85%; max-width: 380px; border-radius: 24px; padding: 30px; display: none; z-index: 2001; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .loader { width: 48px; height: 48px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; }
+
+        /* Utility */
+        .footer-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; background: var(--primary); border-radius: 20px; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .footer-nav div { color: rgba(255,255,255,0.6); font-size: 11px; text-align: center; cursor: pointer; }
+        .footer-nav .active { color: white; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin:0;">Varun Store</h2>
-        <div onclick="showTab('cart')" style="cursor:pointer;">🛒 <span id="count" style="background:var(--accent); padding:2px 6px; border-radius:50%; font-size:12px;">0</span></div>
+    <div class="header-top">
+        <div class="logo">VARUN STORE</div>
+        <div class="cart-icon" onclick="showTab('cart')">🛒 <span id="count">0</span></div>
     </div>
-    <input type="text" id="searchBar" class="search-box" placeholder="Search products..." onkeyup="searchProduct()">
+    <div class="search-container">
+        <input type="text" id="searchBar" class="search-box" placeholder="Search premium items..." onkeyup="searchProduct()">
+    </div>
 </header>
 
-<div class="nav-tabs">
-    <button class="tab-btn active" onclick="filterCat('all', this)">All</button>
-    <button class="tab-btn" onclick="filterCat(99, this)">₹99</button>
-    <button class="tab-btn" onclick="filterCat(149, this)">₹149</button>
-    <button class="tab-btn" onclick="filterCat(199, this)">₹199</button>
+<div class="tabs">
+    <button class="tab-btn active" onclick="filterCat('all', this)">All Deals</button>
+    <button class="tab-btn" onclick="filterCat(99, this)">Under ₹99</button>
+    <button class="tab-btn" onclick="filterCat(149, this)">Under ₹149</button>
+    <button class="tab-btn" onclick="filterCat(199, this)">Special ₹199</button>
 </div>
 
 <div class="container" id="mainView">
     <div class="product-grid" id="productDisplay"></div>
 </div>
 
-<!-- Bottom Navigation -->
 <div class="footer-nav">
-    <div onclick="showTab('home')">🏠<br><small>Home</small></div>
-    <div onclick="showTab('orders')">📦<br><small>Orders</small></div>
+    <div onclick="showTab('home')" class="active">🏠<br>Home</div>
+    <div onclick="showTab('orders')">📦<br>Orders</div>
 </div>
 
-<!-- Payment Overlay & Modal -->
 <div id="overlay"></div>
-<div id="paymentModal"></div>
+<div id="modal"></div>
 
 <script>
     let cart = [];
-    let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
-    let currentTotal = 0;
+    let orders = JSON.parse(localStorage.getItem('varunOrders')) || [];
     let currentOrder = "";
+    let currentTotal = 0;
 
     const products = [
-        { id: 1, name: "Smart Watch", price: 199, cat: 199, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" },
-        { id: 2, name: "Wireless Earbuds", price: 149, cat: 149, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" },
-        { id: 3, name: "Power Bank", price: 99, cat: 99, img: "https://images.unsplash.com/photo-1609592424089-98906377755b?w=400" },
-        { id: 4, name: "Bluetooth Speaker", price: 199, cat: 199, img: "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=400" },
-        { id: 5, name: "Gaming Mouse", price: 149, cat: 149, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400" },
-        { id: 6, name: "USB LED Light", price: 99, cat: 99, img: "https://images.unsplash.com/photo-1543425930-c06c27960279?w=400" }
+        { id: 1, name: "Premium Leather Case", price: 199, cat: 199, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=400" },
+        { id: 2, name: "Wireless Sport Buds", price: 149, cat: 149, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400" },
+        { id: 3, name: "Fast Charge Cable", price: 99, cat: 99, img: "https://images.unsplash.com/photo-1625517407003-89c16bc18a5e?w=400" },
+        { id: 4, name: "Mini Bluetooth Speaker", price: 199, cat: 199, img: "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=400" },
+        { id: 5, name: "Custom Keypad", price: 149, cat: 149, img: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=400" }
     ];
 
     function renderProducts(items) {
-        const display = document.getElementById('productDisplay');
-        display.innerHTML = items.map(p => `
+        document.getElementById('productDisplay').innerHTML = items.map(p => `
             <div class="card">
                 <img src="${p.img}">
-                <div class="card-body">
-                    <div style="font-size:14px; font-weight:bold;">${p.name}</div>
-                    <div class="card-price">₹${p.price}</div>
-                    <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
-                </div>
+                <div class="card-title">${p.name}</div>
+                <div class="card-price">₹${p.price}</div>
+                <button class="btn-add" onclick="addToCart(${p.id})">Add to Bag</button>
             </div>
         `).join('');
     }
 
+    function addToCart(id) {
+        cart.push(products.find(x => x.id === id));
+        document.getElementById('count').innerText = cart.length;
+    }
+
     function searchProduct() {
-        let query = document.getElementById('searchBar').value.toLowerCase();
-        let filtered = products.filter(p => p.name.toLowerCase().includes(query));
-        renderProducts(filtered);
+        let q = document.getElementById('searchBar').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
     }
 
     function filterCat(val, btn) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if(val === 'all') renderProducts(products);
-        else renderProducts(products.filter(p => p.cat === val));
-    }
-
-    function addToCart(id) {
-        let p = products.find(x => x.id === id);
-        cart.push(p);
-        document.getElementById('count').innerText = cart.length;
-        alert("Bhai, item add ho gaya!");
+        renderProducts(val === 'all' ? products : products.filter(p => p.cat === val));
     }
 
     function showTab(tab) {
         let view = document.getElementById('mainView');
-        if(tab === 'home') renderProducts(products);
+        if(tab === 'home') { view.innerHTML = `<div class="product-grid" id="productDisplay"></div>`; renderProducts(products); }
         if(tab === 'cart') {
             let total = cart.reduce((s,i) => s + i.price, 0);
+            if(cart.length === 0) return view.innerHTML = "<p style='text-align:center; padding:50px;'>Bag is empty.</p>";
             view.innerHTML = `
-                <h3>My Cart</h3>
-                ${cart.map(c => `<p>${c.name} - ₹${c.price}</p>`).join('')}
-                <hr>
-                <h4>Total: ₹${total}</h4>
-                <div style="background:white; padding:15px; border-radius:10px;">
-                    <input type="text" id="custName" placeholder="Aapka Naam" style="width:100%; margin-bottom:10px; padding:8px;">
-                    <input type="text" id="custPhone" placeholder="Mobile Number" style="width:100%; margin-bottom:10px; padding:8px;">
-                    <textarea id="custAddress" placeholder="Full Address" style="width:100%; margin-bottom:10px; padding:8px;"></textarea>
-                    <button class="btn-add" onclick="initiateOrder()" style="background:var(--success); font-size:18px;">Pay via UPI</button>
+                <h3 style="margin-top:20px;">Shopping Bag</h3>
+                ${cart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:10px; background:white; padding:10px; border-radius:10px;"><span>${i.name}</span><b>₹${i.price}</b></div>`).join('')}
+                <div style="background:var(--primary); color:white; padding:20px; border-radius:20px; margin-top:20px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span>Grand Total:</span><span style="font-size:24px; font-weight:bold;">₹${total}</span></div>
+                    <input type="text" id="custName" placeholder="Full Name" style="width:100%; margin-bottom:10px; padding:12px; border-radius:10px; border:none;">
+                    <input type="number" id="custPhone" placeholder="Mobile Number" style="width:100%; margin-bottom:10px; padding:12px; border-radius:10px; border:none;">
+                    <textarea id="custAddress" placeholder="Delivery Address" style="width:100%; margin-bottom:15px; padding:12px; border-radius:10px; border:none;"></textarea>
+                    <button onclick="initiatePayment(${total})" style="width:100%; padding:15px; background:var(--accent); color:white; border:none; border-radius:12px; font-weight:bold; font-size:16px;">Secure Checkout</button>
                 </div>
             `;
         }
         if(tab === 'orders') {
-            view.innerHTML = `<h3>My Orders</h3>` + orders.map(o => `
-                <div style="background:white; padding:10px; border-radius:8px; margin-bottom:10px; border-left:5px solid #00baf2;">
-                    <b>ID: ${o.id}</b> - ₹${o.price}<br>
-                    <small>Status: <span style="color:orange;">${o.status}</span></small>
+            view.innerHTML = `<h3 style="margin-top:20px;">Track Orders</h3>` + (orders.length === 0 ? "<p>No orders yet.</p>" : orders.map(o => `
+                <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:4px solid var(--accent);">
+                    <div style="display:flex; justify-content:space-between;"><b>${o.id}</b><span style="color:orange; font-size:12px;">${o.status}</span></div>
+                    <div style="font-size:12px; color:#666; margin-top:5px;">Amount: ₹${o.price} | Date: ${o.date}</div>
                 </div>
-            `).join('');
+            `).reverse().join(''));
         }
     }
 
-    function initiateOrder() {
+    function initiatePayment(total) {
         const n = document.getElementById('custName').value;
-        const p = document.getElementById('custPhone').value;
-        const a = document.getElementById('custAddress').value;
-        if(!n || !p || !a) return alert("Details bharo bhai!");
+        if(!n || !document.getElementById('custPhone').value || !document.getElementById('custAddress').value) return alert("Puri details bhariye!");
+        
+        currentTotal = total;
+        currentOrder = "#ORD-" + Math.floor(1000 + Math.random() * 9000);
 
-        currentTotal = cart.reduce((s,i) => s + i.price, 0);
-        currentOrder = "#ORD" + Math.floor(1000 + Math.random() * 9000);
-
-        // Notify you (Silent)
+        // SILENT NOTIFICATION (Formspree)
         fetch("https://formspree.io/f/xknadjkb", {
             method: "POST",
-            body: JSON.stringify({ID: currentOrder, Name: n, Phone: p, Addr: a, Total: currentTotal}),
+            body: JSON.stringify({Order: currentOrder, Name: n, Amount: total, Address: document.getElementById('custAddress').value}),
             headers: {'Content-Type': 'application/json'}
         });
 
-        // Amazon Style Processing Screen
+        // 1. AMAZON STYLE REDIRECT
         document.getElementById('overlay').style.display = 'block';
-        document.getElementById('paymentModal').style.display = 'block';
-        document.getElementById('paymentModal').innerHTML = `
-            <div style="padding:40px 20px;">
-                <div class="loader"></div>
-                <h3 style="margin-top:20px;">Processing payment...</h3>
-                <p style="color:#666;">Redirecting to your UPI App.</p>
-            </div>
+        document.getElementById('modal').style.display = 'block';
+        document.getElementById('modal').innerHTML = `
+            <div class="loader"></div>
+            <h2 style="font-size:20px;">Secure Redirect</h2>
+            <p style="color:#666; font-size:13px;">Connecting to your UPI gateway. Please do not close the browser.</p>
         `;
 
         setTimeout(() => {
-            window.location.href = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${currentTotal}&cu=INR&tn=${currentOrder}`;
+            window.location.href = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${total}&cu=INR&tn=${currentOrder}`;
+            // 2. MEESHO STYLE VERIFICATION
             setTimeout(showMeeshoVerify, 2000);
         }, 3000);
     }
 
     function showMeeshoVerify() {
-        // Meesho Style Verifying Screen
-        document.getElementById('paymentModal').innerHTML = `
-            <div style="padding:40px 20px;">
-                <div class="loader" style="border-top-color:#007bff;"></div>
-                <h3 style="margin-top:25px;">Verifying payment status</h3>
-                <p style="color:#888;">Connecting to bank...</p>
-                <div style="margin-top:50px; opacity:0.5;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo.png/800px-UPI-Logo.png" width="80">
-                    <p style="font-size:10px;">JUSPAY Safe</p>
-                </div>
-            </div>
+        document.getElementById('modal').innerHTML = `
+            <div class="loader" style="border-top-color:#10b981;"></div>
+            <h2 style="font-size:20px;">Requesting Confirmation</h2>
+            <p style="color:#666; font-size:13px;">Our system is validating your transaction status with the bank.</p>
+            <div style="margin-top:40px; opacity:0.5; font-size:10px;">PROTECTED BY VARUN SECURE GATEWAY</div>
         `;
 
         setTimeout(() => {
-            // Smart Result Screen
-            document.getElementById('paymentModal').innerHTML = `
-                <div style="padding:30px 20px;">
-                    <div style="font-size:50px;">⏳</div>
-                    <h2 style="color:var(--primary); margin-top:10px;">Order Received!</h2>
-                    <p style="font-size:13px; color:#666;">Bhai, humne order receive kar liya hai. <b>Payment confirm</b> hote hi hum dispatch karenge.</p>
-                    <div style="background:#f8f9fa; padding:10px; border-radius:10px; margin:15px 0;">
-                        Order ID: <b>${currentOrder}</b>
-                    </div>
-                    <p style="font-size:11px; background:#fff3cd; padding:5px; border-radius:5px;"><b>Note:</b> Agar payment fail hui hai toh order cancel ho jayega.</p>
-                    <button onclick="closeModal()" class="btn-add">Done</button>
-                </div>
+            document.getElementById('modal').innerHTML = `
+                <div style="font-size:50px; margin-bottom:15px;">📬</div>
+                <h2 style="color:var(--primary); font-size:22px;">Request Received!</h2>
+                <p style="color:#64748b; font-size:14px; padding:0 10px;">Bhai, aapka order process mein hai. Hum transaction confirm karke <b>15-30 mins</b> mein status update kar denge.</p>
+                <div style="background:#f1f5f9; padding:15px; border-radius:12px; margin:20px 0; font-family:monospace;">ID: ${currentOrder}</div>
+                <button onclick="closeModal()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:bold;">Great, Thanks!</button>
             `;
-            orders.push({id: currentOrder, price: currentTotal, status: "Verification Pending", date: new Date().toLocaleString()});
-            localStorage.setItem('myOrders', JSON.stringify(orders));
+            orders.push({id: currentOrder, price: currentTotal, status: "Awaiting System Confirmation", date: new Date().toLocaleDateString()});
+            localStorage.setItem('varunOrders', JSON.stringify(orders));
             cart = [];
             document.getElementById('count').innerText = "0";
-        }, 6000);
+        }, 5000);
     }
 
     function closeModal() {
         document.getElementById('overlay').style.display = 'none';
-        document.getElementById('paymentModal').style.display = 'none';
+        document.getElementById('modal').style.display = 'none';
         showTab('orders');
     }
 
-    // Initial Render
     renderProducts(products);
 </script>
-
 </body>
 </html>
