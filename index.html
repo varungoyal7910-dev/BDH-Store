@@ -5,38 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Student Deals</title>
     <style>
-        :root { --primary: #e63946; --dark: #1d3557; --light: #f1faee; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; padding-bottom: 70px; }
+        :root { --primary: #e63946; --dark: #1d3557; --light: #f1faee; --grey: #457b9d; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f1f4f9; padding-bottom: 80px; color: #333; }
         
-        /* Header & Nav */
-        header { background: var(--dark); color: white; padding: 20px; text-align: center; font-size: 22px; font-weight: bold; }
+        /* Header & Navigation */
+        header { background: var(--dark); color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
         .nav-tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
-        .nav-tabs button { flex: 1; padding: 15px; border: none; background: none; font-weight: bold; cursor: pointer; color: #666; }
+        .nav-tabs button { flex: 1; padding: 15px; border: none; background: none; font-weight: bold; cursor: pointer; color: #666; transition: 0.3s; }
         .nav-tabs button.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
-        /* Search & Filters */
-        .search-sec { padding: 15px; }
-        #searchInput { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #ddd; box-sizing: border-box; }
-        .filters { display: flex; gap: 10px; overflow-x: auto; padding: 10px 15px; scrollbar-width: none; }
-        .filters button { background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
+        /* Main Container */
+        .section { display: none; padding: 15px; animation: fadeIn 0.4s; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* Product Grid */
-        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .card img { width: 100%; border-radius: 8px; height: 150px; object-fit: cover; }
-        .card h3 { font-size: 14px; margin: 10px 0 5px; height: 35px; overflow: hidden; }
-        .card p { color: var(--primary); font-weight: bold; margin: 5px 0; }
-        .buy-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; border-radius: 15px; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; cursor: pointer; transition: transform 0.2s; }
+        .card:active { transform: scale(0.95); }
+        .card img { width: 100%; border-radius: 10px; height: 140px; object-fit: cover; margin-bottom: 10px; }
+        .card h3 { font-size: 14px; margin: 5px 0; height: 35px; overflow: hidden; color: #444; }
+        .card p { color: var(--primary); font-weight: bold; font-size: 16px; margin: 5px 0; }
 
-        /* Modal & Sidebars */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 1000; }
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 400px; border-radius: 20px; padding: 20px; z-index: 1001; display: none; max-height: 85vh; overflow-y: auto; }
-        .badge { background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; }
+        /* Form Styling */
+        .form-group { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 14px; }
+        .buy-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3); }
 
-        /* Sections */
-        .section { display: none; padding: 15px; }
-        .section.active { display: block; }
-        .order-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--primary); }
+        /* Order Items */
+        .order-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 6px solid var(--primary); position: relative; }
+        .status-badge { position: absolute; top: 15px; right: 15px; font-size: 12px; font-weight: bold; color: var(--primary); background: #ffe3e5; padding: 4px 10px; border-radius: 20px; }
+
+        /* Details Modal */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); display: none; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 400px; border-radius: 25px; padding: 25px; z-index: 1001; display: none; }
+        .modal img { width: 100%; border-radius: 15px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -49,65 +52,58 @@
     <button id="btn-orders" onclick="showTab('orders')">📦 My Orders</button>
 </div>
 
-<!-- Shop Section -->
+<!-- SHOP SECTION -->
 <div id="shop" class="section active">
-    <div class="search-sec">
-        <input type="text" id="searchInput" onkeyup="searchProduct()" placeholder="🔍 Search products...">
-    </div>
-    <div class="filters">
-        <button onclick="filterPrice(99)">Under ₹99</button>
-        <button onclick="filterPrice(149)">Under ₹149</button>
-        <button onclick="filterPrice(199)">Under ₹199</button>
-        <button onclick="showAll()">Show All</button>
-    </div>
-    <div class="container" id="productGrid">
-        <!-- Product 1 -->
-        <div class="card" data-price="100">
-            <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg" onclick="openDetails('Love Balloons', 100, 'https://i.postimg.cc/mD3qPz9m/love-balloons.jpg', 'High quality decoration balloons for parties.')">
+    <div class="grid">
+        <!-- Item 1 -->
+        <div class="card" onclick="openDetails('Love Balloons Set', 100, 'https://i.postimg.cc/mD3qPz9m/love-balloons.jpg', 'High-quality party balloons for special occasions. Durable and bright colors.')">
+            <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg">
             <h3>Love Balloons Set</h3>
             <p>₹100</p>
-            <button class="buy-btn" onclick="addToCart('Love Balloons', 100)">Add to Cart</button>
         </div>
-        <!-- Product 2 -->
-        <div class="card" data-price="150">
-            <img src="https://via.placeholder.com/150" onclick="openDetails('Student Gadget', 150, 'https://via.placeholder.com/150', 'Essential gadget for students.')">
-            <h3>Student Gadget</h3>
+        <!-- Item 2 -->
+        <div class="card" onclick="openDetails('Student Tech Gadget', 150, 'https://via.placeholder.com/150', 'Essential gadget for modern students. Portable and highly useful.')">
+            <img src="https://via.placeholder.com/150">
+            <h3>Student Tech Gadget</h3>
             <p>₹150</p>
-            <button class="buy-btn" onclick="addToCart('Student Gadget', 150)">Add to Cart</button>
         </div>
     </div>
 </div>
 
-<!-- Cart Section -->
+<!-- CART SECTION -->
 <div id="cart" class="section">
-    <h3>Your Shopping Cart</h3>
-    <div id="cartContent">Khali hai bhai...</div>
-    <div id="checkoutForm" style="display:none; margin-top:20px;">
-        <input type="text" id="custName" placeholder="Full Name" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-        <textarea id="custAddress" placeholder="Full Address with Pincode" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
-        <button class="buy-btn" style="margin-top:10px;" onclick="processOrder()">Confirm & Pay</button>
+    <h3 style="margin-top:0;">Your Selected Items</h3>
+    <div id="cartItems">Cart khali hai bhai...</div>
+    
+    <div id="checkoutArea" style="display:none; margin-top:20px;">
+        <div class="form-group">
+            <h4>Delivery & Contact Details</h4>
+            <input type="text" id="custName" placeholder="Pura Naam (Full Name)">
+            <input type="number" id="custPhone" placeholder="Mobile Number (Active)">
+            <textarea id="custAddress" placeholder="Pura Address aur Pincode" rows="3"></textarea>
+            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">⚡ Confirm karte hi Automatic Payment Apps khul jayengi.</p>
+            <button class="buy-btn" onclick="placeOrder()">Confirm Order & Pay</button>
+        </div>
     </div>
 </div>
 
-<!-- My Orders Section -->
+<!-- ORDERS SECTION -->
 <div id="orders" class="section">
-    <h3>Track Your Orders</h3>
-    <div id="orderList">No orders yet.</div>
+    <h3 style="margin-top:0;">Track Your Orders</h3>
+    <div id="orderHistory">No orders yet.</div>
 </div>
 
-<!-- Product Details Modal -->
+<!-- PRODUCT MODAL -->
 <div id="overlay" class="overlay" onclick="closeDetails()"></div>
 <div id="productModal" class="modal">
-    <img id="mImg" src="" style="width:100%; border-radius:10px;">
-    <h2 id="mTitle" style="margin:15px 0 5px;"></h2>
-    <p id="mPrice" style="font-size:22px; color:var(--primary); font-weight:bold; margin:0;"></p>
-    <div style="margin:10px 0;">
-        <span class="badge">⭐ 4.5 Rating</span>
-        <span class="badge">🔄 7 Days Replace</span>
+    <img id="modalImg" src="">
+    <h2 id="modalTitle" style="margin:0 0 5px 0;"></h2>
+    <p id="modalPrice" style="font-size:22px; color:var(--primary); font-weight:bold; margin:0;"></p>
+    <p id="modalDesc" style="color:#666; font-size:14px; margin:15px 0; line-height:1.5;"></p>
+    <div style="font-size:12px; color:gray; border-top:1px solid #eee; padding-top:10px; margin-bottom:15px;">
+        ⭐ 4.8 Rating | 🔄 7 Days Replacement
     </div>
-    <p id="mDesc" style="color:#555; font-size:14px; line-height:1.4;"></p>
-    <p style="font-size:12px; color:gray; border-top:1px solid #eee; pt:10px;">🚫 No COD | ✅ Prepaid Only</p>
-    <button class="buy-btn" id="mAddBtn">Add to Cart</button>
+    <button class="buy-btn" id="modalAddBtn">Add to Cart</button>
 </div>
 
 <script>
@@ -124,11 +120,11 @@
     }
 
     function openDetails(name, price, img, desc) {
-        document.getElementById('mTitle').innerText = name;
-        document.getElementById('mPrice').innerText = "₹" + price;
-        document.getElementById('mImg').src = img;
-        document.getElementById('mDesc').innerText = desc;
-        document.getElementById('mAddBtn').onclick = () => { addToCart(name, price); closeDetails(); };
+        document.getElementById('modalTitle').innerText = name;
+        document.getElementById('modalPrice').innerText = "₹" + price;
+        document.getElementById('modalImg').src = img;
+        document.getElementById('modalDesc').innerText = desc;
+        document.getElementById('modalAddBtn').onclick = () => { addToCart(name, price); closeDetails(); };
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('productModal').style.display = 'block';
     }
@@ -141,78 +137,75 @@
     function addToCart(name, price) {
         cart.push({name, price});
         document.getElementById('cart-count').innerText = cart.length;
-        alert("Item add ho gaya!");
+        alert(name + " cart mein add ho gaya!");
     }
 
     function renderCart() {
-        let cont = document.getElementById('cartContent');
-        let form = document.getElementById('checkoutForm');
+        let itemsDiv = document.getElementById('cartItems');
+        let area = document.getElementById('checkoutArea');
         if(cart.length === 0) {
-            cont.innerHTML = "Cart khali hai bhai...";
-            form.style.display = 'none';
+            itemsDiv.innerHTML = "<p style='text-align:center; color:#999;'>Kuch add karo pehle...</p>";
+            area.style.display = 'none';
         } else {
-            cont.innerHTML = cart.map((item, idx) => `<p>✅ ${item.name} - ₹${item.price}</p>`).join("");
-            form.style.display = 'block';
+            itemsDiv.innerHTML = cart.map((i, idx) => `
+                <div style="background:white; padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between;">
+                    <span>✅ ${i.name}</span> <b>₹${i.price}</b>
+                </div>
+            `).join("");
+            area.style.display = 'block';
         }
     }
 
-    function processOrder() {
-        let name = document.getElementById('custName').value;
-        let addr = document.getElementById('custAddress').value;
-        if(!name || !addr) return alert("Pura details bharo!");
+    function placeOrder() {
+        const name = document.getElementById('custName').value;
+        const phone = document.getElementById('custPhone').value;
+        const addr = document.getElementById('custAddress').value;
 
-        let total = cart.reduce((sum, item) => sum + item.price, 0);
-        let orderId = "#SSD" + Math.floor(1000 + Math.random() * 9000);
-        
-        let newOrder = { id: orderId, item: cart[0].name + (cart.length > 1 ? "..." : ""), price: total, date: new Date().toLocaleDateString(), status: "In Transit" };
-        orders.push(newOrder);
+        if(!name || !phone || !addr) return alert("Bhai, sari details bharna zaroori hai!");
+
+        const orderId = "#SSD" + Math.floor(1000 + Math.random() * 9000);
+        const total = cart.reduce((s, i) => s + i.price, 0);
+        const items = cart.map(i => i.name).join(", ");
+
+        // 1. Gmail par Data bhejna (Formspree)
+        // Note: 'xknadjkb' ki jagah apni Formspree ID dalo agar email na aaye
+        fetch("https://formspree.io/f/xknadjkb", {
+            method: "POST",
+            body: JSON.stringify({ OrderID: orderId, Customer: name, Mobile: phone, Address: addr, Items: items, Total: total }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        // 2. Local History update
+        orders.push({ id: orderId, items: items, price: total, date: new Date().toLocaleDateString(), status: "In Transit" });
         localStorage.setItem('myOrders', JSON.stringify(orders));
 
-        // Payment Redirect (Simple UPI Link to avoid Alert)
-        let upi = `upi://pay?pa=varun.goyal@ptyes&pn=VarunGoyal&am=${total}&cu=INR&tn=Order${orderId}`;
-        window.location.href = upi;
+        // 3. AUTOMATIC PAYMENT (Direct PNB Bank UPI)
+        const upiLink = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${total}&cu=INR&tn=Order_${orderId}`;
+        window.location.href = upiLink;
 
-        // Message to you
-        let msg = `Naya Order! ID: ${orderId}%0AName: ${name}%0AAddr: ${addr}`;
-        setTimeout(() => { window.open(`https://wa.me/919417124082?text=${msg}`, '_blank'); }, 2000);
-
+        // 4. Cleanup
         cart = [];
         document.getElementById('cart-count').innerText = "0";
-        showTab('orders');
+        setTimeout(() => { showTab('orders'); }, 1500);
     }
 
     function renderOrders() {
-        let list = document.getElementById('orderList');
+        let hist = document.getElementById('orderHistory');
         if(orders.length === 0) {
-            list.innerHTML = "Abhi tak koi order nahi kiya.";
+            hist.innerHTML = "<p style='text-align:center;'>No orders yet.</p>";
         } else {
-            list.innerHTML = orders.reverse().map(o => `
-                <div class="order-item">
-                    <div style="display:flex; justify-content:space-between;"><b>${o.id}</b> <span style="color:var(--primary)">${o.status}</span></div>
-                    <p style="margin:5px 0;">${o.item}</p>
-                    <small style="color:gray;">Date: ${o.date} | ₹${o.price}</small>
-                    <div style="margin-top:10px; font-size:12px; color:green;">🚚 Live Tracking: Processing from Warehouse</div>
+            hist.innerHTML = orders.reverse().map(o => `
+                <div class="order-card">
+                    <span class="status-badge">${o.status}</span>
+                    <b style="font-size:16px;">${o.id}</b>
+                    <p style="margin:10px 0 5px 0; font-size:14px; color:#555;">${o.items}</p>
+                    <small style="color:#888;">Date: ${o.date} | Total Paid: <b>₹${o.price}</b></small>
+                    <div style="margin-top:10px; color:green; font-size:12px; font-weight:bold;">📦 Processing from PNB Verified Account</div>
                 </div>
             `).join("");
         }
     }
-
-    function searchProduct() {
-        let val = document.getElementById('searchInput').value.toLowerCase();
-        document.querySelectorAll('.card').forEach(c => {
-            let title = c.querySelector('h3').innerText.toLowerCase();
-            c.style.display = title.includes(val) ? "block" : "none";
-        });
-    }
-
-    function filterPrice(max) {
-        document.querySelectorAll('.card').forEach(c => {
-            let p = parseInt(c.getAttribute('data-price'));
-            c.style.display = (p <= max) ? "block" : "none";
-        });
-    }
-
-    function showAll() { document.querySelectorAll('.card').forEach(c => c.style.display = "block"); }
 </script>
+
 </body>
 </html>
