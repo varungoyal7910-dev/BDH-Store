@@ -20,7 +20,7 @@
         .search-box input { background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 20px; color: #fff; width: 100%; box-sizing: border-box; margin-bottom: 15px; }
         .price-filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px; }
         .price-filters::-webkit-scrollbar { display: none; }
-        .chip { background: #111; border: 1px solid #222; padding: 8px 18px; border-radius: 50px; font-size: 12px; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .chip { background: #111; border: 1px solid #222; padding: 8px 18px; border-radius: 50px; font-size: 12px; white-space: nowrap; cursor: pointer; }
         .chip.active { background: #fff; color: #000; }
 
         /* Product Card */
@@ -38,9 +38,10 @@
         .overlay { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
         input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 18px; border-radius: 15px; margin-bottom: 15px; color: #fff; font-size: 15px; box-sizing: border-box; }
         
+        .cart-item-list { background: #111; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #222; }
         .upi-container { background: #111; padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; margin: 15px 0; }
         .timer { font-size: 24px; color: var(--red); font-weight: 800; text-align: center; margin: 10px 0; }
-        .replace-btn { background: var(--sub); color: #000; padding: 10px; border-radius: 10px; font-size: 12px; border: none; font-weight: 700; margin-top: 10px; cursor: pointer; width: 100%; }
+        .replace-btn { background: var(--green); color: #000; padding: 10px; border-radius: 10px; font-size: 12px; border: none; font-weight: 700; margin-top: 10px; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
@@ -51,20 +52,17 @@
 </header>
 
 <div class="container">
-    <!-- Search & Filters -->
     <div class="filter-section">
         <div class="search-box">
-            <input type="text" id="v-search" placeholder="Bhai kya dhund rahe ho?" onkeyup="filterProducts()">
+            <input type="text" id="v-search" placeholder="Search items..." onkeyup="filterProducts()">
         </div>
         <div class="price-filters">
             <div class="chip active" onclick="filterByPrice(0, this)">All</div>
             <div class="chip" onclick="filterByPrice(99, this)">Under 99</div>
             <div class="chip" onclick="filterByPrice(149, this)">Under 149</div>
-            <div class="chip" onclick="filterByPrice(199, this)">Under 199</div>
             <div class="chip" onclick="filterByPrice(499, this)">Under 499</div>
         </div>
     </div>
-
     <div id="main-list"></div>
 </div>
 
@@ -73,17 +71,18 @@
 <nav>
     <div class="nav-item" onclick="location.reload()">HOME</div>
     <div class="nav-item" onclick="showMyOrders()">MY ORDERS</div>
-    <div class="nav-item" onclick="openTrack()">TRACK ORDER</div>
+    <div class="nav-item" onclick="openTrack()">TRACK</div>
 </nav>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwFuATW-egCFrwciXjexSyggNxzEWcdVgbxp3MMVuCHnuELc36oedJPxxHlYfbZKTQ1/exec";
+    const scriptURL = "YOUR_APPS_SCRIPT_URL"; // Apna URL yahan dalein
     let cart = [];
     let timerInterval;
+    let tempOrderData = {};
 
     const products = [
         { id: 1, name: "Premium Silicone Case", price: 95, mrp: 499, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500" },
-        { id: 2, name: "Varun Special Cover", price: 145, mrp: 599, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500" }
+        { id: 2, name: "Matte Glass Protector", price: 120, mrp: 299, img: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=500" }
     ];
 
     function renderHome() {
@@ -94,10 +93,7 @@
                     <img src="${p.img}" class="product-img" onclick="toggleActions(${p.id})">
                     <div style="padding:15px 5px;">
                         <h3 style="margin:0">${p.name}</h3>
-                        <div style="margin-top:5px;">
-                            <span class="p-price" style="font-size:22px; font-weight:800;">₹${p.price}</span>
-                            <span style="color:#555; text-decoration:line-through; margin-left:8px;">₹${p.mrp}</span>
-                        </div>
+                        <div style="margin-top:5px;"><span style="font-size:22px; font-weight:800;">₹${p.price}</span></div>
                         <div class="action-area" id="actions-${p.id}">
                             <div class="btn-group">
                                 <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
@@ -110,27 +106,6 @@
         document.getElementById('main-list').innerHTML = html;
     }
 
-    // --- Search & Filter Logic ---
-    function filterProducts() {
-        let query = document.getElementById('v-search').value.toLowerCase();
-        let cards = document.getElementsByClassName('product-card');
-        for (let card of cards) {
-            let name = card.querySelector('h3').innerText.toLowerCase();
-            card.style.display = name.includes(query) ? "block" : "none";
-        }
-    }
-
-    function filterByPrice(max, el) {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        let cards = document.getElementsByClassName('product-card');
-        for (let card of cards) {
-            let price = parseInt(card.getAttribute('data-price'));
-            card.style.display = (max === 0 || price <= max) ? "block" : "none";
-        }
-    }
-
-    // --- Core Logic ---
     function toggleActions(id) {
         let el = document.getElementById(`actions-${id}`);
         el.style.display = el.style.display === 'block' ? 'none' : 'block';
@@ -139,44 +114,65 @@
     function addToCart(id) {
         cart.push(products.find(x => x.id === id));
         document.getElementById('cart-count').innerText = cart.length;
-        alert("Bag mein add ho gaya!");
     }
 
     function quickBuy(id) {
         cart = [products.find(x => x.id === id)];
-        openCheckout();
+        openCart();
     }
 
     function openCart() {
         if(cart.length === 0) return alert("Cart khali hai!");
-        openCheckout();
-    }
-
-    function openCheckout() {
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
         let total = cart.reduce((s, i) => s + i.price, 0);
+        
+        let cartHtml = cart.map(item => `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>${item.name}</span><span>₹${item.price}</span></div>`).join('');
+
         modal.innerHTML = `
             <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div>
-            <h2>Checkout</h2>
-            <input type="text" id="v-name" placeholder="Full Name">
-            <input type="tel" id="v-phone" placeholder="Phone Number (10 Digits)" maxlength="10">
-            <textarea id="v-addr" placeholder="Full Address" rows="3"></textarea>
-            <input type="number" id="v-pin" placeholder="Pincode (6 Digits)">
-            <div class="upi-container">
-                <span id="upi-id" style="color:var(--green); font-weight:800;">varungoyal7910@pnb</span><br>
-                <button onclick="copyUPI()" style="margin-top:10px; background:#222; color:#fff; border:none; padding:5px 10px; border-radius:5px;">📋 Copy UPI ID</button>
+            <h2>Step 1: Address</h2>
+            <div class="cart-item-list">
+                <small style="color:var(--sub)">Order Summary:</small><br>${cartHtml}
+                <hr style="border:0; border-top:1px solid #222; margin:10px 0;">
+                <b>Total: ₹${total}</b>
             </div>
-            <div class="timer" id="timer-display">02:00</div>
-            <input type="text" id="v-pay-ref" placeholder="Ref No. / Transaction ID" required>
-            <button class="btn-buy" style="width:100%; padding:20px;" onclick="placeOrder(${total})">Place Order (₹${total})</button>
+            <input type="text" id="v-name" placeholder="Full Name">
+            <input type="tel" id="v-phone" placeholder="10 Digit Phone" maxlength="10">
+            <textarea id="v-addr" placeholder="House No, Street, Landmark..." rows="3"></textarea>
+            <input type="number" id="v-pin" placeholder="6 Digit Pincode">
+            <button class="btn-buy" style="width:100%; padding:20px;" onclick="goToPayment(${total})">Proceed to Payment</button>
         `;
-        startTimer(120);
     }
 
-    function copyUPI() {
-        navigator.clipboard.writeText("varungoyal7910@pnb");
-        alert("UPI ID Copy ho gayi!");
+    function goToPayment(total) {
+        tempOrderData = {
+            name: document.getElementById('v-name').value,
+            phone: document.getElementById('v-phone').value,
+            address: document.getElementById('v-addr').value,
+            pincode: document.getElementById('v-pin').value,
+            total: total
+        };
+
+        if(tempOrderData.phone.length !== 10 || tempOrderData.pincode.length !== 6 || !tempOrderData.address) {
+            return alert("Bhai, Address aur Details sahi se bharo!");
+        }
+
+        const modal = document.getElementById('modal');
+        modal.innerHTML = `
+            <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="openCart()">← Back</div>
+            <h2>Step 2: Payment</h2>
+            <div class="upi-container">
+                <p>Payable Amount: <b style="font-size:20px;">₹${total}</b></p>
+                <span id="upi-id" style="color:var(--green); font-weight:800;">varungoyal7910@pnb</span><br>
+                <button onclick="copyUPI()" style="margin-top:10px; background:#222; color:#fff; border:none; padding:8px 15px; border-radius:5px;">📋 Copy UPI ID</button>
+            </div>
+            <div class="timer" id="timer-display">02:00</div>
+            <p style="color:var(--red); font-size:12px; text-align:center;">*Payment karke Ref No. yahan daalein</p>
+            <input type="text" id="v-pay-ref" placeholder="Transaction ID / Ref No." required>
+            <button class="btn-buy" style="width:100%; padding:20px;" onclick="finalPlaceOrder()">Confirm Order</button>
+        `;
+        startTimer(120);
     }
 
     function startTimer(sec) {
@@ -185,37 +181,25 @@
         timerInterval = setInterval(() => {
             let m = Math.floor(time / 60), s = time % 60;
             document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-            if (--time < 0) { clearInterval(timerInterval); location.reload(); }
+            if (--time < 0) { clearInterval(timerInterval); alert("Time Out!"); location.reload(); }
         }, 1000);
     }
 
-    function closeModal() { document.getElementById('modal').style.display = 'none'; clearInterval(timerInterval); }
+    async function finalPlaceOrder() {
+        const payRef = document.getElementById('v-pay-ref').value;
+        if(!payRef) return alert("Bhai, Payment Ref No. jaroori hai!");
 
-    async function placeOrder(total) {
-        const data = {
-            name: document.getElementById('v-name').value,
-            phone: document.getElementById('v-phone').value,
-            address: document.getElementById('v-addr').value,
-            pincode: document.getElementById('v-pin').value,
-            payRef: document.getElementById('v-pay-ref').value,
-            total: total.toString(),
-            orderID: "VAR" + Math.floor(1000 + Math.random()*9000)
-        };
+        const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
+        const finalData = { ...tempOrderData, payRef, orderID, timestamp: new Date().getTime() };
 
-        if(data.phone.length !== 10 || data.pincode.length !== 6 || !data.payRef) return alert("Details check karein!");
-
-        fetch(scriptURL, { method: "POST", body: JSON.stringify(data) });
+        fetch(scriptURL, { method: "POST", body: JSON.stringify(finalData) });
+        
         let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
-        history.unshift({ ...data, status: "Wait for confirming" });
+        history.unshift({ ...finalData, status: "Wait for confirming", date: new Date().toISOString() });
         localStorage.setItem('vOrders', JSON.stringify(history));
-        alert("Order Successful! ID: " + data.orderID);
+        
+        alert("Order Successful! ID: " + orderID);
         location.reload();
-    }
-
-    async function sendReplacementReq(orderID) {
-        if(!confirm("Bhai replacement request bhej de?")) return;
-        await fetch(scriptURL, { method: "POST", body: JSON.stringify({ type: "replacement", orderID: orderID, date: new Date().toLocaleString() }) });
-        alert("Request Sent! Sheet Check Karein.");
     }
 
     function showMyOrders() {
@@ -223,27 +207,50 @@
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
         let html = '<div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div><h2>My Orders</h2>';
+        
+        const now = new Date().getTime();
+
         history.forEach(o => {
+            const orderDate = new Date(o.date).getTime();
+            const diffDays = (now - orderDate) / (1000 * 60 * 60 * 24);
+            
+            let replaceBtn = "";
+            // Logic: 3 din ke baad dikhega (>=3) aur 7 din tak dikhega (<=7)
+            if (diffDays >= 3 && diffDays <= 7) {
+                replaceBtn = `<button class="replace-btn" onclick="sendReplacementReq('${o.orderID}')">Request 7-Day Replacement</button>`;
+            }
+
             html += `<div style="background:#111; padding:15px; border-radius:15px; margin-bottom:10px; border:1px solid #222;">
                 <b>${o.orderID}</b> <span style="float:right">₹${o.total}</span><br>
                 <small>${o.status}</small><br>
-                <button class="replace-btn" onclick="sendReplacementReq('${o.orderID}')">Request Replacement</button>
+                ${replaceBtn}
             </div>`;
         });
         modal.innerHTML = html || '<p>No orders yet.</p>';
     }
 
-    function openTrack() {
-        const modal = document.getElementById('modal');
-        modal.style.display = 'flex';
-        modal.innerHTML = `<div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div><h2>Track Order</h2><input type="text" id="track-id" placeholder="VARXXXX"><button class="btn-buy" style="width:100%; padding:20px;" onclick="fetchStatus()">Track</button><div id="track-res"></div>`;
+    function copyUPI() {
+        navigator.clipboard.writeText("varungoyal7910@pnb");
+        alert("UPI ID Copied!");
     }
 
-    async function fetchStatus() {
-        const id = document.getElementById('track-id').value;
-        const res = await fetch(`${scriptURL}?orderID=${id}`);
-        const status = await res.text();
-        document.getElementById('track-res').innerHTML = `<h3>● ${status}</h3>`;
+    function closeModal() { document.getElementById('modal').style.display = 'none'; clearInterval(timerInterval); }
+    
+    // Search/Filter logic remains same as previous version
+    function filterProducts() {
+        let q = document.getElementById('v-search').value.toLowerCase();
+        document.querySelectorAll('.product-card').forEach(c => {
+            c.style.display = c.querySelector('h3').innerText.toLowerCase().includes(q) ? "block" : "none";
+        });
+    }
+
+    function filterByPrice(max, el) {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.querySelectorAll('.product-card').forEach(c => {
+            let p = parseInt(c.getAttribute('data-price'));
+            c.style.display = (max === 0 || p <= max) ? "block" : "none";
+        });
     }
 
     renderHome();
