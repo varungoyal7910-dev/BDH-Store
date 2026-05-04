@@ -3,257 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Varun Store | Premium</title>
+    <title>Varun Store | Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; --accent: #fff; --sub: #888; --green: #34c759; --red: #ff3b30; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; background: var(--bg); color: #fff; -webkit-font-smoothing: antialiased; }
+        :root { --bg: #ffffff; --text: #000000; --accent: #9c27b0; --sub: #666; --border: #eee; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
         
-        header { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); padding: 15px 25px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 18px; font-weight: 800; letter-spacing: 4px; }
-        .cart-top { cursor: pointer; font-weight: 600; font-size: 14px; background: #222; padding: 8px 15px; border-radius: 50px; }
-        
-        .container { padding: 20px; padding-bottom: 120px; max-width: 500px; margin: auto; }
-        
-        /* Search & Filter Styling */
-        .filter-section { margin-bottom: 20px; }
-        .search-box input { background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 20px; color: #fff; width: 100%; box-sizing: border-box; margin-bottom: 15px; }
-        .price-filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px; }
-        .price-filters::-webkit-scrollbar { display: none; }
-        .chip { background: #111; border: 1px solid #222; padding: 8px 18px; border-radius: 50px; font-size: 12px; white-space: nowrap; cursor: pointer; }
-        .chip.active { background: #fff; color: #000; }
+        /* Header */
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 100; }
+        .logo { font-weight: 800; font-size: 18px; color: var(--accent); }
+        .cart-icon { position: relative; cursor: pointer; }
+        .cart-count { position: absolute; top: -8px; right: -10px; background: var(--accent); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 50px; }
 
-        /* Product Card */
-        .product-card { background: var(--card); border-radius: 25px; padding: 12px; margin-bottom: 20px; border: 1px solid #222; }
-        .product-img { width: 100%; border-radius: 20px; height: 350px; object-fit: cover; cursor: pointer; }
-        
-        .action-area { display: none; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; }
-        .btn-group { display: flex; gap: 10px; }
-        .btn-cart { flex: 1; padding: 16px; border-radius: 15px; background: #222; color: #fff; border: 1px solid #333; font-weight: 600; cursor: pointer; }
-        .btn-buy { flex: 1; padding: 16px; border-radius: 15px; background: #fff; color: #000; border: none; font-weight: 800; cursor: pointer; }
+        .container { padding: 15px; padding-bottom: 100px; }
 
-        nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 5px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1); }
-        .nav-item { color: white; text-align: center; font-size: 11px; cursor: pointer; opacity: 0.7; font-weight: 600; }
-
-        .overlay { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
-        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 18px; border-radius: 15px; margin-bottom: 15px; color: #fff; font-size: 15px; box-sizing: border-box; }
+        /* Search & Filter */
+        .search-bar { background: #f6f6f6; border-radius: 10px; padding: 10px 15px; display: flex; margin-bottom: 15px; }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; }
         
-        .cart-item-list { background: #111; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #222; }
-        .upi-container { background: #111; padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; margin: 15px 0; }
-        .timer { font-size: 24px; color: var(--red); font-weight: 800; text-align: center; margin: 10px 0; }
-        .replace-btn { background: var(--green); color: #000; padding: 10px; border-radius: 10px; font-size: 12px; border: none; font-weight: 700; margin-top: 10px; cursor: pointer; width: 100%; }
+        .filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .chip { padding: 8px 15px; border: 1px solid var(--border); border-radius: 50px; font-size: 12px; white-space: nowrap; cursor: pointer; }
+        .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Product Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .p-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .p-img { width: 100%; height: 180px; object-fit: cover; }
+        .p-info { padding: 10px; }
+        .p-name { font-size: 13px; color: var(--sub); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-price { font-weight: 800; font-size: 16px; }
+        .p-mrp { text-decoration: line-through; color: #999; font-size: 12px; margin-left: 5px; }
+
+        /* Product Detail Modal (Meesho Style) */
+        .full-overlay { position: fixed; inset: 0; background: #fff; z-index: 500; display: none; flex-direction: column; overflow-y: auto; }
+        .detail-img { width: 100%; height: 400px; object-fit: cover; }
+        .detail-content { padding: 20px; flex: 1; }
+        .bottom-bar { position: sticky; bottom: 0; display: flex; padding: 10px; background: #fff; border-top: 1px solid var(--border); gap: 10px; }
+        .btn-outline { flex: 1; padding: 15px; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; background: #fff; font-weight: 600; }
+        .btn-fill { flex: 1; padding: 15px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: 600; }
+
+        /* Checkout Steps */
+        .step-container { padding: 20px; }
+        input, textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
+        .success-card { text-align: center; padding: 40px 20px; }
+        .success-icon { font-size: 60px; color: #4caf50; margin-bottom: 20px; }
+
+        /* Navigation */
+        nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--border); z-index: 400; }
+        .nav-item { font-size: 12px; text-align: center; color: var(--sub); cursor: pointer; }
+        .nav-item.active { color: var(--accent); font-weight: 700; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">VARUN STORE</div>
-    <div class="cart-top" onclick="openCart()">CART (<span id="cart-count">0</span>)</div>
+    <div class="logo">Varun Store</div>
+    <div class="cart-icon" onclick="openCart()">
+        🛒 <span class="cart-count" id="cart-count">0</span>
+    </div>
 </header>
 
-<div class="container">
-    <div class="filter-section">
-        <div class="search-box">
-            <input type="text" id="v-search" placeholder="Search items..." onkeyup="filterProducts()">
-        </div>
-        <div class="price-filters">
-            <div class="chip active" onclick="filterByPrice(0, this)">All</div>
-            <div class="chip" onclick="filterByPrice(99, this)">Under 99</div>
-            <div class="chip" onclick="filterByPrice(149, this)">Under 149</div>
-            <div class="chip" onclick="filterByPrice(499, this)">Under 499</div>
-        </div>
+<div class="container" id="page-home">
+    <div class="search-bar">
+        <input type="text" placeholder="Search for products..." onkeyup="filterProducts(this.value)">
     </div>
-    <div id="main-list"></div>
+    <div class="filters">
+        <div class="chip active" onclick="filterPrice(0, this)">All</div>
+        <div class="chip" onclick="filterPrice(99, this)">Under ₹99</div>
+        <div class="chip" onclick="filterPrice(149, this)">Under ₹149</div>
+        <div class="chip" onclick="filterPrice(199, this)">Under ₹199</div>
+        <div class="chip" onclick="filterPrice(499, this)">Under ₹499</div>
+    </div>
+    <div class="grid" id="product-grid"></div>
 </div>
 
-<div id="modal" class="overlay"></div>
+<!-- Product Detail Modal -->
+<div id="product-modal" class="full-overlay"></div>
 
+<!-- Checkout Overlay -->
+<div id="checkout-modal" class="full-overlay"></div>
+
+<!-- Bottom Navigation -->
 <nav>
-    <div class="nav-item" onclick="location.reload()">HOME</div>
+    <div class="nav-item active" onclick="showPage('home')">HOME</div>
     <div class="nav-item" onclick="showMyOrders()">MY ORDERS</div>
-    <div class="nav-item" onclick="openTrack()">TRACK</div>
+    <div class="nav-item" onclick="showTrack()">TRACK ORDER</div>
 </nav>
 
 <script>
-    const scriptURL = https://script.google.com/macros/s/AKfycbyxIXMyPky1pMzLfcvuVtQ5aGK_8t_uGePoho5bN6AB9AaMkkRDwr70ymsopJoMmQoZ/exec
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyxIXMyPky1pMzLfcvuVtQ5aGK_8t_uGePoho5bN6AB9AaMkkRDwr70ymsopJoMmQoZ/exec";
     let cart = [];
-    let timerInterval;
-    let tempOrderData = {};
-
     const products = [
-        { id: 1, name: "Premium Silicone Case", price: 95, mrp: 499, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500" },
-        { id: 2, name: "Matte Glass Protector", price: 120, mrp: 299, img: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=500" }
+        { id: 1, name: "Premium Silicone Case", price: 95, mrp: 499, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500", rating: "4.1 ★", reviews: "499" },
+        { id: 2, name: "Attractive Party Supplies", price: 80, mrp: 109, img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=500", rating: "4.0 ★", reviews: "113" },
+        { id: 3, name: "Girls Hair Theme Toppers", price: 67, mrp: 101, img: "https://images.unsplash.com/photo-1535572290543-960a8046f5af?w=500", rating: "4.4 ★", reviews: "936" }
     ];
 
-    function renderHome() {
+    // --- Home Functions ---
+    function renderProducts(list = products) {
         let html = '';
-        products.forEach(p => {
+        list.forEach(p => {
             html += `
-                <div class="product-card" data-price="${p.price}">
-                    <img src="${p.img}" class="product-img" onclick="toggleActions(${p.id})">
-                    <div style="padding:15px 5px;">
-                        <h3 style="margin:0">${p.name}</h3>
-                        <div style="margin-top:5px;"><span style="font-size:22px; font-weight:800;">₹${p.price}</span></div>
-                        <div class="action-area" id="actions-${p.id}">
-                            <div class="btn-group">
-                                <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
-                                <button class="btn-buy" onclick="quickBuy(${p.id})">Buy Now</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
+            <div class="p-card" onclick="viewProduct(${p.id})">
+                <img src="${p.img}" class="p-img">
+                <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                    <div><span class="p-price">₹${p.price}</span><span class="p-mrp">₹${p.mrp}</span></div>
+                    <div style="font-size:10px; background:#e8f5e9; color:#2e7d32; display:inline-block; padding:2px 5px; border-radius:4px; margin-top:5px;">${p.rating}</div>
+                </div>
+            </div>`;
         });
-        document.getElementById('main-list').innerHTML = html;
+        document.getElementById('product-grid').innerHTML = html;
     }
 
-    function toggleActions(id) {
-        let el = document.getElementById(`actions-${id}`);
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    function viewProduct(id) {
+        const p = products.find(x => x.id === id);
+        const modal = document.getElementById('product-modal');
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+            <div style="padding:15px; font-size:24px;" onclick="closeModal('product-modal')">←</div>
+            <img src="${p.img}" class="detail-img">
+            <div class="detail-content">
+                <h2 style="margin:0">${p.name}</h2>
+                <p style="color:var(--accent); font-size:24px; font-weight:800; margin:10px 0;">₹${p.price} <span style="text-decoration:line-through; color:#999; font-size:16px;">₹${p.mrp}</span></p>
+                <div style="background:#f9f9f9; padding:15px; border-radius:10px; margin-top:20px;">
+                    <h4 style="margin:0">Product Highlights</h4>
+                    <p style="font-size:14px; color:#555;">High quality material, durable and stylish design. Perfect for your daily needs.</p>
+                </div>
+            </div>
+            <div class="bottom-bar">
+                <button class="btn-outline" onclick="addToCart(${p.id})">Add to Cart</button>
+                <button class="btn-fill" onclick="quickBuy(${p.id})">Buy Now</button>
+            </div>
+        `;
     }
 
+    // --- Cart & Checkout Logic ---
     function addToCart(id) {
         cart.push(products.find(x => x.id === id));
         document.getElementById('cart-count').innerText = cart.length;
+        alert("Added to bag!");
     }
 
     function quickBuy(id) {
         cart = [products.find(x => x.id === id)];
-        openCart();
+        openCheckoutStep1();
     }
 
     function openCart() {
-        if(cart.length === 0) return alert("Cart khali hai!");
-        const modal = document.getElementById('modal');
+        if(cart.length === 0) return alert("Cart is empty!");
+        openCheckoutStep1();
+    }
+
+    function openCheckoutStep1() {
+        const modal = document.getElementById('checkout-modal');
         modal.style.display = 'flex';
-        let total = cart.reduce((s, i) => s + i.price, 0);
-        
-        let cartHtml = cart.map(item => `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>${item.name}</span><span>₹${item.price}</span></div>`).join('');
-
         modal.innerHTML = `
-            <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div>
-            <h2>Step 1: Address</h2>
-            <div class="cart-item-list">
-                <small style="color:var(--sub)">Order Summary:</small><br>${cartHtml}
-                <hr style="border:0; border-top:1px solid #222; margin:10px 0;">
-                <b>Total: ₹${total}</b>
+            <div style="padding:15px; font-size:24px;" onclick="closeModal('checkout-modal')">✕</div>
+            <div class="step-container">
+                <h2>Shipping Details</h2>
+                <input type="text" id="f-name" placeholder="Full Name">
+                <input type="tel" id="f-phone" placeholder="Phone Number (10 Digits)" maxlength="10">
+                <textarea id="f-addr" placeholder="Full Address (House no, Area, City)" rows="3"></textarea>
+                <input type="number" id="f-pin" placeholder="Pincode (6 Digits)">
+                <button class="btn-fill" style="width:100%; margin-top:10px;" onclick="openCheckoutStep2()">Continue to Payment</button>
             </div>
-            <input type="text" id="v-name" placeholder="Full Name">
-            <input type="tel" id="v-phone" placeholder="10 Digit Phone" maxlength="10">
-            <textarea id="v-addr" placeholder="House No, Street, Landmark..." rows="3"></textarea>
-            <input type="number" id="v-pin" placeholder="6 Digit Pincode">
-            <button class="btn-buy" style="width:100%; padding:20px;" onclick="goToPayment(${total})">Proceed to Payment</button>
         `;
     }
 
-    function goToPayment(total) {
-        tempOrderData = {
-            name: document.getElementById('v-name').value,
-            phone: document.getElementById('v-phone').value,
-            address: document.getElementById('v-addr').value,
-            pincode: document.getElementById('v-pin').value,
-            total: total
-        };
+    function openCheckoutStep2() {
+        const name = document.getElementById('f-name').value;
+        const phone = document.getElementById('f-phone').value;
+        const addr = document.getElementById('f-addr').value;
+        const pin = document.getElementById('f-pin').value;
 
-        if(tempOrderData.phone.length !== 10 || tempOrderData.pincode.length !== 6 || !tempOrderData.address) {
-            return alert("Bhai, Address aur Details sahi se bharo!");
-        }
+        if(!name || phone.length!==10 || !addr || pin.length!==6) return alert("Please fill all details correctly!");
 
-        const modal = document.getElementById('modal');
+        window.userData = { name, phone, addr, pin };
+        const total = cart.reduce((s, i) => s + i.price, 0);
+
+        const modal = document.getElementById('checkout-modal');
         modal.innerHTML = `
-            <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="openCart()">← Back</div>
-            <h2>Step 2: Payment</h2>
-            <div class="upi-container">
-                <p>Payable Amount: <b style="font-size:20px;">₹${total}</b></p>
-                <span id="upi-id" style="color:var(--green); font-weight:800;">varungoyal7910@pnb</span><br>
-                <button onclick="copyUPI()" style="margin-top:10px; background:#222; color:#fff; border:none; padding:8px 15px; border-radius:5px;">📋 Copy UPI ID</button>
+            <div style="padding:15px; font-size:24px;" onclick="openCheckoutStep1()">←</div>
+            <div class="step-container">
+                <h2>Payment</h2>
+                <div style="background:#f0f0f0; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px;">
+                    <p style="margin:0; color:#666;">UPI ID</p>
+                    <b style="font-size:18px;">varungoyal7910@pnb</b>
+                </div>
+                <p>Total Amount: <b>₹${total}</b></p>
+                <input type="text" id="f-pay-ref" placeholder="Enter Transaction ID / Payment No">
+                <button class="btn-fill" style="width:100%;" onclick="processFinalOrder(${total})">Confirm Order</button>
             </div>
-            <div class="timer" id="timer-display">02:00</div>
-            <p style="color:var(--red); font-size:12px; text-align:center;">*Payment karke Ref No. yahan daalein</p>
-            <input type="text" id="v-pay-ref" placeholder="Transaction ID / Ref No." required>
-            <button class="btn-buy" style="width:100%; padding:20px;" onclick="finalPlaceOrder()">Confirm Order</button>
         `;
-        startTimer(120);
     }
 
-    function startTimer(sec) {
-        clearInterval(timerInterval);
-        let time = sec;
-        timerInterval = setInterval(() => {
-            let m = Math.floor(time / 60), s = time % 60;
-            document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-            if (--time < 0) { clearInterval(timerInterval); alert("Time Out!"); location.reload(); }
-        }, 1000);
-    }
-
-    async function finalPlaceOrder() {
-        const payRef = document.getElementById('v-pay-ref').value;
-        if(!payRef) return alert("Bhai, Payment Ref No. jaroori hai!");
+    async function processFinalOrder(total) {
+        const payRef = document.getElementById('f-pay-ref').value;
+        if(!payRef) return alert("Payment ID is required!");
 
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
-        const finalData = { ...tempOrderData, payRef, orderID, timestamp: new Date().getTime() };
+        const data = { ...window.userData, payRef, total, orderID, status: "Pending", date: new Date().toISOString() };
 
-        fetch(scriptURL, { method: "POST", body: JSON.stringify(finalData) });
-        
+        // Save to Sheet
+        fetch(scriptURL, { method: 'POST', body: JSON.stringify(data), mode: 'no-cors' });
+
+        // Save to Local
         let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
-        history.unshift({ ...finalData, status: "Wait for confirming", date: new Date().toISOString() });
+        history.unshift(data);
         localStorage.setItem('vOrders', JSON.stringify(history));
-        
-        alert("Order Successful! ID: " + orderID);
-        location.reload();
+
+        // Step 3: Success
+        const modal = document.getElementById('checkout-modal');
+        modal.innerHTML = `
+            <div class="success-card">
+                <div class="success-icon">✓</div>
+                <h2>Order Placed!</h2>
+                <p>Order ID: <b>${orderID}</b></p>
+                <p style="color:#666; font-size:14px;">Order team ke pass chala gaya hai, 30 min main confirm ho jayega.</p>
+                <p style="font-size:12px; margin-top:20px; color:var(--accent);">Track karne ke liye order id important hai</p>
+                <button class="btn-fill" style="width:100%; margin-top:30px;" onclick="location.reload()">Back to Home</button>
+            </div>
+        `;
+        cart = [];
     }
 
+    // --- My Orders & Replacement Logic ---
     function showMyOrders() {
+        showPage('none');
         const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
-        const modal = document.getElementById('modal');
-        modal.style.display = 'flex';
-        let html = '<div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div><h2>My Orders</h2>';
+        const container = document.getElementById('page-home');
+        let html = '<h2>My Orders</h2>';
         
         const now = new Date().getTime();
 
         history.forEach(o => {
             const orderDate = new Date(o.date).getTime();
             const diffDays = (now - orderDate) / (1000 * 60 * 60 * 24);
+            let replaceBtn = '';
             
-            let replaceBtn = "";
-            // Logic: 3 din ke baad dikhega (>=3) aur 7 din tak dikhega (<=7)
-            if (diffDays >= 3 && diffDays <= 7) {
-                replaceBtn = `<button class="replace-btn" onclick="sendReplacementReq('${o.orderID}')">Request 7-Day Replacement</button>`;
+            // Logic: 3 to 10 days replacement
+            if (diffDays >= 3 && diffDays <= 10) {
+                replaceBtn = `<button class="btn-outline" style="width:100%; padding:8px; margin-top:10px;" onclick="alert('Replacement request sent for ${o.orderID}')">7-Day Return/Replace</button>`;
             }
 
-            html += `<div style="background:#111; padding:15px; border-radius:15px; margin-bottom:10px; border:1px solid #222;">
-                <b>${o.orderID}</b> <span style="float:right">₹${o.total}</span><br>
-                <small>${o.status}</small><br>
-                ${replaceBtn}
-            </div>`;
+            html += `
+                <div style="border:1px solid #eee; padding:15px; border-radius:12px; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>${o.orderID}</b>
+                        <span style="color:var(--accent)">₹${o.total}</span>
+                    </div>
+                    <small style="color:#888;">Placed on: ${new Date(o.date).toLocaleDateString()}</small>
+                    ${replaceBtn}
+                </div>
+            `;
         });
-        modal.innerHTML = html || '<p>No orders yet.</p>';
+        container.innerHTML = html || '<p>No orders yet.</p>';
     }
 
-    function copyUPI() {
-        navigator.clipboard.writeText("varungoyal7910@pnb");
-        alert("UPI ID Copied!");
+    // --- Tracking Logic ---
+    function showTrack() {
+        showPage('none');
+        const container = document.getElementById('page-home');
+        container.innerHTML = `
+            <h2>Track Order</h2>
+            <p style="font-size:13px; color:#666;">Enter your Order ID to see status</p>
+            <input type="text" id="t-id" placeholder="VARXXXX">
+            <button class="btn-fill" style="width:100%;" onclick="trackOrder()">Track Now</button>
+            <div id="track-result" style="margin-top:20px; text-align:center;"></div>
+        `;
     }
 
-    function closeModal() { document.getElementById('modal').style.display = 'none'; clearInterval(timerInterval); }
-    
-    // Search/Filter logic remains same as previous version
-    function filterProducts() {
-        let q = document.getElementById('v-search').value.toLowerCase();
-        document.querySelectorAll('.product-card').forEach(c => {
-            c.style.display = c.querySelector('h3').innerText.toLowerCase().includes(q) ? "block" : "none";
-        });
+    function trackOrder() {
+        const id = document.getElementById('t-id').value;
+        const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
+        const order = history.find(x => x.orderID === id);
+        
+        if(order) {
+            document.getElementById('track-result').innerHTML = `<h3>Status: ${order.status}</h3><p>Confirmed within 30 mins</p>`;
+        } else {
+            alert("Invalid Order ID");
+        }
     }
 
-    function filterByPrice(max, el) {
+    // --- Utility Functions ---
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function showPage(p) { 
+        if(p === 'home') renderHome();
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    }
+    function filterPrice(max, el) {
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        document.querySelectorAll('.product-card').forEach(c => {
-            let p = parseInt(c.getAttribute('data-price'));
-            c.style.display = (max === 0 || p <= max) ? "block" : "none";
-        });
+        const filtered = max === 0 ? products : products.filter(p => p.price <= max);
+        renderProducts(filtered);
+    }
+    function filterProducts(q) {
+        const filtered = products.filter(p => p.name.toLowerCase().includes(q.toLowerCase()));
+        renderProducts(filtered);
+    }
+    function renderHome() {
+        document.getElementById('page-home').innerHTML = `
+            <div class="search-bar"><input type="text" placeholder="Search..." onkeyup="filterProducts(this.value)"></div>
+            <div class="filters">...</div><div class="grid" id="product-grid"></div>
+        `;
+        renderProducts();
     }
 
-    renderHome();
+    renderProducts();
 </script>
 </body>
 </html>
