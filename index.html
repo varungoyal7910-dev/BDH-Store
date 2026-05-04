@@ -3,266 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varun Store</title>
+    <title>Varun Store | Official</title>
     <style>
-        :root { --accent: #e91e63; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
+        :root { --accent: #e91e63; --bg: #f4f7f6; --text: #333; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 80px; }
         
-        /* Header */
-        header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
+        /* Header & Logo */
+        header { background: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-img { width: 35px; height: 35px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; }
+        .logo-text { font-size: 18px; font-weight: bold; color: var(--accent); letter-spacing: 1px; }
         .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
-        .cart-count { position: absolute; top: -5px; right: -10px; background: red; color: #fff; font-size: 11px; padding: 2px 5px; border-radius: 50%; }
+        .cart-count { position: absolute; top: -5px; right: -10px; background: #000; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
 
-        /* Filters */
-        .search-area { background: #fff; padding: 10px; position: sticky; top: 54px; z-index: 90; border-bottom: 1px solid #eee; }
+        /* Search & Filters */
+        .search-area { background: #fff; padding: 10px; border-bottom: 1px solid #eee; }
         .filter-chips { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
-        .chip { padding: 6px 15px; background: #fff; border: 1px solid #ddd; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-        .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .chip { padding: 7px 15px; background: #f0f0f0; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; }
+        .chip.active { background: #fff; border-color: var(--accent); color: var(--accent); font-weight: bold; }
 
         /* Product Grid */
-        .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .p-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; cursor: pointer; }
-        .p-img { width: 100%; height: 140px; object-fit: cover; }
-        .p-info { padding: 10px; }
-        .p-name { font-size: 14px; font-weight: 600; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-price { color: var(--accent); font-weight: bold; }
+        .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
+        .p-img { width: 100%; height: 160px; object-fit: cover; }
+        .discount-badge { position: absolute; top: 8px; left: 8px; background: #4caf50; color: #fff; font-size: 10px; padding: 3px 7px; border-radius: 4px; font-weight: bold; }
+        .p-info { padding: 10px; text-align: left; }
+        .p-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .p-price { font-size: 15px; font-weight: bold; color: var(--accent); }
+        .p-mrp { font-size: 11px; text-decoration: line-through; color: #888; margin-left: 5px; }
 
-        /* Modal & Overlays */
+        /* Product Detail Modal */
         .modal { position: fixed; inset: 0; background: #fff; z-index: 3000; display: none; flex-direction: column; overflow-y: auto; }
-        .modal-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; background: #fff; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
-        .overlay-content { background: #fff; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; box-sizing: border-box; }
+        .modal-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #fff; }
+        .trust-tag { display: flex; align-items: center; gap: 10px; font-size: 12px; margin-top: 8px; color: #555; background: #f9f9f9; padding: 8px; border-radius: 6px; }
 
-        /* Cart UI */
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .qty-btn { background: #eee; border: none; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        .btn-main { background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
+        /* Color Selection */
+        .color-options { display: flex; gap: 10px; margin: 15px 0; }
+        .color-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; transition: 0.2s; }
+        .color-dot.selected { border-color: #000; transform: scale(1.1); }
+
+        /* Cart & Checkout */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
+        .overlay-content { background: #fff; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; box-sizing: border-box; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; background: #f0f0f0; padding: 5px 10px; border-radius: 6px; }
+        .qty-btn { border: none; background: none; font-size: 18px; font-weight: bold; cursor: pointer; width: 25px; }
+
+        .btn-main { background: var(--accent); color: #fff; border: none; padding: 16px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 15px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+
         /* Bottom Nav */
         nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
-        .nav-item { text-align: center; font-size: 11px; color: #666; cursor: pointer; flex: 1; }
+        .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; cursor: pointer; }
         .nav-item.active { color: var(--accent); font-weight: bold; }
-        .color-dot { width: 35px; height: 35px; border-radius: 50%; display: inline-block; margin-right: 12px; border: 2px solid #ddd; cursor: pointer; }
         
-        .page { display: none; }
+        .page { display: none; animation: fadeIn 0.3s; }
         .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">Varun Store</div>
-    <div class="cart-icon" onclick="openCart()">🛒 <span class="cart-count" id="cart-count">0</span></div>
+    <div class="logo-area">
+        <div class="logo-img">V</div>
+        <div class="logo-text">VARUN STORE</div>
+    </div>
+    <div class="cart-icon" onclick="openCart()">🛍️ <span class="cart-count" id="cart-count">0</span></div>
 </header>
 
-<!-- HOME PAGE -->
+<!-- PAGES -->
 <div id="home-page" class="page active">
     <div class="search-area">
         <div class="filter-chips">
-            <div class="chip active" onclick="applyFilter('all', this)">All Items</div>
-            <div class="chip" onclick="applyFilter('149', this)">Under 149</div>
-            <div class="chip" onclick="applyFilter('499', this)">Under 499</div>
+            <div class="chip active" onclick="filterByPrice('all', this)">All</div>
+            <div class="chip" onclick="filterByPrice(99, this)">Under 99</div>
+            <div class="chip" onclick="filterByPrice(149, this)">Under 149</div>
+            <div class="chip" onclick="filterByPrice(499, this)">Under 499</div>
         </div>
     </div>
     <div id="product-list" class="container"></div>
 </div>
 
-<!-- ORDERS PAGE -->
-<div id="orders-page" class="page" style="padding: 20px;">
+<div id="orders-page" class="page" style="padding:20px;">
     <h3>My Orders</h3>
-    <div id="my-orders-list">No orders yet.</div>
+    <div id="my-orders-list">Abhi tak koi order nahi kiya gaya hai.</div>
 </div>
 
-<!-- TRACK PAGE -->
-<div id="track-page" class="page" style="padding: 20px;">
-    <h3>Track Order</h3>
-    <input type="text" id="track-id" placeholder="Enter Order ID">
-    <button class="btn-main" onclick="alert('Tracking system coming soon!')">Search</button>
+<div id="track-page" class="page" style="padding:20px;">
+    <h3>Track Your Order</h3>
+    <input type="text" id="track-input" placeholder="Enter Order ID (e.g. VAR123456)">
+    <button class="btn-main" onclick="trackLive()">Check Live Status</button>
+    <div id="track-result" style="margin-top:20px;"></div>
 </div>
 
-<!-- Product Detail Modal -->
-<div id="product-modal" class="modal">
-    <div class="modal-header"><span onclick="closeModal()" style="font-size:25px;">←</span> <b>Details</b></div>
-    <div id="modal-content" style="padding:15px;"></div>
+<!-- MODALS -->
+<div id="p-modal" class="modal">
+    <div class="modal-header">
+        <span onclick="closeModal()" style="font-size:28px; cursor:pointer;">✕</span>
+        <b>Product Details</b>
+        <span></span>
+    </div>
+    <div id="modal-content" style="padding:20px;"></div>
 </div>
 
-<!-- Cart/Checkout Overlay -->
-<div id="main-overlay" class="overlay">
-    <div class="overlay-content" id="overlay-body"></div>
+<div id="cart-overlay" class="overlay">
+    <div class="overlay-content" id="cart-body"></div>
 </div>
 
 <nav>
-    <div class="nav-item active" onclick="showPage('home', this)">🏠<br>Home</div>
-    <div class="nav-item" onclick="showPage('orders', this)">📋<br>My Orders</div>
-    <div class="nav-item" onclick="showPage('track', this)">🚚<br>Tracking</div>
+    <div class="nav-item active" onclick="switchPage('home', this)">🏠<br>Home</div>
+    <div class="nav-item" onclick="switchPage('orders', this)">📋<br>My Orders</div>
+    <div class="nav-item" onclick="switchPage('track', this)">🚚<br>Tracking</div>
 </nav>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxfoHDe7kKojTS6_u0fkG_rrgliVXSDBeQnltEo5Xi8QNL7QDopaGNSGPSFn5neujG/exec";
-    const upiID = "varungoyal7910@pnb";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxfoHDe7kKojTS6b_u0fkG_rrgliVXSDBeQnltEo5Xi8QNL7QDopaGNSGPSFn5neujG/exec";
     
     const products = [
-        { id: 1, name: "Matte Case", price: 149, mrp: 499, img: "https://via.placeholder.com/150", colors: ["Black", "MidnightBlue", "Red"] },
-        { id: 2, name: "M10 Buds", price: 499, mrp: 999, img: "https://via.placeholder.com/150", colors: ["Black", "White"] }
+        { id: 101, name: "Luxury Silicone Case", price: 149, mrp: 499, img: "https://via.placeholder.com/300", colors: ["Black", "Gold", "MidnightBlue"] },
+        { id: 102, name: "M10 TWS Earbuds", price: 499, mrp: 1299, img: "https://via.placeholder.com/300", colors: ["Black", "White"] },
+        { id: 103, name: "Fast Charging Cable", price: 89, mrp: 199, img: "https://via.placeholder.com/300", colors: ["White", "Red"] }
     ];
 
-    let cart = [], selectedColor = "", userData = {};
+    let cart = [], selectedColor = "";
 
-    function renderProducts(data = products) {
-        document.getElementById('product-list').innerHTML = data.map(p => `
-            <div class="p-card" onclick="openProduct(${p.id})">
+    function renderItems(data = products) {
+        document.getElementById('product-list').innerHTML = data.map(p => {
+            let disc = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+            return `
+            <div class="p-card" onclick="viewProduct(${p.id})">
+                <span class="discount-badge">${disc}% OFF</span>
                 <img src="${p.img}" class="p-img">
                 <div class="p-info">
-                    <div class="p-name">${p.name}</div>
-                    <div class="p-price">₹${p.price} <small style="text-decoration:line-through; color:gray;">₹${p.mrp}</small></div>
+                    <span class="p-name">${p.name}</span>
+                    <span class="p-price">₹${p.price}</span>
+                    <span class="p-mrp">₹${p.mrp}</span>
                 </div>
-            </div>`).join('');
+            </div>`;
+        }).join('');
     }
-    renderProducts();
+    renderItems();
 
-    function openProduct(id) {
+    function viewProduct(id) {
         const p = products.find(x => x.id === id);
         selectedColor = "";
-        document.getElementById('product-modal').style.display = 'flex';
+        document.getElementById('p-modal').style.display = 'flex';
+        let disc = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+        
         document.getElementById('modal-content').innerHTML = `
-            <img src="${p.img}" style="width:100%; border-radius:10px;">
-            <h2>${p.name}</h2>
-            <p>Premium quality product with 7-days replacement policy.</p>
-            <h4>Choose Color:</h4>
-            ${p.colors.map(c => `<div class="color-dot" style="background:${c.toLowerCase()};" onclick="selectColor('${c}', this)"></div>`).join('')}
-            <button class="btn-main" onclick="addToCart(${p.id})">Add to Bag</button>
+            <img src="${p.img}" style="width:100%; border-radius:12px;">
+            <h2 style="margin:15px 0 5px;">${p.name}</h2>
+            <div style="font-size:20px; color:var(--accent); font-weight:bold;">₹${p.price} <span style="font-size:14px; text-decoration:line-through; color:#888;">₹${p.mrp}</span> <span style="color:#4caf50; font-size:14px;">(${disc}% Off)</span></div>
+            
+            <div class="trust-tag">❌ Cash on Delivery Not Available</div>
+            <div class="trust-tag">✅ 7 Days Full Replacement</div>
+            <div class="trust-tag">🚚 Free Delivery All Over India</div>
+
+            <h4 style="margin-top:20px;">Select Color:</h4>
+            <div class="color-options">
+                ${p.colors.map(c => `<div class="color-dot" style="background:${c.toLowerCase()};" onclick="pickColor('${c}', this)"></div>`).join('')}
+            </div>
+            <button class="btn-main" onclick="addItem(${p.id})">Add to Bag</button>
         `;
     }
 
-    function selectColor(color, el) {
-        selectedColor = color;
-        document.querySelectorAll('.color-dot').forEach(d => d.style.border = "2px solid #ddd");
-        el.style.border = "3px solid black";
+    function pickColor(c, el) {
+        selectedColor = c;
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+        el.classList.add('selected');
     }
 
-    function addToCart(id) {
+    function addItem(id) {
+        if(!selectedColor) return alert("Bhai, color toh select kar lo!");
         const p = products.find(x => x.id === id);
-        if(!selectedColor) return alert("Pehle color select karein!");
+        let exist = cart.find(i => i.id === id && i.color === selectedColor);
+        if(exist) exist.qty++; else cart.push({...p, color: selectedColor, qty: 1});
         
-        let existing = cart.find(i => i.id === id && i.color === selectedColor);
-        if(existing) existing.qty++;
-        else cart.push({...p, color: selectedColor, qty: 1});
-        
-        updateUI();
+        updateBagCount();
         closeModal();
-        alert("Bag mein add ho gaya!");
+        openCart();
     }
 
-    function updateUI() {
+    function updateBagCount() {
         document.getElementById('cart-count').innerText = cart.reduce((a,b) => a + b.qty, 0);
     }
 
     function openCart() {
-        document.getElementById('main-overlay').style.display = 'flex';
-        const body = document.getElementById('overlay-body');
-        if(cart.length === 0) { body.innerHTML = "<h3>Bag Khali Hai</h3>"; return; }
+        document.getElementById('cart-overlay').style.display = 'flex';
+        const body = document.getElementById('cart-body');
+        if(cart.length === 0) { body.innerHTML = "<h3>Bag Khali Hai!</h3><button class='btn-main' onclick='closeCart()'>Continue Shopping</button>"; return; }
         
-        let total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
-        body.innerHTML = `<h3>My Bag</h3>` + cart.map((i, index) => `
+        let subtotal = cart.reduce((a,b) => a + (b.price * b.qty), 0);
+        body.innerHTML = `<h3>Shopping Bag</h3>` + cart.map((item, i) => `
             <div class="cart-item">
-                <div><b>${i.name}</b><br><small>${i.color}</small></div>
-                <div>
-                    <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                    <span style="margin:0 10px;">${i.qty}</span>
-                    <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                <div style="flex:1;"><b>${item.name}</b><br><small>Color: ${item.color}</small></div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="adjustQty(${i}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button class="qty-btn" onclick="adjustQty(${i}, 1)">+</button>
                 </div>
-                <b>₹${i.price * i.qty}</b>
-            </div>`).join('') + `<h4>Total: ₹${total}</h4><button class="btn-main" onclick="openAddress(${total})">Proceed to Checkout</button>`;
+                <div style="width:70px; text-align:right;"><b>₹${item.price * item.qty}</b></div>
+            </div>`).join('') + `
+            <div style="margin-top:20px; display:flex; justify-content:space-between; font-size:18px;"><b>Total:</b> <b>₹${subtotal}</b></div>
+            <button class="btn-main" onclick="showAddress(${subtotal})">Order Now</button>`;
     }
 
-    function changeQty(index, delta) {
-        cart[index].qty += delta;
-        if(cart[index].qty <= 0) cart.splice(index, 1);
-        updateUI();
+    function adjustQty(i, delta) {
+        cart[i].qty += delta;
+        if(cart[i].qty <= 0) cart.splice(i, 1);
+        updateBagCount();
         openCart();
     }
 
-    function openAddress(total) {
-        document.getElementById('overlay-body').innerHTML = `
-            <h3>Shipping Details</h3>
-            <input type="text" id="name" placeholder="Name">
-            <input type="text" id="phone" placeholder="Phone">
-            <input type="text" id="addr" placeholder="Full Address">
-            <input type="text" id="pin" placeholder="Pincode">
-            <button class="btn-main" onclick="saveAddress(${total})">Confirm & Pay</button>`;
+    function showAddress(total) {
+        document.getElementById('cart-body').innerHTML = `
+            <h3>Delivery Details</h3>
+            <input type="text" id="cust-name" placeholder="Full Name">
+            <input type="text" id="cust-phone" placeholder="Mobile Number">
+            <input type="text" id="cust-addr" placeholder="Full Address with Landmark">
+            <input type="text" id="cust-pin" placeholder="Pincode">
+            <button class="btn-main" onclick="proceedToPay(${total})">Go to Payment</button>`;
     }
 
-    function saveAddress(t) {
-        userData = { name: document.getElementById('name').value, phone: document.getElementById('phone').value, addr: document.getElementById('addr').value, pin: document.getElementById('pin').value };
-        if(!userData.name || !userData.phone) return alert("Fill all info!");
-        openPayment(t);
-    }
-
-    function openPayment(total) {
-        document.getElementById('overlay-body').innerHTML = `
+    function proceedToPay(total) {
+        const name = document.getElementById('cust-name').value;
+        const phone = document.getElementById('cust-phone').value;
+        if(!name || !phone) return alert("Pehle info bhariye!");
+        
+        document.getElementById('cart-body').innerHTML = `
             <div style="text-align:center;">
-                <p style="color:red;">Time: <span id="timer">02:00</span></p>
-                <h3>Pay ₹${total}</h3>
-                <p>UPI: ${upiID}</p>
-                <input type="text" id="ref" placeholder="UTR Number">
-                <button class="btn-main" onclick="confirmOrder(${total})">Complete Order</button>
+                <h3>Total Amount: ₹${total}</h3>
+                <p style="background:#fff3cd; padding:10px; font-size:12px;">Scan & Pay to: <b>varungoyal7910@pnb</b></p>
+                <div style="background:#eee; padding:20px; margin:10px 0; border-radius:10px;">[QR Code Placeholder]</div>
+                <p>Payment ke baad <b>Reference (UTR)</b> number niche likhein:</p>
+                <input type="text" id="utr-ref" placeholder="Enter 12-digit UTR Number">
+                <button class="btn-main" onclick="finalizeOrder(${total})">Confirm Order</button>
             </div>`;
-        let time = 120;
-        let t = setInterval(() => {
-            let m = Math.floor(time/60), s = time%60;
-            if(document.getElementById('timer')) document.getElementById('timer').innerText = `${m}:${s<10?'0':''}${s}`;
-            if(--time < 0) { clearInterval(t); location.reload(); }
-        }, 1000);
     }
 
-    async function confirmOrder(total) {
-        const ref = document.getElementById('ref').value;
-        if(!ref) return alert("Enter UTR!");
+    async function finalizeOrder(total) {
+        const utr = document.getElementById('utr-ref').value;
+        if(!utr) return alert("UTR number ke bina order nahi hoga!");
         
-        const details = cart.map(i => `${i.name} (${i.color}) x${i.qty}`).join(", ");
-        const orderID = "VAR" + Date.now().toString().slice(-6);
-        const date = new Date().toLocaleString('en-IN');
+        const orderID = "VAR" + Math.floor(100000 + Math.random() * 900000);
+        const orderDetails = cart.map(i => `${i.name}(${i.color})x${i.qty}`).join(", ");
         
-        const final = { ...userData, total, payRef: ref, orderID, orderDetails: details, date };
-        
-        // Save to My Orders (Local Storage)
-        let myOrders = JSON.parse(localStorage.getItem('myOrders') || '[]');
-        myOrders.push({ id: orderID, date: date, total: total, items: details });
-        localStorage.setItem('myOrders', JSON.stringify(myOrders));
+        const data = {
+            name: document.getElementById('cust-name').value,
+            phone: document.getElementById('cust-phone').value,
+            addr: document.getElementById('cust-addr').value,
+            pin: document.getElementById('cust-pin').value,
+            payRef: utr,
+            total: total,
+            date: new Date().toLocaleString('en-IN'),
+            orderID: orderID,
+            orderDetails: orderDetails
+        };
 
-        document.getElementById('overlay-body').innerHTML = "<h4>Processing...</h4>";
-        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(final) });
+        // Local Storage for My Orders
+        let history = JSON.parse(localStorage.getItem('my_orders') || '[]');
+        history.push({ id: orderID, date: data.date, items: orderDetails, total: total });
+        localStorage.setItem('my_orders', JSON.stringify(history));
+
+        document.getElementById('cart-body').innerHTML = "<h4>Processing Order... Plz wait</h4>";
+        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
         
-        alert("Order Success! ID: " + orderID);
-        cart = []; updateUI();
-        location.reload();
+        alert("Balle Balle! Order Successful.\nID: " + orderID);
+        cart = []; updateBagCount(); location.reload();
     }
 
-    function showPage(pageId, el) {
+    function switchPage(page, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId + '-page').classList.add('active');
+        document.getElementById(page + '-page').classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
 
-        if(pageId === 'orders') {
-            let orders = JSON.parse(localStorage.getItem('myOrders') || '[]');
-            document.getElementById('my-orders-list').innerHTML = orders.length ? orders.map(o => `
-                <div style="background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--accent);">
-                    <b>ID: ${o.id}</b><br><small>${o.date}</small><br>
-                    <span>${o.items}</span><br><b>Total: ₹${o.total}</b>
-                </div>`).join('') : "No orders found.";
+        if(page === 'orders') {
+            let h = JSON.parse(localStorage.getItem('my_orders') || '[]');
+            document.getElementById('my-orders-list').innerHTML = h.reverse().map(o => `
+                <div style="background:#fff; padding:15px; border-radius:10px; margin-bottom:12px; border-left:5px solid var(--accent);">
+                    <b style="color:var(--accent);">ID: ${o.id}</b><br>
+                    <small>${o.date}</small><br>
+                    <div style="margin-top:5px; font-size:13px;">${o.items}</div>
+                    <b>Total: ₹${o.total}</b>
+                </div>`).join('') || "No orders yet.";
         }
     }
 
-    function closeModal() { document.getElementById('product-modal').style.display = 'none'; }
-    function applyFilter(type, el) {
+    async function trackLive() {
+        const id = document.getElementById('track-input').value.trim();
+        if(!id) return alert("Order ID toh dalo!");
+        const out = document.getElementById('track-result');
+        out.innerHTML = "Status check ho raha hai...";
+        try {
+            const resp = await fetch(`${scriptURL}?orderID=${id}`);
+            const status = await resp.text();
+            out.innerHTML = `<div style="background:#e3f2fd; padding:15px; border-radius:8px;"><b>Status:</b> ${status}</div>`;
+        } catch(e) { out.innerHTML = "Error! ID check karein."; }
+    }
+
+    function filterByPrice(p, el) {
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        renderProducts(type === 'all' ? products : products.filter(p => p.price <= parseInt(type)));
+        renderItems(p === 'all' ? products : products.filter(i => i.price <= p));
     }
+
+    function closeModal() { document.getElementById('p-modal').style.display = 'none'; }
+    function closeCart() { document.getElementById('cart-overlay').style.display = 'none'; }
 </script>
 </body>
 </html>
