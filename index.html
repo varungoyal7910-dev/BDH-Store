@@ -6,38 +6,35 @@
     <title>Varun Store | Shopping Hub</title>
     <style>
         :root { --accent: #e91e63; --sub: #666; --border: #eee; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding-bottom: 70px; background: #f8f9fa; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding-bottom: 75px; background: #f8f9fa; color: #333; }
         
-        /* Header & Logo */
+        /* Header */
         header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .logo { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
         .cart-icon { position: relative; font-size: 24px; cursor: pointer; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: var(--accent); color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
 
-        /* Navigation Tabs */
+        /* Navigation Tabs (Fixed) */
         nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: var(--sub); cursor: pointer; transition: 0.3s; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: var(--sub); cursor: pointer; transition: 0.3s; width: 33%; }
         .nav-item.active { color: var(--accent); font-weight: 700; }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-item span { font-size: 20px; margin-bottom: 4px; }
 
-        /* Search & Filters */
+        /* Search & Products Grid */
         .search-section { padding: 15px; background: #fff; }
         .search-bar { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; outline: none; }
-
-        /* Products Grid */
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
+        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .p-img { width: 100%; height: 160px; object-fit: cover; }
         .p-info { padding: 12px; }
         .p-name { font-size: 14px; font-weight: 600; margin-bottom: 5px; height: 35px; overflow: hidden; }
         .p-price { color: var(--accent); font-weight: 700; font-size: 16px; }
-        .btn-add { background: var(--accent); color: white; border: none; padding: 8px; width: 100%; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        .btn-add { background: var(--accent); color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: 600; }
 
-        /* Modal / Cart / Payment */
+        /* Overlays & Timer */
         .full-overlay { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
         .overlay-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
         .overlay-content { flex: 1; overflow-y: auto; padding: 20px; }
-        
         #payment-timer { background: #fff1f5; color: var(--accent); padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; border: 1px dashed var(--accent); margin-bottom: 20px; }
         
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); }
@@ -45,7 +42,7 @@
         .qty-btn { border: none; background: none; font-size: 18px; font-weight: bold; color: var(--accent); cursor: pointer; }
         
         .hidden { display: none; }
-        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; }
+        .order-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     </style>
 </head>
 <body>
@@ -53,27 +50,33 @@
 <header>
     <div class="logo">Varun Store</div>
     <div class="cart-icon" onclick="openCart()">
-        🛒 <span class="cart-count" id="cart-count">0</span>
+        🛍️ <span class="cart-count" id="cart-count">0</span>
     </div>
 </header>
 
-<!-- HOME PAGE -->
+<!-- PAGES -->
 <div id="page-home">
     <div class="search-section">
-        <input type="text" class="search-bar" placeholder="Search for products..." onkeyup="filterProducts(this.value)">
+        <input type="text" class="search-bar" placeholder="Search products..." onkeyup="filterProducts(this.value)">
     </div>
     <div class="container" id="product-list"></div>
 </div>
 
-<!-- TRACKING PAGE -->
-<div id="page-track" class="hidden" style="padding: 20px;">
-    <h2>Track Your Order</h2>
-    <input type="text" id="track-id-input" placeholder="Enter Order ID (e.g. VAR1234)">
-    <button class="btn-add" onclick="trackOrder()">Check Status</button>
-    <div id="status-display" style="margin-top: 20px; padding: 15px; background: #fff; border-radius: 10px;"></div>
+<div id="page-orders" class="hidden" style="padding: 20px;">
+    <h2>My Orders</h2>
+    <div id="my-orders-list">
+        <p style="color:#999; text-align:center;">Abhi tak koi order nahi hai.</p>
+    </div>
 </div>
 
-<!-- OVERLAY FOR CART/PAYMENT -->
+<div id="page-track" class="hidden" style="padding: 20px;">
+    <h2>Track Order</h2>
+    <input type="text" id="track-id-input" placeholder="Enter Order ID (e.g. VAR1234)" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
+    <button class="btn-add" onclick="trackOrder()">Check Status</button>
+    <div id="status-display" style="margin-top:20px; padding:15px; background:#fff; border-radius:10px;"></div>
+</div>
+
+<!-- CART OVERLAY -->
 <div id="cart-overlay" class="full-overlay">
     <div class="overlay-header">
         <span onclick="closeOverlay()" style="font-size: 24px; cursor: pointer;">←</span>
@@ -82,17 +85,16 @@
     <div class="overlay-content" id="overlay-body"></div>
 </div>
 
-<!-- BOTTOM NAVIGATION -->
+<!-- NAV BAR (FIXED: HOME, MY ORDERS, TRACK) -->
 <nav>
-    <div class="nav-item active" onclick="showPage('home', this)"><i>🏠</i>Home</div>
-    <div class="nav-item" onclick="showPage('track', this)"><i>📦</i>Track</div>
-    <div class="nav-item" onclick="openCart()"><i>🛍️</i>Cart</div>
+    <div class="nav-item active" onclick="showPage('home', this)"><span>🏠</span>Home</div>
+    <div class="nav-item" onclick="showPage('orders', this)"><span>📋</span>My Orders</div>
+    <div class="nav-item" onclick="showPage('track', this)"><span>📦</span>Track</div>
 </nav>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbyxIXMyPky1pMzLfcvuVtQ5aGK_8t_uGePoho5bN6AB9AaMkkRDwr70ymsopJoMmQoZ/exec";
     
-    // Data from
     const products = [
         { id: 1, name: "Premium Silicone Case", price: 95, img: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400" },
         { id: 2, name: "Attractive Party Supplies", price: 80, img: "https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=400" },
@@ -100,12 +102,11 @@
     ];
 
     let cart = [];
-    let userData = { name: "Varun Goyal", phone: "1234567890", addr: "Maur, Punjab", pin: "151502" }; //
+    let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
+    let userData = { name: "Varun Goyal", phone: "1234567890", addr: "Maur, Punjab", pin: "151502" };
 
-    // Initialize Home
     function renderProducts(list = products) {
-        const container = document.getElementById('product-list');
-        container.innerHTML = list.map(p => `
+        document.getElementById('product-list').innerHTML = list.map(p => `
             <div class="p-card">
                 <img src="${p.img}" class="p-img">
                 <div class="p-info">
@@ -120,17 +121,18 @@
 
     function showPage(page, el) {
         document.getElementById('page-home').classList.toggle('hidden', page !== 'home');
+        document.getElementById('page-orders').classList.toggle('hidden', page !== 'orders');
         document.getElementById('page-track').classList.toggle('hidden', page !== 'track');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
+        if(page === 'orders') renderMyOrders();
     }
 
-    // CART LOGIC (+/-)
     function addToCart(id) {
         const item = cart.find(x => x.id === id);
         if (item) { item.qty++; } 
         else { const p = products.find(x => x.id === id); cart.push({ ...p, qty: 1 }); }
-        updateCartUI();
+        updateCartCount();
     }
 
     function updateQty(id, change) {
@@ -140,10 +142,10 @@
             if (item.qty <= 0) cart = cart.filter(x => x.id !== id);
         }
         openCart();
-        updateCartUI();
+        updateCartCount();
     }
 
-    function updateCartUI() {
+    function updateCartCount() {
         document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
     }
 
@@ -154,7 +156,7 @@
         overlay.style.display = 'flex';
         
         if(cart.length === 0) {
-            body.innerHTML = "<p style='text-align:center;'>Your bag is empty!</p>";
+            body.innerHTML = "<p style='text-align:center; padding-top:50px; color:#999;'>Aapka bag khali hai!</p>";
             return;
         }
 
@@ -177,18 +179,17 @@
         body.innerHTML = html;
     }
 
-    // CHECKOUT & TIMER
     function goToCheckout(total) {
         const body = document.getElementById('overlay-body');
         document.getElementById('overlay-title').innerText = "Payment";
         body.innerHTML = `
             <div id="payment-timer">Complete Payment in: 2:00</div>
-            <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid var(--border);">
+            <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
                 <p>Scan & Pay to UPI:</p>
                 <h3 style="color:var(--accent); margin:5px 0;">varungoyal17910@pnb</h3>
-                <p>Amount: <b>₹${total}</b></p>
-                <hr>
-                <input type="text" id="pay-ref" placeholder="Enter Transaction Reference ID">
+                <p>Payable Amount: <b>₹${total}</b></p>
+                <hr style="border:0.5px solid #eee; margin:15px 0;">
+                <input type="text" id="pay-ref" placeholder="Transaction Reference ID (Required)" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
                 <button class="btn-add" onclick="finalSubmit(${total})">Confirm Order</button>
             </div>
         `;
@@ -207,27 +208,44 @@
 
     async function finalSubmit(total) {
         const ref = document.getElementById('pay-ref').value;
-        if(!ref) return alert("Ref ID missing!");
+        if(!ref) return alert("Please enter Transaction ID!");
         
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
-        const data = { ...userData, payRef: ref, total: total, orderID: orderID };
+        const orderData = { ...userData, payRef: ref, total: total, orderID: orderID, date: new Date().toLocaleDateString() };
         
-        document.getElementById('overlay-body').innerHTML = "<h3>Processing...</h3>";
+        document.getElementById('overlay-body').innerHTML = "<h3>Placing Order...</h3>";
         try {
-            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(data), mode: 'no-cors' });
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(orderData), mode: 'no-cors' });
+            
+            // Save to LocalStorage for "My Orders"
+            myOrders.unshift(orderData);
+            localStorage.setItem('myOrders', JSON.stringify(myOrders));
+
             document.getElementById('overlay-body').innerHTML = `
                 <div style="text-align:center; padding-top:40px;">
-                    <div style="font-size:50px;">✅</div>
-                    <h2>Order Placed!</h2>
+                    <h2 style="color:green;">✅ Order Placed!</h2>
                     <p>Order ID: <b>${orderID}</b></p>
-                    <p>Status: Wait for confirmation</p>
-                    <button class="btn-add" onclick="location.reload()">Done</button>
+                    <button class="btn-add" onclick="location.reload()">Great!</button>
                 </div>`;
-            cart = []; updateCartUI();
-        } catch(e) { alert("Error!"); }
+            cart = []; updateCartCount();
+        } catch(e) { alert("Server Error!"); }
     }
 
-    // TRACKING (FIXED)
+    function renderMyOrders() {
+        const list = document.getElementById('my-orders-list');
+        if(myOrders.length === 0) return;
+        list.innerHTML = myOrders.map(o => `
+            <div class="order-card">
+                <div style="display:flex; justify-content:space-between;">
+                    <b>ID: ${o.orderID}</b>
+                    <small>${o.date}</small>
+                </div>
+                <div style="margin-top:5px; font-size:14px;">Total: ₹${o.total}</div>
+                <div style="color:var(--accent); font-size:12px; margin-top:5px;">Status: Processing</div>
+            </div>
+        `).join('');
+    }
+
     async function trackOrder() {
         const id = document.getElementById('track-id-input').value;
         const display = document.getElementById('status-display');
