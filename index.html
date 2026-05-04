@@ -3,140 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Amazon.in | Varun Store</title>
+    <title>Varun Store | Exclusive Deals</title>
     <style>
-        :root { --amz-navy: #131921; --amz-blue: #232f3e; --amz-yellow: #febd69; --amz-orange: #f3a847; --bg: #eaeded; }
-        body { font-family: 'Amazon Ember', Arial, sans-serif; margin: 0; background: var(--bg); color: #0f1111; }
-        
-        /* Amazon Header */
-        header { background: var(--amz-navy); color: white; padding: 10px 15px; position: sticky; top: 0; z-index: 1000; }
-        .nav-bar { display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-size: 20px; font-weight: bold; cursor: pointer; }
-        .logo span { color: var(--amz-yellow); }
-        .cart-icon { position: relative; font-size: 24px; cursor: pointer; }
-        .cart-count { position: absolute; top: -2px; right: -8px; background: var(--amz-orange); color: black; font-size: 12px; padding: 1px 5px; border-radius: 50%; font-weight: bold; }
+        :root { 
+            --brand-color: #232f3e; /* Navy Blue */
+            --accent: #ff9900; /* Amazon-style Orange for trust */
+            --bg: #f3f3f3;
+        }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--bg); padding-bottom: 70px; }
 
-        /* Pages */
-        .page { display: none; padding: 10px; animation: fadeIn 0.2s; }
+        /* HEADER */
+        header { background: #fff; padding: 12px 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .brand-name { font-size: 20px; font-weight: 800; color: var(--brand-color); letter-spacing: -1px; }
+        .brand-name span { color: var(--accent); }
+        
+        .search-bar { background: #f0f2f2; display: flex; border-radius: 8px; border: 1px solid #ddd; overflow: hidden; }
+        .search-bar input { border: none; background: transparent; padding: 10px; width: 100%; outline: none; }
+        .search-bar button { background: var(--accent); border: none; padding: 10px 15px; color: #fff; }
+
+        /* FILTERS */
+        .filter-row { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; background: #fff; white-space: nowrap; border-bottom: 1px solid #eee; }
+        .f-btn { background: #fff; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .f-btn.active { background: var(--brand-color); color: #fff; border-color: var(--brand-color); }
+
+        /* PRODUCT GRID */
+        .page { display: none; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Product Grid */
-        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .p-card { background: white; border-radius: 4px; padding: 10px; border: 1px solid #ddd; }
-        .p-img { width: 100%; height: 160px; object-fit: contain; cursor: pointer; }
-        .p-name { font-size: 14px; color: #007185; cursor: pointer; margin: 5px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .price-tag { font-size: 18px; font-weight: bold; }
-        .mrp { color: #565959; text-decoration: line-through; font-size: 12px; margin-left: 5px; }
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .p-card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; }
+        .p-img { width: 100%; height: 160px; object-fit: contain; padding: 10px; box-sizing: border-box; }
+        .p-info { padding: 10px; }
+        .p-title { font-size: 13px; font-weight: 500; height: 35px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .p-price { font-size: 16px; font-weight: 800; color: #B12704; margin: 5px 0; }
+        .p-mrp { font-size: 12px; color: #565959; text-decoration: line-through; }
 
-        /* Detail Page */
-        .detail-img { width: 100%; max-height: 300px; object-fit: contain; background: white; }
-        .discount-badge { color: #CC0C39; font-size: 24px; font-weight: 300; }
-        .buy-box { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 15px; }
+        /* DETAIL PAGE (AMAZON STYLE) */
+        #detail-page { background: #fff; min-height: 100vh; }
+        .detail-header { padding: 15px; }
+        .detail-img-box { text-align: center; border-bottom: 1px solid #eee; }
+        .buy-now-box { padding: 15px; background: #fff; border-radius: 12px; border: 1px solid #ddd; margin: 15px; }
 
-        /* Buttons */
-        .btn-amz { background: #FFD814; border: 1px solid #FCD200; border-radius: 20px; padding: 10px; width: 100%; cursor: pointer; font-size: 14px; margin-bottom: 8px; }
-        .btn-amz-orange { background: #FFA41C; border: 1px solid #FF8F00; }
+        /* BUTTONS */
+        .btn-cart { background: #FFD814; border: 1px solid #FCD200; border-radius: 20px; padding: 10px; width: 100%; font-weight: 600; margin-bottom: 8px; cursor: pointer; }
+        .btn-buy { background: #FFA41C; border: 1px solid #FF8F00; border-radius: 20px; padding: 10px; width: 100%; font-weight: 600; cursor: pointer; }
 
-        /* Form */
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #888; border-radius: 3px; box-sizing: border-box; }
-
-        /* Navigation */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; padding: 10px 0; font-size: 11px; color: #111; cursor: pointer; }
-        .nav-item i { display: block; font-size: 20px; margin-bottom: 2px; }
+        /* BOTTOM NAVIGATION */
+        nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; border-top: 1px solid #ddd; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .nav-item { flex: 1; text-align: center; padding: 10px 0; font-size: 11px; color: #555; font-weight: 600; }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon { display: block; font-size: 20px; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="nav-bar">
-        <div class="logo" onclick="showPage('home-page')">amazon<span>.in</span></div>
-        <div class="cart-icon" onclick="showPage('cart-page')">🛒<span class="cart-count" id="cart-count">0</span></div>
+    <div class="header-top">
+        <div class="brand-name" onclick="showPage('home-page')">VARUN<span>STORE</span></div>
+        <div onclick="showPage('cart-page')" style="font-size: 20px; cursor: pointer;">🛒<span id="cart-count" style="font-size:12px; background:orange; padding:2px 5px; border-radius:50%; position:relative; top:-10px;">0</span></div>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Search products...">
+        <button>🔍</button>
     </div>
 </header>
 
-<!-- HOME PAGE -->
+<div class="filter-row" id="filters">
+    <button class="f-btn active" onclick="filterProducts('all', this)">All</button>
+    <button class="f-btn" onclick="filterProducts(99, this)">Under ₹99</button>
+    <button class="f-btn" onclick="filterProducts(149, this)">Under ₹149</button>
+    <button class="f-btn" onclick="filterProducts(199, this)">Under ₹199</button>
+</div>
+
+<!-- PAGES -->
 <div id="home-page" class="page active-page">
     <div class="p-grid" id="product-list"></div>
 </div>
 
-<!-- PRODUCT DETAIL PAGE -->
-<div id="detail-page" class="page" style="background:white; min-height:100vh; padding:15px;">
+<div id="detail-page" class="page">
     <div id="detail-content"></div>
 </div>
 
-<!-- CART PAGE -->
-<div id="cart-page" class="page">
-    <h2 style="border-bottom:1px solid #ddd; padding-bottom:10px;">Shopping Cart</h2>
+<div id="cart-page" class="page" style="padding:15px;">
+    <h2>Shopping Cart</h2>
     <div id="cart-items"></div>
-    <div id="cart-total-box" class="buy-box"></div>
+    <div id="cart-total" class="buy-now-box"></div>
 </div>
 
-<!-- ADDRESS PAGE -->
-<div id="address-page" class="page">
-    <h2>Enter a delivery address</h2>
-    <input type="text" id="u-name" placeholder="Full name">
-    <input type="number" id="u-phone" placeholder="Mobile number">
-    <textarea id="u-address" rows="3" placeholder="Flat, House no., Building, Company, Apartment"></textarea>
-    <input type="number" id="u-pin" placeholder="Pincode">
-    <button class="btn-amz btn-amz-orange" onclick="showPage('payment-page')">Use this address</button>
+<div id="track-page" class="page" style="padding:20px; text-align:center;">
+    <h2>Track Your Order</h2>
+    <input type="text" id="track-id" placeholder="Enter Order ID (e.g. VAR1234)">
+    <button class="btn-buy" onclick="alert('Order checking in progress...')">Track Now</button>
 </div>
 
-<!-- PAYMENT PAGE -->
-<div id="payment-page" class="page">
-    <h2>Select a payment method</h2>
-    <div class="buy-box" style="text-align:center;">
-        <p>Scan & Pay with any UPI App</p>
-        <div id="qr-area" style="margin:15px 0;"></div>
-        <p><b>UPI: varungoyal7910@pnb</b></p>
-        <h3 id="pay-total"></h3>
-        <input type="text" id="u-utr" placeholder="Enter 12-digit UTR Number">
-        <button class="btn-amz-orange btn-amz" onclick="submitOrder()">Place Your Order</button>
-    </div>
-</div>
-
-<!-- ORDERS PAGE -->
-<div id="orders-page" class="page">
-    <h2>Your Orders</h2>
+<div id="orders-page" class="page" style="padding:15px;">
+    <h2>Order History</h2>
     <div id="history-list"></div>
 </div>
 
-<!-- HELP PAGE -->
-<div id="help-page" class="page">
-    <h2>Customer Service</h2>
-    <div class="buy-box">
-        <p>Bhai, kisi bhi help ke liye humein mail karein:</p>
-        <a href="mailto:varungoyal7910@gmail.com" style="color:#007185; font-weight:bold;">varungoyal7910@gmail.com</a>
+<div id="help-page" class="page" style="padding:20px;">
+    <h2>Help Centre</h2>
+    <div class="buy-now-box">
+        <p>Bhai, kisi bhi problem ke liye mail karein:</p>
+        <p>📧 <b>varungoyal7910@gmail.com</b></p>
     </div>
 </div>
 
 <nav>
-    <div class="nav-item" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" onclick="showPage('orders-page')">📦<br>Orders</div>
-    <div class="nav-item" onclick="showPage('help-page')">🆘<br>Help</div>
+    <div class="nav-item active" id="n-home" onclick="showPage('home-page')"><span class="nav-icon">🏠</span>Home</div>
+    <div class="nav-item" id="n-orders" onclick="showPage('orders-page')"><span class="nav-icon">📦</span>Orders</div>
+    <div class="nav-item" id="n-track" onclick="showPage('track-page')"><span class="nav-icon">📍</span>Track</div>
+    <div class="nav-item" id="n-help" onclick="showPage('help-page')"><span class="nav-icon">🆘</span>Help</div>
 </nav>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxfoHDe7kKojTS6b_u0fkG_rrgliVXSDBeQnltEo5Xi8QNL7QDopaGNSGPSFn5neujG/exec";
-
     const products = [
-        { 
-            id: 1, 
-            name: "Boya BY-M1 Lavalier Microphone for Smartphones, DSLR, Camcorders", 
-            price: 298, 
-            mrp: 999, 
-            img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg",
-            desc: "Designed for smartphones, DSLR cameras, camcorders, audio recorders, PC etc. It is perfect for video use."
-        },
-        { 
-            id: 2, 
-            name: "Syvo WT 750 Lightweight Tripod with Mobile Holder and Carry Bag", 
-            price: 149, 
-            mrp: 499, 
-            img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg",
-            desc: "High-quality aluminium tripod. Perfect for vlogging and stable video shoots."
-        }
+        { id: 1, name: "Premium Vlogging Mic", price: 99, mrp: 299, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", desc: "Best mic for starters. High quality voice recording." },
+        { id: 2, name: "Mini Tripod Stand", price: 149, mrp: 499, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", desc: "Stable tripod for mobile vlogging." },
+        { id: 3, name: "Ring Light 10 Inch", price: 199, mrp: 899, img: "https://m.media-amazon.com/images/I/61p-I6R+m7L._SL1500_.jpg", desc: "Studio light for perfect videos." }
     ];
 
     let cart = {};
@@ -144,46 +130,49 @@
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(id.includes('home')) document.getElementById('n-home').classList.add('active');
         if(id === 'cart-page') renderCart();
-        if(id === 'orders-page') renderHistory();
-        if(id === 'payment-page') renderPayment();
         window.scrollTo(0,0);
     }
 
-    function init() {
-        document.getElementById('product-list').innerHTML = products.map(p => `
+    function renderProducts(arr) {
+        document.getElementById('product-list').innerHTML = arr.map(p => `
             <div class="p-card">
-                <img src="${p.img}" class="p-img" onclick="viewProduct(${p.id})">
-                <div class="p-name" onclick="viewProduct(${p.id})">${p.name}</div>
-                <div>
-                    <span class="price-tag">₹${p.price}</span>
-                    <span class="mrp">₹${p.mrp}</span>
+                <img src="${p.img}" class="p-img" onclick="viewDetail(${p.id})">
+                <div class="p-info">
+                    <div class="p-title" onclick="viewDetail(${p.id})">${p.name}</div>
+                    <div class="p-price">₹${p.price} <span class="p-mrp">₹${p.mrp}</span></div>
+                    <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
                 </div>
-                <p style="color:#007600; font-size:12px;">FREE delivery</p>
-                <button class="btn-amz" onclick="addToCart(${p.id})">Add to Cart</button>
             </div>
         `).join('');
     }
 
-    function viewProduct(id) {
+    function filterProducts(limit, btn) {
+        document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if(limit === 'all') renderProducts(products);
+        else renderProducts(products.filter(p => p.price <= limit));
+    }
+
+    function viewDetail(id) {
         const p = products.find(x => x.id === id);
         const discount = Math.round(((p.mrp - p.price) / p.mrp) * 100);
         document.getElementById('detail-content').innerHTML = `
-            <img src="${p.img}" class="detail-img">
-            <p style="color:#007185; font-size:14px;">Visit the Varun Store</p>
-            <h2 style="font-weight:400; font-size:16px; margin-top:0;">${p.name}</h2>
-            <hr>
-            <div>
-                <span class="discount-badge">-${discount}%</span>
+            <div class="detail-img-box"><img src="${p.img}" style="width:100%; max-height:300px; object-fit:contain;"></div>
+            <div class="detail-header">
+                <span style="color:#CC0C39; font-size:24px;">-${discount}%</span>
                 <span style="font-size:28px; font-weight:bold; margin-left:10px;">₹${p.price}</span>
-            </div>
-            <p>M.R.P.: <span style="text-decoration:line-through;">₹${p.mrp}</span></p>
-            <p style="color:#007600; font-weight:bold;">In stock</p>
-            <div class="buy-box">
-                <b>About this item:</b>
-                <p style="font-size:14px; line-height:1.4;">${p.desc}</p>
-                <button class="btn-amz" onclick="addToCart(${p.id})">Add to Cart</button>
-                <button class="btn-amz btn-amz-orange" onclick="addToCart(${p.id}); showPage('cart-page');">Buy Now</button>
+                <p>M.R.P.: <span style="text-decoration:line-through;">₹${p.mrp}</span></p>
+                <h2>${p.name}</h2>
+                <hr>
+                <div class="buy-now-box">
+                    <b>About this item</b>
+                    <p>${p.desc}</p>
+                    <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
+                    <button class="btn-buy" onclick="addToCart(${p.id}); showPage('cart-page');">Buy Now</button>
+                </div>
             </div>
         `;
         showPage('detail-page');
@@ -192,88 +181,29 @@
     function addToCart(id) {
         if(cart[id]) cart[id].qty++;
         else cart[id] = { ...products.find(p => p.id === id), qty: 1 };
-        updateCount();
-    }
-
-    function updateCount() {
         document.getElementById('cart-count').innerText = Object.values(cart).reduce((a,b) => a + b.qty, 0);
+        alert("Added to cart!");
     }
 
     function renderCart() {
         const list = document.getElementById('cart-items');
         const items = Object.values(cart);
-        if(items.length === 0) { list.innerHTML = "<p>Your Amazon Cart is empty.</p>"; document.getElementById('cart-total-box').style.display='none'; return; }
+        if(items.length === 0) { list.innerHTML = "<p>Cart empty hai bhai!</p>"; return; }
         
-        document.getElementById('cart-total-box').style.display='block';
         list.innerHTML = items.map(i => `
-            <div style="display:flex; background:white; padding:10px; margin-bottom:10px; border-bottom:1px solid #ddd;">
-                <img src="${i.img}" style="width:80px; height:80px; object-fit:contain;">
-                <div style="margin-left:15px; flex:1;">
-                    <div class="p-name">${i.name}</div>
-                    <div class="price-tag">₹${i.price * i.qty}</div>
-                    <div style="margin-top:5px;">
-                        Qty: <button onclick="changeQty(${i.id},-1)">-</button> ${i.qty} <button onclick="changeQty(${i.id},1)">+</button>
-                    </div>
+            <div style="display:flex; border-bottom:1px solid #ddd; padding:10px;">
+                <img src="${i.img}" style="width:60px;">
+                <div style="margin-left:15px;">
+                    <div>${i.name}</div>
+                    <b>₹${i.price * i.qty}</b>
                 </div>
             </div>`).join('');
-
+        
         let total = items.reduce((a,b) => a + (b.price * b.qty), 0);
-        document.getElementById('cart-total-box').innerHTML = `
-            <h3>Subtotal: ₹${total}</h3>
-            <button class="btn-amz btn-amz-orange" onclick="showPage('address-page')">Proceed to Buy (${items.length} items)</button>
-        `;
+        document.getElementById('cart-total').innerHTML = `<h3>Total: ₹${total}</h3><button class="btn-buy">Place Order</button>`;
     }
 
-    function changeQty(id, val) {
-        cart[id].qty += val;
-        if(cart[id].qty <= 0) delete cart[id];
-        renderCart(); updateCount();
-    }
-
-    function renderPayment() {
-        const total = Object.values(cart).reduce((a,b) => a + (b.price * b.qty), 0);
-        document.getElementById('pay-total').innerText = "Total Payable: ₹" + total;
-        const upiLink = `upi://pay?pa=varungoyal7910@pnb&pn=VarunStore&am=${total}&cu=INR`;
-        document.getElementById('qr-area').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiLink)}" />`;
-    }
-
-    async function submitOrder() {
-        const utr = document.getElementById('u-utr').value;
-        if(!utr || utr.length < 10) return alert("Please enter valid 12-digit UTR");
-
-        const orderData = {
-            orderID: "VAR" + Date.now().toString().slice(-4),
-            name: document.getElementById('u-name').value,
-            phone: document.getElementById('u-phone').value,
-            address: document.getElementById('u-address').value,
-            pin: document.getElementById('u-pin').value,
-            total: document.getElementById('pay-total').innerText,
-            utr: utr,
-            date: new Date().toLocaleString()
-        };
-
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(orderData) });
-
-        let hist = JSON.parse(localStorage.getItem('myOrders')) || [];
-        hist.push(orderData);
-        localStorage.setItem('myOrders', JSON.stringify(hist));
-
-        alert("Order placed successfully!");
-        cart = {}; updateCount();
-        showPage('orders-page');
-    }
-
-    function renderHistory() {
-        const hist = JSON.parse(localStorage.getItem('myOrders')) || [];
-        document.getElementById('history-list').innerHTML = hist.reverse().map(o => `
-            <div class="buy-box">
-                <b>Order ID: #${o.orderID}</b><br>
-                Status: <span style="color:#007600">Arriving Soon</span><br>
-                Amount: ${o.total}
-            </div>`).join('');
-    }
-
-    init();
+    renderProducts(products);
 </script>
 </body>
 </html>
