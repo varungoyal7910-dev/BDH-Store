@@ -6,164 +6,195 @@
     <title>Varun Store | Vlogging Hub</title>
     <style>
         :root { --accent: #e91e63; --bg: #f4f7f6; --text: #333; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 75px; }
         
         header { background: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
         .logo-text { font-size: 18px; font-weight: bold; color: var(--accent); }
         .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: #000; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
 
-        .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* Page Management */
+        .page { display: none; padding: 20px; min-height: 80vh; animation: fadeIn 0.3s ease; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* UI Elements */
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
         .p-img { width: 100%; height: 150px; object-fit: cover; }
         .p-info { padding: 10px; text-align: center; }
 
-        .modal, .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
-        .modal-content, .overlay-content { background: #fff; width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 25px; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; font-family: inherit; }
+        .btn-main { background: var(--accent); color: #fff; border: none; padding: 18px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        .btn-main { background: var(--accent); color: #fff; border: none; padding: 18px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; }
-        
-        /* Navigation Bottom Bar */
+        /* Navigation */
         nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; z-index: 1000; }
-        .nav-item { text-align: center; font-size: 12px; color: #888; flex: 1; cursor: pointer; }
-        .nav-item.active { color: var(--accent); font-weight: bold; }
+        .nav-item { text-align: center; font-size: 10px; color: #888; flex: 1; cursor: pointer; transition: 0.2s; }
+        .nav-item.active { color: var(--accent); font-weight: bold; transform: translateY(-3px); }
 
-        /* Track Order Styling */
-        .status-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 10px; border-left: 5px solid var(--accent); }
+        /* Cards */
+        .info-card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 15px; border-left: 5px solid var(--accent); }
+        .help-link { color: var(--accent); text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo-text">VARUN STORE</div>
-    <div class="cart-icon" onclick="openCart()">🛍️ <span class="cart-count" id="cart-count">0</span></div>
+    <div class="cart-icon" onclick="showPage('cart-page')">🛒 <span class="cart-count" id="cart-count">0</span></div>
 </header>
 
-<div id="home-page" class="container">
-    <!-- Products automatic load honge -->
+<!-- PAGES -->
+<div id="home-page" class="page active-page">
+    <h2 style="margin-top:0;">Top Deals</h2>
+    <div class="product-grid" id="product-list"></div>
 </div>
 
-<!-- Modal Screens -->
-<div id="main-modal" class="modal">
-    <div class="modal-content" id="modal-body"></div>
+<div id="track-page" class="page">
+    <h2>Track Order</h2>
+    <div class="info-card">
+        <p>Enter your Order ID (e.g., VAR1234) to see delivery status.</p>
+        <input type="text" id="track-id" placeholder="Enter Order ID">
+        <button class="btn-main" onclick="trackAction()">Track Now</button>
+        <div id="track-output" style="margin-top:15px;"></div>
+    </div>
 </div>
 
+<div id="orders-page" class="page">
+    <h2>My History</h2>
+    <div id="order-history-list"></div>
+</div>
+
+<div id="help-page" class="page">
+    <h2>Help & Support</h2>
+    <div class="info-card">
+        <h3>Contact Us</h3>
+        <p>Bhai, agar koi problem aaye ya order confirm na ho raha ho, toh humein mail karein:</p>
+        <p>📧 Email: <a href="mailto:varungoyal7910@gmail.com" class="help-link">varungoyal7910@gmail.com</a></p>
+        <p>📱 WhatsApp: <b>+91 XXXXX XXXXX</b></p>
+    </div>
+    <div class="info-card">
+        <h3>Send Message</h3>
+        <input type="text" id="h-subject" placeholder="Issue Subject">
+        <textarea id="h-msg" rows="4" placeholder="Describe your problem..."></textarea>
+        <button class="btn-main" onclick="sendSupport()">Send Support Request</button>
+    </div>
+</div>
+
+<div id="cart-page" class="page">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <div id="cart-total-area"></div>
+</div>
+
+<!-- BOTTOM NAV -->
 <nav>
-    <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
-    <div class="nav-item" onclick="showTrackSystem()">📍<br>Track Order</div>
-    <div class="nav-item" onclick="alert('Support: @varungoyal7910')">💬<br>Help</div>
+    <div class="nav-item active" id="n-home" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" id="n-track" onclick="showPage('track-page')">📍<br>Track</div>
+    <div class="nav-item" id="n-orders" onclick="showPage('orders-page')">📦<br>Orders</div>
+    <div class="nav-item" id="n-help" onclick="showPage('help-page')">🆘<br>Help</div>
 </nav>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxfoHDe7kKojTS6b_u0fkG_rrgliVXSDBeQnltEo5Xi8QNL7QDopaGNSGPSFn5neujG/exec";
-    
+
     const products = [
-        { id: 1, name: "Premium RGB Mouse", price: 298, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
-        { id: 2, name: "Wireless Earbuds", price: 499, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500" }
+        { id: 1, name: "Vlogging Mic", price: 298, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400" },
+        { id: 2, name: "Tripod Stand", price: 149, img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" },
+        { id: 3, name: "Ring Light", price: 599, img: "https://images.unsplash.com/photo-1526394931762-90052e97b376?w=400" }
     ];
 
     let cart = [];
 
-    // Load Home
+    // Page Switching
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(id === 'home-page') document.getElementById('n-home').classList.add('active');
+        if(id === 'track-page') document.getElementById('n-track').classList.add('active');
+        if(id === 'orders-page') {
+            document.getElementById('n-orders').classList.add('active');
+            renderOrders();
+        }
+        if(id === 'help-page') document.getElementById('n-help').classList.add('active');
+        if(id === 'cart-page') renderCart();
+        window.scrollTo(0,0);
+    }
+
+    // Home Setup
     function init() {
-        document.getElementById('home-page').innerHTML = products.map(p => `
+        document.getElementById('product-list').innerHTML = products.map(p => `
             <div class="p-card" onclick="addToCart(${p.id})">
                 <img src="${p.img}" class="p-img">
-                <div class="p-info">
-                    <b>${p.name}</b><br>
-                    <span style="color:var(--accent)">₹${p.price}</span>
-                </div>
+                <div class="p-info"><b>${p.name}</b><br><span style="color:var(--accent)">₹${p.price}</span></div>
             </div>`).join('');
     }
 
     function addToCart(id) {
-        const p = products.find(x => x.id === id);
-        cart.push(p);
+        cart.push(products.find(x => x.id === id));
         document.getElementById('cart-count').innerText = cart.length;
-        alert(p.name + " Bag mein daal diya hai!");
+        alert("Added to Bag!");
     }
 
-    function openCart() {
-        if(cart.length === 0) return alert("Cart khali hai!");
-        let total = cart.reduce((a,b) => a + b.price, 0);
-        showModal(`
-            <h3>Your Cart</h3>
-            ${cart.map(i => `<p>${i.name} - ₹${i.price}</p>`).join('')}
-            <hr>
-            <h4>Total: ₹${total}</h4>
-            <button class="btn-main" onclick="checkoutStep1(${total})">Checkout Now</button>
-        `);
-    }
-
-    function checkoutStep1(total) {
-        showModal(`
-            <h3>Delivery Details</h3>
-            <input type="text" id="c-name" placeholder="Name">
-            <input type="number" id="c-phone" placeholder="Phone">
-            <button class="btn-main" onclick="checkoutStep2(${total})">Next</button>
-        `);
-    }
-
-    function checkoutStep2(total) {
-        const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=varungoyal7910@pnb%26am=${total}`;
-        showModal(`
-            <center>
-                <h3>Pay ₹${total}</h3>
-                <img src="${qr}" style="width:180px;">
-                <p>UPI ID: varungoyal7910@pnb</p>
-                <input type="number" id="utr" placeholder="Enter 12-digit UTR">
-                <button class="btn-main" id="conf-btn" onclick="finalize()">Confirm Order</button>
-            </center>
-        `);
-    }
-
-    async function finalize() {
-        const btn = document.getElementById('conf-btn');
-        btn.innerText = "Processing... Wait";
-        btn.disabled = true;
-
-        const orderID = "VAR" + Math.floor(Math.random()*9000 + 1000);
+    // Cart Logic
+    function renderCart() {
+        const itemsDiv = document.getElementById('cart-items');
+        if(cart.length === 0) { itemsDiv.innerHTML = "<p>Cart empty hai bhai!</p>"; return; }
         
-        // Data to save
-        const data = { orderID, utr: document.getElementById('utr').value };
-
-        try {
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-            alert("Success! Order ID: " + orderID);
-            localStorage.setItem('lastOrder', orderID); // Track ke liye save kar liya
-            location.reload();
-        } catch(e) {
-            alert("Error!");
-            btn.disabled = false;
-        }
+        let total = cart.reduce((a,b) => a + b.price, 0);
+        itemsDiv.innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #ddd;"><span>${i.name}</span><b>₹${i.price}</b></div>`).join('');
+        document.getElementById('cart-total-area').innerHTML = `<h3>Total: ₹${total}</h3><button class="btn-main" onclick="payNow(${total})">CONFIRM ORDER</button>`;
     }
 
-    // --- TRACK ORDER SYSTEM ---
-    function showTrackSystem() {
-        const lastID = localStorage.getItem('lastOrder') || "Example: VAR1234";
-        showModal(`
-            <h3>Track Your Order</h3>
-            <p>Enter your Order ID to check status:</p>
-            <input type="text" id="track-id" value="${lastID}">
-            <button class="btn-main" onclick="trackNow()">Track Now</button>
-            <div id="status-result"></div>
-        `);
+    async function payNow(total) {
+        const utr = prompt("Scan and Pay ₹"+total+"\nUPI: varungoyal7910@pnb\n\n12-digit UTR No. dalo:");
+        if(!utr || utr.length < 10) return;
+
+        const orderID = "VAR" + Math.floor(1000 + Math.random() * 9000);
+        const data = { orderID, total, utr, date: new Date().toLocaleDateString() };
+
+        let history = JSON.parse(localStorage.getItem('myOrders')) || [];
+        history.push(data);
+        localStorage.setItem('myOrders', JSON.stringify(history));
+
+        alert("Order Placed! ID: " + orderID);
+        cart = []; document.getElementById('cart-count').innerText = "0";
+        showPage('orders-page');
     }
 
-    function trackNow() {
+    // Orders History
+    function renderOrders() {
+        const list = document.getElementById('order-history-list');
+        let history = JSON.parse(localStorage.getItem('myOrders')) || [];
+        if(history.length === 0) { list.innerHTML = "<p>No orders yet.</p>"; return; }
+        
+        list.innerHTML = history.reverse().map(o => `
+            <div class="info-card">
+                <b>Order: ${o.orderID}</b><br>
+                Date: ${o.date} | Total: ₹${o.total}<br>
+                <span style="color:orange">● Status: Checking Payment</span>
+            </div>
+        `).join('');
+    }
+
+    // Track Feature
+    function trackAction() {
         const id = document.getElementById('track-id').value;
-        const res = document.getElementById('status-result');
-        res.innerHTML = `<div class="status-box"><b>Status:</b> 📦 Order Confirmed<br><small>Checking payment for ${id}...</small></div>`;
+        const out = document.getElementById('track-output');
+        if(!id) return;
+        out.innerHTML = `<div class="info-card" style="border-left-color:green;"><b>Status for ${id}:</b><br>📦 Packing in progress. Delivery expected in 2 days.</div>`;
     }
 
-    function showModal(html) {
-        const m = document.getElementById('main-modal');
-        document.getElementById('modal-body').innerHTML = html + `<button onclick="closeModal()" style="background:none; border:none; color:blue; margin-top:15px; width:100%;">← Back to Shop</button>`;
-        m.style.display = 'flex';
+    // Support Logic
+    function sendSupport() {
+        const sub = document.getElementById('h-subject').value;
+        const msg = document.getElementById('h-msg').value;
+        if(!sub || !msg) return alert("Pehle message likho!");
+        alert("Aapka message varungoyal7910@gmail.com par bhej diya gaya hai. Hum jaldi reply karenge.");
+        showPage('home-page');
     }
-
-    function closeModal() { document.getElementById('main-modal').style.display = 'none'; }
 
     init();
 </script>
