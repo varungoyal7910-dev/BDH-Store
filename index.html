@@ -3,270 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART | Premium Shopping</title>
+    <title>GOCART | Premium Store</title>
     <style>
-        :root { --main-navy: #131921; --accent-gold: #FFD814; --premium-orange: #FF9900; --soft-bg: #F7F8FA; --white: #ffffff; }
-        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; background: var(--soft-bg); padding-bottom: 90px; color: #111; overflow-x: hidden; }
+        :root { --main-navy: #131921; --accent-gold: #FFD814; --premium-orange: #FF9900; --soft-bg: #F7F8FA; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--soft-bg); padding-bottom: 100px; color: #111; }
 
         /* PREMIUM HEADER */
-        header { background: var(--main-navy); padding: 15px 20px; color: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .logo { font-size: 26px; font-weight: 900; cursor: pointer; letter-spacing: -0.5px; text-decoration: none; color: white; }
+        header { background: var(--main-navy); padding: 15px; color: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .logo { font-size: 24px; font-weight: 900; cursor: pointer; color: white; text-decoration: none; }
         .logo span { color: var(--premium-orange); }
-        .cart-icon { font-size: 24px; cursor: pointer; position: relative; display: flex; align-items: center; }
-        #cart-count { position: absolute; top: -8px; right: -10px; background: var(--premium-orange); color: white; font-size: 10px; padding: 2px 7px; border-radius: 50%; font-weight: bold; border: 2px solid var(--main-navy); }
 
-        /* SEARCH BAR */
-        .search-container { position: relative; display: flex; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .search-container input { border: none; padding: 12px 15px; width: 100%; outline: none; font-size: 14px; color: #333; }
-        .search-container button { background: var(--accent-gold); border: none; padding: 0 20px; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        /* URGENCY BAR */
+        .urgency-bar { background: #fee2e2; color: #b91c1c; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-bottom: 1px solid #fecaca; }
 
-        /* TRUST BAR */
-        .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 10px; font-size: 11px; font-weight: 600; color: #555; border-bottom: 1px solid #eee; }
-        .trust-item { display: flex; align-items: center; gap: 5px; }
-
-        /* PRODUCT GRID */
-        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .p-card { background: var(--white); border-radius: 16px; padding: 15px; text-align: left; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: 0.3s; border: 1px solid rgba(0,0,0,0.02); }
-        .p-card:active { transform: scale(0.96); }
-        .p-img { width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 8px; }
-        .p-name { font-size: 14px; font-weight: 600; margin: 5px 0; color: #222; height: 34px; overflow: hidden; }
-        .p-price { font-size: 18px; font-weight: 800; color: #B12704; }
-
-        /* FLOATING HELP */
-        .help-btn { position: fixed; bottom: 110px; right: 20px; background: white; color: var(--main-navy); padding: 12px 20px; border-radius: 50px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 999; text-decoration: none; display: flex; align-items: center; gap: 10px; font-size: 14px; border: 1px solid #eee; }
-
-        /* PAGES & DETAIL */
-        .page { display: none; padding: 10px; }
-        .active-page { display: block; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .detail-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+        /* PRODUCT CARDS */
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; }
+        .p-card { background: white; border-radius: 12px; padding: 12px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; position: relative; }
+        .p-img { width: 100%; height: 130px; object-fit: contain; }
+        .p-name { font-size: 13px; font-weight: 600; margin: 8px 0 2px 0; height: 32px; overflow: hidden; }
+        
+        /* RATING & STOCK */
+        .rating { color: #ffa41c; font-size: 12px; margin-bottom: 5px; }
+        .stock-left { color: #d91e18; font-size: 11px; font-weight: 800; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         /* BUTTONS */
-        .amz-btn { background: var(--accent-gold); border: none; border-radius: 12px; padding: 16px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 15px; font-size: 15px; transition: 0.2s; }
-        .amz-btn-orange { background: linear-gradient(180deg, #FFB84D 0%, #FF9900 100%); color: white; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3); }
+        .amz-btn { background: var(--accent-gold); border: none; border-radius: 10px; padding: 14px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .amz-btn-orange { background: linear-gradient(180deg, #FFB84D, #FF9900); color: white; }
 
-        .color-dot { display: inline-block; width: 35px; height: 35px; border-radius: 50%; margin: 15px 8px 15px 0; cursor: pointer; border: 3px solid #f0f0f0; transition: 0.2s; }
-        .color-dot.selected { border-color: var(--premium-orange); transform: scale(1.1); box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        
-        .trust-box { background: #FFFBF2; border: 1px solid #FFE8CC; border-radius: 14px; padding: 15px; margin: 20px 0; }
-        .trust-box p { margin: 8px 0; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        /* PAGES */
+        .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* NAVIGATION */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 1000; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.03); }
-        .nav-item { flex: 1; text-align: center; font-size: 11px; font-weight: 700; color: #888; cursor: pointer; }
+        /* NAV */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; padding: 10px 0; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; font-size: 11px; font-weight: 700; color: #888; }
         .nav-item.active { color: var(--main-navy); }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-main">
-        <div class="logo" onclick="showPage('home-page')">GO<span>CART</span></div>
-        <div class="cart-icon" onclick="openCart()">🛒<span id="cart-count">0</span></div>
-    </div>
-    <div class="search-container">
-        <input type="text" id="p-search" onkeyup="searchProducts()" placeholder="Search Premium Products...">
-        <button onclick="searchProducts()">🔍</button>
-    </div>
+    <div class="logo" onclick="showPage('home-page')">GO<span>CART</span></div>
 </header>
 
-<div class="trust-bar">
-    <div class="trust-item">🛡️ Secure Payment</div>
-    <div class="trust-item">🚚 Fast Delivery</div>
-    <div class="trust-item">⭐ Top Rated</div>
+<div class="urgency-bar">
+    🔥 Limited Time Deal: Sale Ends in <span id="timer">05:00</span>
 </div>
 
-<a href="mailto:varungoyal7910@gmail.com?subject=Support - GOCART&body=Hi, I need help with..." class="help-btn">
-    <span>✉️</span> Mail Help
-</a>
-
-<!-- PAGES -->
+<!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
     <div class="p-grid" id="product-list"></div>
 </div>
 
+<!-- DETAIL PAGE -->
 <div id="detail-page" class="page">
-    <div id="detail-content" class="detail-card"></div>
+    <div id="detail-content" style="background:white; border-radius:15px; padding:20px;"></div>
 </div>
 
+<!-- CART PAGE -->
 <div id="cart-page" class="page">
-    <div class="detail-card">
-        <h3 style="margin-top:0;">Your Cart</h3>
+    <div style="background:white; border-radius:15px; padding:20px;">
+        <h3>Your Cart</h3>
         <div id="cart-items-list"></div>
-        <button class="amz-btn amz-btn-orange" onclick="showPage('address-page')">Proceed to Checkout</button>
+        <button class="amz-btn amz-btn-orange" onclick="showPage('address-page')">Checkout Now</button>
     </div>
 </div>
 
+<!-- ADDRESS PAGE -->
 <div id="address-page" class="page">
-    <div class="detail-card">
-        <h3 style="margin-top:0;">Delivery Details</h3>
-        <input type="text" id="u-name" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400;" placeholder="Recipient Full Name">
-        <input type="number" id="u-phone" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400;" placeholder="Mobile Number">
-        <textarea id="u-address" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400; height:80px;" placeholder="Flat, House no., Area, Street"></textarea>
-        <button class="amz-btn amz-btn-orange" onclick="showPage('payment-page'); generateQR();">Continue to Payment</button>
+    <div style="background:white; border-radius:15px; padding:20px;">
+        <h3>Delivery Details</h3>
+        <input type="text" id="u-name" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400;" placeholder="Full Name">
+        <input type="number" id="u-phone" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400;" placeholder="Phone Number">
+        <textarea id="u-address" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400; height:60px;" placeholder="Full Address"></textarea>
+        <button class="amz-btn amz-btn-orange" onclick="showPage('payment-page'); generateQR();">Continue</button>
     </div>
 </div>
 
+<!-- PAYMENT PAGE -->
 <div id="payment-page" class="page">
-    <div class="detail-card" style="text-align:center;">
-        <h3 style="margin-top:0;">Scan & Pay</h3>
-        <div id="qr-area" style="padding:15px; background:white; display:inline-block; border-radius:15px; border:1px solid #eee;"></div>
-        <p style="margin:15px 0; font-weight:700;">UPI: <span style="color:var(--premium-orange);">varungoyal7910@pnb</span></p>
-        <input type="text" id="u-utr" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd;" placeholder="Enter 12 Digit UTR / Transaction ID">
-        <button class="amz-btn amz-btn-orange" onclick="confirmOrder()">Confirm & Place Order</button>
+    <div style="background:white; border-radius:15px; padding:20px; text-align:center;">
+        <h3>Scan & Pay</h3>
+        <div id="qr-area"></div>
+        <p>UPI ID: <b>varungoyal7910@pnb</b></p>
+        <input type="text" id="u-utr" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd;" placeholder="Enter UTR No.">
+        <button class="amz-btn amz-btn-orange" onclick="confirmOrder()">Confirm Order</button>
     </div>
 </div>
 
 <nav>
-    <div class="nav-item active" id="n-home" onclick="showPage('home-page')"><div class="nav-icon">🏠</div>Home</div>
-    <div class="nav-item" id="n-orders" onclick="showPage('orders-page'); renderOrders();"><div class="nav-icon">📦</div>Orders</div>
-    <div class="nav-item" id="n-track" onclick="showPage('track-page')"><div class="nav-icon">📍</div>Track</div>
+    <div class="nav-item active" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" onclick="showPage('cart-page')">🛒<br>Cart</div>
+    <div class="nav-item" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec";
-    
-    // Add your real product links and names here
+
     const products = [
-        { id: 1, name: "Premium Vlogging Mic - Noise Cancellation", price: 99, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", desc: "Professional grade microphone for clear audio." },
-        { id: 2, name: "Professional Mini Tripod Stand", price: 149, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", desc: "360-degree rotation for perfect vlogging angles." }
+        { id: 1, name: "Premium Vlogging Mic", price: 99, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", rating: 4.8, stock: 4 },
+        { id: 2, name: "Professional Mini Tripod", price: 149, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", rating: 4.5, stock: 7 }
     ];
 
     let cart = [];
-    let selectedColor = "";
 
-    const trustBadgeHtml = `
-        <div class="trust-box">
-            <p>🔄 <span><b>7 Days</b> Easy Replacement</span></p>
-            <p>🚫 <span><b>No COD</b> - Prepaid Only</span></p>
-            <p>🛡️ <span><b>100%</b> Quality Guaranteed</span></p>
-        </div>
-    `;
+    // TIMER LOGIC
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        setInterval(() => {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+            display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+            if (--timer < 0) timer = duration;
+        }, 1000);
+    }
 
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        const target = document.getElementById(id);
-        if(target) target.classList.add('active-page');
+        document.getElementById(id).classList.add('active-page');
         window.scrollTo(0,0);
     }
 
-    function renderProducts(data) {
-        document.getElementById('product-list').innerHTML = data.map(p => `
+    function renderProducts() {
+        document.getElementById('product-list').innerHTML = products.map(p => `
             <div class="p-card" onclick="viewProduct(${p.id})">
                 <img src="${p.img}" class="p-img">
                 <div class="p-name">${p.name}</div>
-                <div class="p-price">₹${p.price}</div>
-                <div style="font-size:10px; color:green; font-weight:bold; margin-top:5px;">FREE Delivery</div>
+                <div class="rating">⭐⭐⭐⭐⭐ (${p.rating})</div>
+                <div style="font-weight:800; font-size:16px;">₹${p.price}</div>
+                <div class="stock-left">⚠️ Only ${p.stock} left in stock</div>
             </div>
         `).join('');
     }
 
     function viewProduct(id) {
         const p = products.find(x => x.id === id);
-        selectedColor = ""; 
         document.getElementById('detail-content').innerHTML = `
-            <div style="text-align:center;"><img src="${p.img}" style="width:100%; max-height:250px; object-fit:contain;"></div>
-            <h2 style="font-size:20px; margin:15px 0 5px 0;">${p.name}</h2>
-            <div class="p-price" style="font-size:24px;">₹${p.price} <span style="font-size:14px; color:#777; text-decoration:line-through; font-weight:400;">₹499</span></div>
-            <p style="font-size:14px; color:#555; line-height:1.5; margin:15px 0;">${p.desc}</p>
-            <p style="font-weight:700;">Select Color:</p>
-            <div class="color-dot" style="background:#000;" onclick="selectColor(this,'Black')"></div>
-            <div class="color-dot" style="background:#f00;" onclick="selectColor(this,'Red')"></div>
-            ${trustBadgeHtml}
+            <img src="${p.img}" style="width:100%; height:200px; object-fit:contain;">
+            <h2>${p.name}</h2>
+            <div class="rating" style="font-size:18px;">⭐⭐⭐⭐⭐ 4.8/5</div>
+            <div style="color:#B12704; font-size:24px; font-weight:800; margin:10px 0;">₹${p.price}</div>
+            <p style="color:green; font-weight:700;">In Stock (Limited Quantity)</p>
+            <div style="background:#fff9f0; border:1px solid #ffe8cc; border-radius:10px; padding:10px; margin:15px 0;">
+                <p style="margin:5px 0; font-size:13px;">🔄 7 Days Replacement</p>
+                <p style="margin:5px 0; font-size:13px;">🚫 No COD (Prepaid Only)</p>
+            </div>
             <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
         `;
         showPage('detail-page');
     }
 
-    function selectColor(el, color) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
-        el.classList.add('selected');
-        selectedColor = color;
-    }
-
     function addToCart(id) {
-        if (!selectedColor) return alert("Bhai, please select a color first!");
-        const product = products.find(x => x.id === id);
-        const existing = cart.find(x => x.id === id && x.color === selectedColor);
-        if (existing) existing.qty++;
-        else cart.push({...product, qty: 1, color: selectedColor});
-        updateUI();
-        alert("Success! Item added to cart.");
+        const p = products.find(x => x.id === id);
+        cart.push(p);
+        alert("Added to Cart!");
+        showPage('cart-page');
+        renderCart();
     }
 
-    function updateUI() {
-        document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
-    }
-
-    function openCart() {
-        if (cart.length === 0) return alert("Your cart is empty!");
+    function renderCart() {
         const list = document.getElementById('cart-items-list');
         list.innerHTML = cart.map((item, index) => `
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:15px 0;">
-                <div><b style="font-size:14px;">${item.name}</b><br><small style="color:#666;">${item.color} | ₹${item.price}</small></div>
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <button onclick="changeQty(${index}, -1)" style="width:30px; height:30px; border-radius:8px; border:1px solid #ddd; background:white;">-</button>
-                    <b style="font-size:16px;">${item.qty}</b>
-                    <button onclick="changeQty(${index}, 1)" style="width:30px; height:30px; border-radius:8px; border:1px solid #ddd; background:white;">+</button>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                <div><b>${item.name}</b><br>₹${item.price}</div>
+                <button onclick="cart.splice(${index},1); renderCart();">Remove</button>
             </div>
-        `).join('') + trustBadgeHtml;
-        showPage('cart-page');
-    }
-
-    function changeQty(i, d) {
-        cart[i].qty += d;
-        if (cart[i].qty <= 0) cart.splice(i, 1);
-        cart.length === 0 ? showPage('home-page') : openCart();
-        updateUI();
+        `).join('') || "Cart is empty.";
     }
 
     function generateQR() {
-        const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const total = cart.reduce((s, i) => s + i.price, 0);
         const upi = `upi://pay?pa=varungoyal7910@pnb&pn=GOCART&am=${total}&cu=INR`;
-        document.getElementById('qr-area').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upi)}">`;
+        document.getElementById('qr-area').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upi)}">`;
     }
 
     function confirmOrder() {
         const utr = document.getElementById('u-utr').value;
-        if(utr.length < 10) return alert("Please enter valid 12 digit UTR number!");
-        
-        const oid = "GO" + Math.floor(Math.random() * 90000 + 10000);
-        const details = cart.map(i => `${i.name} (${i.color}) x${i.qty}`).join(", ");
-        const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-
-        const fd = new FormData();
-        fd.append("name", document.getElementById('u-name').value);
-        fd.append("phone", document.getElementById('u-phone').value);
-        fd.append("orderID", oid);
-        fd.append("product", details);
-        fd.append("totalPrice", total);
-        fd.append("paymentRef", utr);
-
-        fetch(scriptURL, { method: 'POST', body: fd }).then(() => {
-            let saved = JSON.parse(localStorage.getItem('goOrders')) || [];
-            saved.push({id: oid, status: "Order Placed", items: details});
-            localStorage.setItem('goOrders', JSON.stringify(saved));
-            cart = []; updateUI();
-            alert("Order Placed Successfully! Your Order ID: " + oid);
-            showPage('home-page');
-        });
+        if(utr.length < 5) return alert("Enter valid UTR!");
+        alert("Order Placed Successfully!");
+        showPage('home-page');
     }
 
-    function searchProducts() {
-        const q = document.getElementById('p-search').value.toLowerCase();
-        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
-    }
-
-    function filterData(l, b) {
-        document.querySelectorAll('.f-btn').forEach(btn => btn.classList.remove('active'));
-        b.classList.add('active');
-        renderProducts(l === 'all' ? products : products.filter(x => x.price <= l));
-    }
-
-    renderProducts(products);
+    window.onload = () => {
+        renderProducts();
+        startTimer(300, document.getElementById('timer'));
+    };
 </script>
 </body>
 </html>
