@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -48,6 +48,8 @@
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000;}
         .nav-item { flex: 1; text-align: center; padding: 12px 0; font-size: 10px; font-weight: 600; color: #555; cursor: pointer; }
         .nav-item.active { color: var(--amz-orange); border-top: 3px solid var(--amz-orange); }
+        
+        .guidelines-box { margin: 15px 0; padding: 10px; background: #f9f9f9; border: 1px dashed #ccc; border-radius: 8px; font-size: 13px; text-align: left; }
     </style>
 </head>
 <body>
@@ -69,27 +71,22 @@
     <button class="f-btn" onclick="filterData(149, this)">Under ₹149</button>
 </div>
 
-<!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
     <div class="p-grid" id="product-list"></div>
 </div>
 
-<!-- DETAIL PAGE -->
 <div id="detail-page" class="page">
     <div id="detail-content" class="detail-card"></div>
 </div>
 
-<!-- CART PAGE -->
 <div id="cart-page" class="page">
     <div class="detail-card">
         <h3>Your Shopping Cart</h3>
         <div id="cart-items-list"></div>
-        <div id="cart-guidelines"></div>
         <button class="amz-btn amz-btn-orange" onclick="goToAddress()">Proceed to Buy</button>
     </div>
 </div>
 
-<!-- ADDRESS PAGE -->
 <div id="address-page" class="page">
     <div class="detail-card">
         <h3>Delivery Details</h3>
@@ -101,7 +98,6 @@
     </div>
 </div>
 
-<!-- PAYMENT PAGE -->
 <div id="payment-page" class="page">
     <div class="detail-card" style="text-align:center;">
         <h3>Scan to Pay</h3>
@@ -112,7 +108,13 @@
     </div>
 </div>
 
-<!-- TRACK PAGE -->
+<div id="my-orders-page" class="page">
+    <div class="detail-card">
+        <h3>My Orders</h3>
+        <div id="orders-display-list"></div>
+    </div>
+</div>
+
 <div id="track-page" class="page">
     <div class="detail-card" style="text-align:center;">
         <h3>Track Order</h3>
@@ -122,17 +124,15 @@
     </div>
 </div>
 
-<!-- SUCCESS PAGE -->
 <div id="success-page" class="page" style="text-align:center; padding-top:50px;">
     <h1 style="color:green;">✔️ Order Placed!</h1>
     <p>Aapka order process ho raha hai.</p>
     <button class="amz-btn" onclick="showPage('home-page')">Back to Home</button>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav>
     <div class="nav-item active" id="n-home" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" id="n-orders" onclick="openCart()">🛒<br>Cart</div>
+    <div class="nav-item" id="n-orders" onclick="showPage('my-orders-page'); renderOrders();">📦<br>Orders</div>
     <div class="nav-item" id="n-track" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
 
@@ -148,11 +148,19 @@
     let cart = [];
     let selectedColor = "";
 
+    const guideHtml = `
+        <div class="guidelines-box">
+            <p style="margin:5px 0;">🔄 <b>7 Days Replacement</b></p>
+            <p style="margin:5px 0;">🚫 <b>No Cash on Delivery</b></p>
+            <p style="margin:5px 0;">⭐ <b>Guaranteed Product</b></p>
+        </div>
+    `;
+
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        const navMap = {'home-page':'n-home', 'track-page':'n-track', 'cart-page':'n-orders'};
+        const navMap = {'home-page':'n-home', 'track-page':'n-track', 'my-orders-page':'n-orders'};
         if(navMap[id]) document.getElementById(navMap[id]).classList.add('active');
     }
 
@@ -178,6 +186,7 @@
             <div class="color-option" style="background:black;" onclick="selColor(this,'Black')"></div>
             <div class="color-option" style="background:red;" onclick="selColor(this,'Red')"></div>
             <div class="color-option" style="background:silver;" onclick="selColor(this,'Silver')"></div>
+            ${guideHtml}
             <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
         `;
         showPage('detail-page');
@@ -191,67 +200,43 @@
 
     function addToCart(id) {
         if (!selectedColor) return alert("Bhai, pehle color select karna important hai!");
-        
         const product = products.find(x => x.id === id);
         const existing = cart.find(x => x.id === id && x.color === selectedColor);
-        
         if (existing) existing.qty++;
         else cart.push({...product, qty: 1, color: selectedColor});
-        
         updateCartCount();
         alert("Item Cart mein add ho gaya!");
-        showPage('home-page');
     }
 
     function updateCartCount() {
-        const total = cart.reduce((acc, item) => acc + item.qty, 0);
-        document.getElementById('cart-count').innerText = total;
+        document.getElementById('cart-count').innerText = cart.reduce((acc, item) => acc + item.qty, 0);
     }
 
     function openCart() {
         if (cart.length === 0) return alert("Cart khali hai!");
-        
         const list = document.getElementById('cart-items-list');
         list.innerHTML = cart.map((item, index) => `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                <div style="flex:1;">
-                    <b style="font-size:14px;">${item.name}</b><br>
-                    <small>Color: ${item.color} | ₹${item.price}</small>
-                </div>
+                <div style="flex:1;"><b>${item.name}</b><br><small>${item.color} | ₹${item.price}</small></div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <button onclick="changeQty(${index}, -1)" style="width:25px; height:25px; background:#eee; border:1px solid #ccc;">-</button>
+                    <button onclick="changeQty(${index}, -1)" style="width:25px;">-</button>
                     <b>${item.qty}</b>
-                    <button onclick="changeQty(${index}, 1)" style="width:25px; height:25px; background:#eee; border:1px solid #ccc;">+</button>
+                    <button onclick="changeQty(${index}, 1)" style="width:25px;">+</button>
                 </div>
             </div>
-        `).join('');
-
-        document.getElementById('cart-guidelines').innerHTML = `
-            <div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:8px; border:1px dashed #ccc; font-size:13px;">
-                <p>🔄 <b>7 Days Replacement</b></p>
-                <p>🚫 <b>No Cash on Delivery</b></p>
-                <p>⭐ <b>Guaranteed Product</b></p>
-            </div>
-        `;
+        `).join('') + guideHtml;
         showPage('cart-page');
     }
 
     function changeQty(index, delta) {
         cart[index].qty += delta;
         if (cart[index].qty <= 0) cart.splice(index, 1);
-        if (cart.length === 0) {
-            updateCartCount();
-            showPage('home-page');
-        } else {
-            updateCartCount();
-            openCart();
-        }
+        if (cart.length === 0) showPage('home-page');
+        else openCart();
+        updateCartCount();
     }
 
-    function goToAddress() {
-        if (cart.length === 0) return;
-        showPage('address-page');
-    }
+    function goToAddress() { showPage('address-page'); }
 
     function generateQR() {
         const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
@@ -262,7 +247,6 @@
     function confirmOrder() {
         const utr = document.getElementById('u-utr').value;
         if(!utr) return alert("Enter UTR!");
-        
         const oid = "VAR" + Math.floor(1000 + Math.random() * 9000);
         const productDetails = cart.map(item => `${item.name} (${item.color}) x${item.qty}`).join(", ");
         const finalPrice = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
@@ -277,22 +261,26 @@
         fd.append("orderID", oid);
         fd.append("product", productDetails);
 
-        fetch(scriptURL, { method: 'POST', body: fd })
-        .then(() => {
+        fetch(scriptURL, { method: 'POST', body: fd }).then(() => {
             let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
-            orders.push({orderID: oid, status: "Processing"});
+            orders.push({orderID: oid, status: "Processing", product: productDetails});
             localStorage.setItem('myOrders', JSON.stringify(orders));
-            cart = [];
-            updateCartCount();
-            showPage('success-page');
+            cart = []; updateCartCount(); showPage('success-page');
         });
+    }
+
+    function renderOrders() {
+        const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+        document.getElementById('orders-display-list').innerHTML = orders.map(o => `
+            <div style="border-bottom:1px solid #ddd; padding:10px 0;"><b>ID: ${o.orderID}</b><br>${o.product}<br><span style="color:orange;">${o.status}</span></div>
+        `).join('') || "No orders yet.";
     }
 
     function trackNow() {
         const id = document.getElementById('track-input').value.toUpperCase();
         const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
         const found = orders.find(o => o.orderID === id);
-        document.getElementById('track-msg').innerText = found ? `Status: ${found.status}` : "Order ID nahi mili.";
+        document.getElementById('track-msg').innerText = found ? `Status: ${found.status}` : "ID Not Found";
     }
 
     function filterData(l, b) {
