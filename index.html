@@ -1,24 +1,187 @@
-<!-- Design aur header wahi rahega jo aapke paas hai -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Varun Store | Pro Shop</title>
+    <style>
+        :root { --amz-navy: #131921; --amz-yellow: #febd69; --amz-orange: #f3a847; --bg: #f0f2f2; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); padding-bottom: 85px; color: #0f1111; }
 
+        /* HEADER */
+        header { background: var(--amz-navy); padding: 12px 15px; color: white; position: sticky; top: 0; z-index: 1000; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logo { font-size: 22px; font-weight: 800; cursor: pointer; color: white; text-decoration: none; }
+        .logo span { color: var(--amz-yellow); }
+        .cart-icon { font-size: 22px; cursor: pointer; position: relative; }
+        #cart-count { position: absolute; top: -8px; right: -10px; background: var(--amz-orange); font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
+
+        /* SEARCH & FILTERS */
+        .search-box { background: white; display: flex; border-radius: 6px; overflow: hidden; border: 1px solid #ccc; }
+        .search-box input { border: none; padding: 10px; width: 100%; outline: none; }
+        .search-box button { background: var(--amz-yellow); border: none; padding: 10px 15px; cursor: pointer; }
+        .filter-row { display: flex; gap: 8px; padding: 12px; background: #fff; overflow-x: auto; border-bottom: 1px solid #ddd; }
+        .f-btn { background: #fff; border: 1px solid #ccc; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .f-btn.active { background: var(--amz-navy); color: white; }
+
+        /* PAGES */
+        .page { display: none; padding: 10px; animation: fadeIn 0.2s; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GRID & CARDS */
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .p-card { background: white; border-radius: 8px; border: 1px solid #ddd; padding: 10px; text-align: center; cursor: pointer; }
+        .p-img { width: 100%; height: 130px; object-fit: contain; }
+        .detail-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        .color-option { display: inline-block; width: 30px; height: 30px; border-radius: 50%; margin: 10px 5px; cursor: pointer; border: 2px solid #ddd; }
+        .color-option.selected { border: 3px solid var(--amz-orange); transform: scale(1.1); }
+
+        /* BUTTONS */
+        .amz-btn { background: #FFD814; border: 1px solid #FCD200; border-radius: 20px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .amz-btn-orange { background: #FFA41C; border: 1px solid #FF8F00; }
+
+        /* FORMS */
+        input.form-input { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #888; border-radius: 6px; box-sizing: border-box; }
+
+        /* NAV */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; z-index: 1000;}
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; font-size: 10px; font-weight: 600; color: #555; cursor: pointer; }
+        .nav-item.active { color: var(--amz-orange); border-top: 3px solid var(--amz-orange); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-main">
+        <div class="logo" onclick="showPage('home-page')">VARUN<span>STORE</span></div>
+        <div class="cart-icon" onclick="openCart()">🛒<span id="cart-count">0</span></div>
+    </div>
+    <div class="search-box">
+        <input type="text" id="p-search" onkeyup="searchProducts()" placeholder="Search Products...">
+        <button onclick="searchProducts()">🔍</button>
+    </div>
+</header>
+
+<div class="filter-row">
+    <button class="f-btn active" onclick="filterData('all', this)">All Deals</button>
+    <button class="f-btn" onclick="filterData(99, this)">Under ₹99</button>
+    <button class="f-btn" onclick="filterData(149, this)">Under ₹149</button>
+</div>
+
+<!-- HOME PAGE -->
+<div id="home-page" class="page active-page">
+    <div class="p-grid" id="product-list"></div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div id="detail-page" class="page">
+    <div id="detail-content" class="detail-card"></div>
+</div>
+
+<!-- CART PAGE -->
 <div id="cart-page" class="page">
     <div class="detail-card">
-        <h3>Shopping Cart</h3>
+        <h3>Your Shopping Cart</h3>
         <div id="cart-items-list"></div>
-        <hr>
-        <div style="padding: 10px; font-size: 12px; color: #555;">
-            <p>🛡️ <b>7 Days Replacement</b></p>
-            <p>🚫 <b>No Cash on Delivery (Prepaid Only)</b></p>
-            <p>✅ <b>Guaranteed Product Quality</b></p>
-        </div>
-        <button class="amz-btn amz-btn-orange" onclick="checkoutFromCart()">Proceed to Buy</button>
+        <div id="cart-guidelines"></div>
+        <button class="amz-btn amz-btn-orange" onclick="goToAddress()">Proceed to Buy</button>
     </div>
 </div>
+
+<!-- ADDRESS PAGE -->
+<div id="address-page" class="page">
+    <div class="detail-card">
+        <h3>Delivery Details</h3>
+        <input type="text" id="u-name" class="form-input" placeholder="Full Name">
+        <input type="number" id="u-phone" class="form-input" placeholder="Phone Number">
+        <input type="text" id="u-address" class="form-input" placeholder="Full Address">
+        <input type="number" id="u-pin" class="form-input" placeholder="Pincode">
+        <button class="amz-btn amz-btn-orange" onclick="showPage('payment-page'); generateQR();">Continue to Payment</button>
+    </div>
+</div>
+
+<!-- PAYMENT PAGE -->
+<div id="payment-page" class="page">
+    <div class="detail-card" style="text-align:center;">
+        <h3>Scan to Pay</h3>
+        <div id="qr-area"></div>
+        <p>UPI ID: <b>varungoyal7910@pnb</b></p>
+        <input type="text" id="u-utr" class="form-input" placeholder="Enter Payment Ref / UTR No.">
+        <button class="amz-btn amz-btn-orange" onclick="confirmOrder()">Confirm Order</button>
+    </div>
+</div>
+
+<!-- TRACK PAGE -->
+<div id="track-page" class="page">
+    <div class="detail-card" style="text-align:center;">
+        <h3>Track Order</h3>
+        <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID">
+        <button class="amz-btn" onclick="trackNow()">Track Status</button>
+        <div id="track-msg" style="margin-top:15px; color:var(--amz-orange); font-weight:bold;"></div>
+    </div>
+</div>
+
+<!-- SUCCESS PAGE -->
+<div id="success-page" class="page" style="text-align:center; padding-top:50px;">
+    <h1 style="color:green;">✔️ Order Placed!</h1>
+    <p>Aapka order process ho raha hai.</p>
+    <button class="amz-btn" onclick="showPage('home-page')">Back to Home</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav>
+    <div class="nav-item active" id="n-home" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" id="n-orders" onclick="openCart()">🛒<br>Cart</div>
+    <div class="nav-item" id="n-track" onclick="showPage('track-page')">📍<br>Track</div>
+</nav>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec";
     
-    let cart = []; // Ab ye array hai Multiple items ke liye
-    let selectedColor = ""; // Starting mein khali
+    const products = [
+        { id: 1, name: "Premium Vlogging Mic", price: 99, mrp: 499, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", desc: "Best for YouTube vlogs." },
+        { id: 2, name: "Mini Tripod Stand", price: 149, mrp: 599, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", desc: "Stable and durable." },
+        { id: 3, name: "LED Ring Light", price: 199, mrp: 999, img: "https://m.media-amazon.com/images/I/61p-I6R+m7L._SL1500_.jpg", desc: "Professional studio light." }
+    ];
+
+    let cart = [];
+    let selectedColor = "";
+
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const navMap = {'home-page':'n-home', 'track-page':'n-track', 'cart-page':'n-orders'};
+        if(navMap[id]) document.getElementById(navMap[id]).classList.add('active');
+    }
+
+    function renderProducts(data) {
+        document.getElementById('product-list').innerHTML = data.map(p => `
+            <div class="p-card" onclick="viewProduct(${p.id})">
+                <img src="${p.img}" class="p-img">
+                <p style="font-size:12px; margin:5px 0;">${p.name}</p>
+                <b>₹${p.price}</b>
+            </div>
+        `).join('');
+    }
+
+    function viewProduct(id) {
+        const p = products.find(x => x.id === id);
+        selectedColor = ""; 
+        document.getElementById('detail-content').innerHTML = `
+            <img src="${p.img}" style="width:100%; height:180px; object-fit:contain;">
+            <h2>${p.name}</h2>
+            <p style="color:#B12704; font-size:20px; font-weight:bold;">₹${p.price}</p>
+            <p>${p.desc}</p>
+            <b>Select Color (Important):</b><br>
+            <div class="color-option" style="background:black;" onclick="selColor(this,'Black')"></div>
+            <div class="color-option" style="background:red;" onclick="selColor(this,'Red')"></div>
+            <div class="color-option" style="background:silver;" onclick="selColor(this,'Silver')"></div>
+            <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
+        `;
+        showPage('detail-page');
+    }
 
     function selColor(el, color) {
         document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
@@ -27,78 +190,80 @@
     }
 
     function addToCart(id) {
-        // Check if color is selected
-        if (selectedColor === "") {
-            alert("Bhai, pehle color select karo!");
-            return;
-        }
-
-        const product = products.find(x => x.id === id);
-        const itemInCart = cart.find(x => x.id === id && x.color === selectedColor);
-
-        if (itemInCart) {
-            itemInCart.qty++;
-        } else {
-            cart.push({...product, qty: 1, color: selectedColor});
-        }
+        if (!selectedColor) return alert("Bhai, pehle color select karna important hai!");
         
-        updateCartUI();
-        alert("Cart mein add ho gaya!");
-        selectedColor = ""; // Reset for next selection
+        const product = products.find(x => x.id === id);
+        const existing = cart.find(x => x.id === id && x.color === selectedColor);
+        
+        if (existing) existing.qty++;
+        else cart.push({...product, qty: 1, color: selectedColor});
+        
+        updateCartCount();
+        alert("Item Cart mein add ho gaya!");
         showPage('home-page');
     }
 
-    function updateCartUI() {
-        const count = cart.reduce((acc, item) => acc + item.qty, 0);
-        document.getElementById('cart-count').innerText = count;
+    function updateCartCount() {
+        const total = cart.reduce((acc, item) => acc + item.qty, 0);
+        document.getElementById('cart-count').innerText = total;
+    }
+
+    function openCart() {
+        if (cart.length === 0) return alert("Cart khali hai!");
         
         const list = document.getElementById('cart-items-list');
-        if (cart.length === 0) {
-            list.innerHTML = "<p>Cart khali hai!</p>";
-            return;
-        }
-
         list.innerHTML = cart.map((item, index) => `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                <div>
+                <div style="flex:1;">
                     <b style="font-size:14px;">${item.name}</b><br>
                     <small>Color: ${item.color} | ₹${item.price}</small>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <button onclick="changeQty(${index}, -1)" style="width:25px; height:25px; border:1px solid #ccc;">-</button>
+                    <button onclick="changeQty(${index}, -1)" style="width:25px; height:25px; background:#eee; border:1px solid #ccc;">-</button>
                     <b>${item.qty}</b>
-                    <button onclick="changeQty(${index}, 1)" style="width:25px; height:25px; border:1px solid #ccc;">+</button>
+                    <button onclick="changeQty(${index}, 1)" style="width:25px; height:25px; background:#eee; border:1px solid #ccc;">+</button>
                 </div>
             </div>
         `).join('');
+
+        document.getElementById('cart-guidelines').innerHTML = `
+            <div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:8px; border:1px dashed #ccc; font-size:13px;">
+                <p>🔄 <b>7 Days Replacement</b></p>
+                <p>🚫 <b>No Cash on Delivery</b></p>
+                <p>⭐ <b>Guaranteed Product</b></p>
+            </div>
+        `;
+        showPage('cart-page');
     }
 
     function changeQty(index, delta) {
         cart[index].qty += delta;
-        if (cart[index].qty <= 0) {
-            cart.splice(index, 1);
+        if (cart[index].qty <= 0) cart.splice(index, 1);
+        if (cart.length === 0) {
+            updateCartCount();
+            showPage('home-page');
+        } else {
+            updateCartCount();
+            openCart();
         }
-        updateCartUI();
     }
 
-    function openCart() {
-        updateCartUI();
-        showPage('cart-page');
-    }
-
-    function checkoutFromCart() {
-        if (cart.length === 0) return alert("Cart khali hai!");
+    function goToAddress() {
+        if (cart.length === 0) return;
         showPage('address-page');
     }
 
-    // Confirm Order function mein cart ka data bhejne ke liye:
+    function generateQR() {
+        const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+        const upi = `upi://pay?pa=varungoyal7910@pnb&pn=VarunStore&am=${total}&cu=INR`;
+        document.getElementById('qr-area').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upi)}">`;
+    }
+
     function confirmOrder() {
         const utr = document.getElementById('u-utr').value;
-        if(!utr) return alert("UTR Number dalo.");
+        if(!utr) return alert("Enter UTR!");
         
         const oid = "VAR" + Math.floor(1000 + Math.random() * 9000);
-        
-        // Sabhi items ko ek string mein convert karna Sheet ke liye
         const productDetails = cart.map(item => `${item.name} (${item.color}) x${item.qty}`).join(", ");
         const finalPrice = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
 
@@ -114,9 +279,34 @@
 
         fetch(scriptURL, { method: 'POST', body: fd })
         .then(() => {
+            let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+            orders.push({orderID: oid, status: "Processing"});
+            localStorage.setItem('myOrders', JSON.stringify(orders));
             cart = [];
-            updateCartUI();
+            updateCartCount();
             showPage('success-page');
         });
     }
+
+    function trackNow() {
+        const id = document.getElementById('track-input').value.toUpperCase();
+        const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+        const found = orders.find(o => o.orderID === id);
+        document.getElementById('track-msg').innerText = found ? `Status: ${found.status}` : "Order ID nahi mili.";
+    }
+
+    function filterData(l, b) {
+        document.querySelectorAll('.f-btn').forEach(btn => btn.classList.remove('active'));
+        b.classList.add('active');
+        renderProducts(l === 'all' ? products : products.filter(x => x.price <= l));
+    }
+
+    function searchProducts() {
+        const q = document.getElementById('p-search').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    renderProducts(products);
 </script>
+</body>
+</html>
