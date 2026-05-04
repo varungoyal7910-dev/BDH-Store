@@ -13,28 +13,25 @@
         .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: #000; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
 
-        /* Page Management */
         .page { display: none; padding: 20px; min-height: 80vh; animation: fadeIn 0.3s ease; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI Elements */
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; cursor: pointer; }
         .p-img { width: 100%; height: 150px; object-fit: cover; }
         .p-info { padding: 10px; text-align: center; }
 
-        input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; font-family: inherit; }
+        input, textarea { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
         .btn-main { background: var(--accent); color: #fff; border: none; padding: 18px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         
-        /* Navigation */
         nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; z-index: 1000; }
-        .nav-item { text-align: center; font-size: 10px; color: #888; flex: 1; cursor: pointer; transition: 0.2s; }
-        .nav-item.active { color: var(--accent); font-weight: bold; transform: translateY(-3px); }
+        .nav-item { text-align: center; font-size: 10px; color: #888; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--accent); font-weight: bold; }
 
-        /* Cards */
-        .info-card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 15px; border-left: 5px solid var(--accent); }
-        .help-link { color: var(--accent); text-decoration: none; font-weight: bold; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fff; margin-bottom: 10px; border-radius: 10px; }
+        .qty-btn { background: #eee; border: none; padding: 5px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .info-card { background: #fff; padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid var(--accent); }
     </style>
 </head>
 <body>
@@ -46,18 +43,29 @@
 
 <!-- PAGES -->
 <div id="home-page" class="page active-page">
-    <h2 style="margin-top:0;">Top Deals</h2>
     <div class="product-grid" id="product-list"></div>
+</div>
+
+<div id="cart-page" class="page">
+    <h2>Your Cart</h2>
+    <div id="cart-items-list"></div>
+    <div id="cart-summary"></div>
+</div>
+
+<div id="checkout-page" class="page">
+    <h2>Delivery Details</h2>
+    <input type="text" id="u-name" placeholder="Full Name">
+    <input type="number" id="u-phone" placeholder="Phone Number">
+    <textarea id="u-address" rows="3" placeholder="Full Address"></textarea>
+    <input type="number" id="u-pincode" placeholder="Pincode">
+    <button class="btn-main" onclick="goToPayment()">Next: Payment</button>
 </div>
 
 <div id="track-page" class="page">
     <h2>Track Order</h2>
-    <div class="info-card">
-        <p>Enter your Order ID (e.g., VAR1234) to see delivery status.</p>
-        <input type="text" id="track-id" placeholder="Enter Order ID">
-        <button class="btn-main" onclick="trackAction()">Track Now</button>
-        <div id="track-output" style="margin-top:15px;"></div>
-    </div>
+    <input type="text" id="track-id" placeholder="Enter Order ID">
+    <button class="btn-main" onclick="trackAction()">Track Now</button>
+    <div id="track-output"></div>
 </div>
 
 <div id="orders-page" class="page">
@@ -68,23 +76,9 @@
 <div id="help-page" class="page">
     <h2>Help & Support</h2>
     <div class="info-card">
-        <h3>Contact Us</h3>
-        <p>Bhai, agar koi problem aaye ya order confirm na ho raha ho, toh humein mail karein:</p>
-        <p>📧 Email: <a href="mailto:varungoyal7910@gmail.com" class="help-link">varungoyal7910@gmail.com</a></p>
-        <p>📱 WhatsApp: <b>+91 XXXXX XXXXX</b></p>
+        <p>Bhai, koi dikkat ho toh mail karein:</p>
+        <b>varungoyal7910@gmail.com</b>
     </div>
-    <div class="info-card">
-        <h3>Send Message</h3>
-        <input type="text" id="h-subject" placeholder="Issue Subject">
-        <textarea id="h-msg" rows="4" placeholder="Describe your problem..."></textarea>
-        <button class="btn-main" onclick="sendSupport()">Send Support Request</button>
-    </div>
-</div>
-
-<div id="cart-page" class="page">
-    <h2>Your Cart</h2>
-    <div id="cart-items"></div>
-    <div id="cart-total-area"></div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -96,104 +90,88 @@
 </nav>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxfoHDe7kKojTS6b_u0fkG_rrgliVXSDBeQnltEo5Xi8QNL7QDopaGNSGPSFn5neujG/exec";
-
     const products = [
         { id: 1, name: "Vlogging Mic", price: 298, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400" },
-        { id: 2, name: "Tripod Stand", price: 149, img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" },
-        { id: 3, name: "Ring Light", price: 599, img: "https://images.unsplash.com/photo-1526394931762-90052e97b376?w=400" }
+        { id: 2, name: "Tripod Stand", price: 149, img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" }
     ];
 
-    let cart = [];
+    let cart = {}; // Cart object for quantity management
 
-    // Page Switching
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
-        
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(id === 'home-page') document.getElementById('n-home').classList.add('active');
-        if(id === 'track-page') document.getElementById('n-track').classList.add('active');
-        if(id === 'orders-page') {
-            document.getElementById('n-orders').classList.add('active');
-            renderOrders();
-        }
-        if(id === 'help-page') document.getElementById('n-help').classList.add('active');
+        if(id.includes('home')) document.getElementById('n-home').classList.add('active');
         if(id === 'cart-page') renderCart();
-        window.scrollTo(0,0);
+        if(id === 'orders-page') renderOrders();
     }
 
-    // Home Setup
     function init() {
         document.getElementById('product-list').innerHTML = products.map(p => `
             <div class="p-card" onclick="addToCart(${p.id})">
                 <img src="${p.img}" class="p-img">
-                <div class="p-info"><b>${p.name}</b><br><span style="color:var(--accent)">₹${p.price}</span></div>
+                <div class="p-info"><b>${p.name}</b><br><span>₹${p.price}</span></div>
             </div>`).join('');
     }
 
     function addToCart(id) {
-        cart.push(products.find(x => x.id === id));
-        document.getElementById('cart-count').innerText = cart.length;
-        alert("Added to Bag!");
+        if(cart[id]) cart[id].qty++;
+        else cart[id] = { ...products.find(p => p.id === id), qty: 1 };
+        updateCartCount();
+        alert("Added to cart!");
     }
 
-    // Cart Logic
+    function updateCartCount() {
+        let count = Object.values(cart).reduce((a, b) => a + b.qty, 0);
+        document.getElementById('cart-count').innerText = count;
+    }
+
     function renderCart() {
-        const itemsDiv = document.getElementById('cart-items');
-        if(cart.length === 0) { itemsDiv.innerHTML = "<p>Cart empty hai bhai!</p>"; return; }
+        const list = document.getElementById('cart-items-list');
+        const items = Object.values(cart);
+        if(items.length === 0) { list.innerHTML = "Cart is empty."; return; }
         
-        let total = cart.reduce((a,b) => a + b.price, 0);
-        itemsDiv.innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #ddd;"><span>${i.name}</span><b>₹${i.price}</b></div>`).join('');
-        document.getElementById('cart-total-area').innerHTML = `<h3>Total: ₹${total}</h3><button class="btn-main" onclick="payNow(${total})">CONFIRM ORDER</button>`;
+        list.innerHTML = items.map(i => `
+            <div class="cart-item">
+                <div><b>${i.name}</b><br>₹${i.price * i.qty}</div>
+                <div>
+                    <button class="qty-btn" onclick="changeQty(${i.id}, -1)">-</button>
+                    <span style="margin:0 10px">${i.qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${i.id}, 1)">+</button>
+                </div>
+            </div>`).join('');
+        
+        let total = items.reduce((a, b) => a + (b.price * b.qty), 0);
+        document.getElementById('cart-summary').innerHTML = `<h3>Total: ₹${total}</h3><button class="btn-main" onclick="showPage('checkout-page')">Checkout Now</button>`;
     }
 
-    async function payNow(total) {
-        const utr = prompt("Scan and Pay ₹"+total+"\nUPI: varungoyal7910@pnb\n\n12-digit UTR No. dalo:");
-        if(!utr || utr.length < 10) return;
+    function changeQty(id, val) {
+        cart[id].qty += val;
+        if(cart[id].qty <= 0) delete cart[id];
+        renderCart();
+        updateCartCount();
+    }
 
+    function goToPayment() {
+        const name = document.getElementById('u-name').value;
+        if(!name) return alert("Pehle details bharo!");
+        alert("Payment Page: Scan UPI and Enter UTR");
+        finalizeOrder();
+    }
+
+    function finalizeOrder() {
         const orderID = "VAR" + Math.floor(1000 + Math.random() * 9000);
-        const data = { orderID, total, utr, date: new Date().toLocaleDateString() };
-
         let history = JSON.parse(localStorage.getItem('myOrders')) || [];
-        history.push(data);
+        history.push({ orderID, date: new Date().toLocaleDateString(), status: 'Pending' });
         localStorage.setItem('myOrders', JSON.stringify(history));
-
-        alert("Order Placed! ID: " + orderID);
-        cart = []; document.getElementById('cart-count').innerText = "0";
+        cart = {}; updateCartCount();
         showPage('orders-page');
     }
 
-    // Orders History
     function renderOrders() {
         const list = document.getElementById('order-history-list');
         let history = JSON.parse(localStorage.getItem('myOrders')) || [];
-        if(history.length === 0) { list.innerHTML = "<p>No orders yet.</p>"; return; }
-        
-        list.innerHTML = history.reverse().map(o => `
-            <div class="info-card">
-                <b>Order: ${o.orderID}</b><br>
-                Date: ${o.date} | Total: ₹${o.total}<br>
-                <span style="color:orange">● Status: Checking Payment</span>
-            </div>
-        `).join('');
-    }
-
-    // Track Feature
-    function trackAction() {
-        const id = document.getElementById('track-id').value;
-        const out = document.getElementById('track-output');
-        if(!id) return;
-        out.innerHTML = `<div class="info-card" style="border-left-color:green;"><b>Status for ${id}:</b><br>📦 Packing in progress. Delivery expected in 2 days.</div>`;
-    }
-
-    // Support Logic
-    function sendSupport() {
-        const sub = document.getElementById('h-subject').value;
-        const msg = document.getElementById('h-msg').value;
-        if(!sub || !msg) return alert("Pehle message likho!");
-        alert("Aapka message varungoyal7910@gmail.com par bhej diya gaya hai. Hum jaldi reply karenge.");
-        showPage('home-page');
+        list.innerHTML = history.reverse().map(o => `<div class="info-card">ID: ${o.orderID} | ${o.date}<br>Status: ${o.status}</div>`).join('');
     }
 
     init();
