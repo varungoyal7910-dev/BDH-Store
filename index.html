@@ -3,54 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART | Premium Store</title>
+    <title>GOCART | Shop Premium</title>
     <style>
-        :root { --main-navy: #131921; --accent-gold: #FFD814; --premium-orange: #FF9900; --soft-bg: #F7F8FA; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--soft-bg); padding-bottom: 100px; color: #111; }
+        :root { --amz-navy: #131921; --amz-orange: #febd69; --amz-btn: #f3a847; --bg: #f0f2f2; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; color: #0f1111; }
 
-        /* PREMIUM HEADER */
-        header { background: var(--main-navy); padding: 15px; color: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .logo { font-size: 24px; font-weight: 900; cursor: pointer; color: white; text-decoration: none; }
-        .logo span { color: var(--premium-orange); }
+        /* PROFESSIONAL HEADER */
+        header { background: var(--amz-navy); padding: 12px 15px; color: white; position: sticky; top: 0; z-index: 1000; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logo { font-size: 22px; font-weight: 800; cursor: pointer; text-decoration: none; color: white; letter-spacing: 0.5px; }
+        .logo span { color: var(--amz-orange); }
+        .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
+        #cart-count { position: absolute; top: -5px; right: -8px; background: #e47911; color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: 800; }
 
-        /* URGENCY BAR */
-        .urgency-bar { background: #fee2e2; color: #b91c1c; padding: 8px; text-align: center; font-size: 13px; font-weight: 700; border-bottom: 1px solid #fecaca; }
+        /* SEARCH BAR */
+        .search-box { background: white; display: flex; border-radius: 4px; overflow: hidden; height: 40px; }
+        .search-box input { border: none; padding: 0 12px; width: 100%; outline: none; font-size: 14px; }
+        .search-box button { background: var(--amz-orange); border: none; padding: 0 15px; cursor: pointer; }
 
-        /* PRODUCT CARDS */
-        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; }
-        .p-card { background: white; border-radius: 12px; padding: 12px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; position: relative; }
-        .p-img { width: 100%; height: 130px; object-fit: contain; }
-        .p-name { font-size: 13px; font-weight: 600; margin: 8px 0 2px 0; height: 32px; overflow: hidden; }
-        
-        /* RATING & STOCK */
-        .rating { color: #ffa41c; font-size: 12px; margin-bottom: 5px; }
-        .stock-left { color: #d91e18; font-size: 11px; font-weight: 800; animation: blink 1.5s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        /* DEAL BAR */
+        .deal-bar { background: #232f3e; color: white; padding: 8px; text-align: center; font-size: 13px; font-weight: 500; }
+        #timer { color: var(--amz-orange); font-weight: 800; }
+
+        /* PRODUCT GRID */
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .p-card { background: white; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; cursor: pointer; }
+        .p-img { width: 100%; height: 140px; object-fit: contain; margin-bottom: 8px; }
+        .p-name { font-size: 14px; line-height: 1.2; height: 34px; overflow: hidden; margin-bottom: 4px; }
+        .rating { color: #ffa41c; font-size: 12px; margin-bottom: 4px; }
+        .p-price { font-size: 17px; font-weight: 700; color: #B12704; }
+        .stock-tag { color: #b12704; font-size: 11px; font-weight: 700; margin-top: 5px; }
+
+        /* FLOATING MAIL HELP */
+        .help-tab { position: fixed; bottom: 90px; right: 15px; background: white; color: #555; padding: 8px 15px; border-radius: 20px; font-weight: 600; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 999; text-decoration: none; border: 1px solid #ddd; display: flex; align-items: center; gap: 6px; font-size: 13px; }
 
         /* BUTTONS */
-        .amz-btn { background: var(--accent-gold); border: none; border-radius: 10px; padding: 14px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; }
-        .amz-btn-orange { background: linear-gradient(180deg, #FFB84D, #FF9900); color: white; }
+        .amz-btn { background: #FFD814; border: 1px solid #FCD200; border-radius: 8px; padding: 12px; width: 100%; font-weight: 500; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .amz-btn-orange { background: #FFA41C; border-color: #FF8F00; }
 
         /* PAGES */
-        .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
+        .page { display: none; }
         .active-page { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .container { background: white; padding: 20px; margin: 10px; border-radius: 8px; }
 
         /* NAV */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; padding: 10px 0; z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; font-size: 11px; font-weight: 700; color: #888; }
-        .nav-item.active { color: var(--main-navy); }
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; height: 65px; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; padding-top: 12px; font-size: 11px; color: #555; cursor: pointer; font-weight: 600; }
+        .nav-item.active { color: var(--amz-navy); border-top: 3px solid #e47911; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo" onclick="showPage('home-page')">GO<span>CART</span></div>
+    <div class="header-main">
+        <div class="logo" onclick="showPage('home-page')">GO<span>CART</span></div>
+        <div class="cart-icon" onclick="openCart()">🛒<span id="cart-count">0</span></div>
+    </div>
+    <div class="search-box">
+        <input type="text" placeholder="Search GOCART.in" id="p-search" onkeyup="searchProducts()">
+        <button onclick="searchProducts()">🔍</button>
+    </div>
 </header>
 
-<div class="urgency-bar">
-    🔥 Limited Time Deal: Sale Ends in <span id="timer">05:00</span>
-</div>
+<div class="deal-bar">Limited Time Deal: Ends in <span id="timer">05:00</span></div>
+
+<a href="mailto:varungoyal7910@gmail.com" class="help-tab">✉️ Mail Help</a>
 
 <!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
@@ -59,66 +76,54 @@
 
 <!-- DETAIL PAGE -->
 <div id="detail-page" class="page">
-    <div id="detail-content" style="background:white; border-radius:15px; padding:20px;"></div>
+    <div id="detail-content" class="container"></div>
 </div>
 
 <!-- CART PAGE -->
 <div id="cart-page" class="page">
-    <div style="background:white; border-radius:15px; padding:20px;">
-        <h3>Your Cart</h3>
+    <div class="container">
+        <h3>Shopping Cart</h3>
         <div id="cart-items-list"></div>
-        <button class="amz-btn amz-btn-orange" onclick="showPage('address-page')">Checkout Now</button>
+        <button class="amz-btn amz-btn-orange" onclick="showPage('address-page')">Proceed to Checkout</button>
     </div>
 </div>
 
-<!-- ADDRESS PAGE -->
+<!-- ADDRESS & PAYMENT (BAAKI LOGIC SAME HAI) -->
 <div id="address-page" class="page">
-    <div style="background:white; border-radius:15px; padding:20px;">
-        <h3>Delivery Details</h3>
-        <input type="text" id="u-name" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400;" placeholder="Full Name">
-        <input type="number" id="u-phone" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400;" placeholder="Phone Number">
-        <textarea id="u-address" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd; text-align:left; font-weight:400; height:60px;" placeholder="Full Address"></textarea>
+    <div class="container">
+        <h3>Delivery Address</h3>
+        <input type="text" id="u-name" class="amz-btn" style="background:white; text-align:left;" placeholder="Full Name">
+        <input type="number" id="u-phone" class="amz-btn" style="background:white; text-align:left;" placeholder="Mobile Number">
+        <textarea id="u-address" class="amz-btn" style="background:white; text-align:left; height:60px;" placeholder="Full Address"></textarea>
         <button class="amz-btn amz-btn-orange" onclick="showPage('payment-page'); generateQR();">Continue</button>
     </div>
 </div>
 
-<!-- PAYMENT PAGE -->
 <div id="payment-page" class="page">
-    <div style="background:white; border-radius:15px; padding:20px; text-align:center;">
-        <h3>Scan & Pay</h3>
+    <div class="container" style="text-align:center;">
+        <h3>Secure Payment</h3>
         <div id="qr-area"></div>
         <p>UPI ID: <b>varungoyal7910@pnb</b></p>
-        <input type="text" id="u-utr" class="amz-btn" style="background:#f9f9f9; border:1px solid #ddd;" placeholder="Enter UTR No.">
-        <button class="amz-btn amz-btn-orange" onclick="confirmOrder()">Confirm Order</button>
+        <input type="text" id="u-utr" class="amz-btn" style="background:white;" placeholder="Enter UTR / Transaction ID">
+        <button class="amz-btn amz-btn-orange" onclick="confirmOrder()">Verify & Place Order</button>
     </div>
 </div>
 
 <nav>
-    <div class="nav-item active" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" onclick="showPage('cart-page')">🛒<br>Cart</div>
-    <div class="nav-item" onclick="showPage('track-page')">📍<br>Track</div>
+    <div class="nav-item active" id="n-home" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" id="n-orders" onclick="showPage('orders-page')">📦<br>Orders</div>
+    <div class="nav-item" id="n-track" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec";
-
+    
     const products = [
-        { id: 1, name: "Premium Vlogging Mic", price: 99, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", rating: 4.8, stock: 4 },
-        { id: 2, name: "Professional Mini Tripod", price: 149, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", rating: 4.5, stock: 7 }
+        { id: 1, name: "Premium Vlogging Mic with Noise Cancellation", price: 99, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", rating: "4.8", stock: 8 },
+        { id: 2, name: "Professional Mini Tripod for Mobile", price: 149, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", rating: "4.5", stock: 4 }
     ];
 
     let cart = [];
-
-    // TIMER LOGIC
-    function startTimer(duration, display) {
-        let timer = duration, minutes, seconds;
-        setInterval(() => {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
-            if (--timer < 0) timer = duration;
-        }, 1000);
-    }
 
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
@@ -131,9 +136,9 @@
             <div class="p-card" onclick="viewProduct(${p.id})">
                 <img src="${p.img}" class="p-img">
                 <div class="p-name">${p.name}</div>
-                <div class="rating">⭐⭐⭐⭐⭐ (${p.rating})</div>
-                <div style="font-weight:800; font-size:16px;">₹${p.price}</div>
-                <div class="stock-left">⚠️ Only ${p.stock} left in stock</div>
+                <div class="rating">⭐⭐⭐⭐⭐ ${p.rating}</div>
+                <div class="p-price">₹${p.price}</div>
+                <div class="stock-tag">Only ${p.stock} left in stock - order soon.</div>
             </div>
         `).join('');
     }
@@ -141,16 +146,18 @@
     function viewProduct(id) {
         const p = products.find(x => x.id === id);
         document.getElementById('detail-content').innerHTML = `
-            <img src="${p.img}" style="width:100%; height:200px; object-fit:contain;">
+            <img src="${p.img}" style="width:100%; height:250px; object-fit:contain;">
             <h2>${p.name}</h2>
-            <div class="rating" style="font-size:18px;">⭐⭐⭐⭐⭐ 4.8/5</div>
-            <div style="color:#B12704; font-size:24px; font-weight:800; margin:10px 0;">₹${p.price}</div>
-            <p style="color:green; font-weight:700;">In Stock (Limited Quantity)</p>
-            <div style="background:#fff9f0; border:1px solid #ffe8cc; border-radius:10px; padding:10px; margin:15px 0;">
-                <p style="margin:5px 0; font-size:13px;">🔄 7 Days Replacement</p>
-                <p style="margin:5px 0; font-size:13px;">🚫 No COD (Prepaid Only)</p>
+            <div class="rating">⭐⭐⭐⭐⭐ 4.8 out of 5</div>
+            <hr style="border:0; border-top:1px solid #eee;">
+            <div class="p-price" style="font-size:24px;">₹${p.price}</div>
+            <p style="color:green; font-weight:700;">In Stock.</p>
+            <div style="background:#fff9f0; padding:15px; border-radius:8px; border:1px solid #ffe8cc; font-size:13px;">
+                <p>🔄 7 Days Replacement</p>
+                <p>🚫 No Cash on Delivery</p>
             </div>
-            <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
+            <button class="amz-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+            <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id}); showPage('cart-page');">Buy Now</button>
         `;
         showPage('detail-page');
     }
@@ -158,19 +165,20 @@
     function addToCart(id) {
         const p = products.find(x => x.id === id);
         cart.push(p);
-        alert("Added to Cart!");
-        showPage('cart-page');
-        renderCart();
+        document.getElementById('cart-count').innerText = cart.length;
+        alert("Added to Cart");
     }
 
-    function renderCart() {
+    function openCart() {
+        if(cart.length === 0) return alert("Cart is Empty");
         const list = document.getElementById('cart-items-list');
         list.innerHTML = cart.map((item, index) => `
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
                 <div><b>${item.name}</b><br>₹${item.price}</div>
-                <button onclick="cart.splice(${index},1); renderCart();">Remove</button>
+                <button onclick="cart.splice(${index},1); openCart(); document.getElementById('cart-count').innerText = cart.length;">Remove</button>
             </div>
-        `).join('') || "Cart is empty.";
+        `).join('');
+        showPage('cart-page');
     }
 
     function generateQR() {
@@ -181,15 +189,31 @@
 
     function confirmOrder() {
         const utr = document.getElementById('u-utr').value;
-        if(utr.length < 5) return alert("Enter valid UTR!");
-        alert("Order Placed Successfully!");
-        showPage('home-page');
+        if(utr.length < 8) return alert("Invalid UTR");
+        
+        const oid = "GO" + Math.floor(Math.random()*9000);
+        const fd = new FormData();
+        fd.append("orderID", oid);
+        fd.append("paymentRef", utr);
+        fd.append("totalPrice", cart.reduce((s,i)=>s+i.price, 0));
+
+        fetch(scriptURL, { method: 'POST', body: fd }).then(() => {
+            alert("Order Placed! ID: " + oid);
+            cart = []; document.getElementById('cart-count').innerText = 0;
+            showPage('home-page');
+        });
     }
 
-    window.onload = () => {
-        renderProducts();
-        startTimer(300, document.getElementById('timer'));
-    };
+    // TIMER
+    let time = 300;
+    setInterval(() => {
+        let m = Math.floor(time/60);
+        let s = time%60;
+        document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
+        if(time>0) time--;
+    }, 1000);
+
+    renderProducts();
 </script>
 </body>
 </html>
