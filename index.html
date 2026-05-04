@@ -6,22 +6,30 @@
     <title>Varun Store</title>
     <style>
         :root { --accent: #e91e63; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
         header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
         .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: red; color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
 
-        /* Search & Filter Bar */
-        .search-container { padding: 10px 15px; display: flex; gap: 10px; }
-        .search-bar { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .filter-btn { padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
+        /* Search & Filter Section */
+        .search-area { background: #fff; padding: 10px 15px; position: sticky; top: 55px; z-index: 90; border-bottom: 1px solid #eee; }
+        .search-container { display: flex; gap: 10px; align-items: center; }
+        .search-bar { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; background: #f9f9f9; }
+        .filter-logo { font-size: 20px; cursor: pointer; padding: 5px; border-radius: 5px; transition: 0.3s; }
+        .filter-logo:active { background: #eee; }
+
+        /* Side Scrolling Filter Chips */
+        .filter-chips { display: none; gap: 10px; overflow-x: auto; padding: 10px 0 5px; white-space: nowrap; scrollbar-width: none; }
+        .filter-chips::-webkit-scrollbar { display: none; }
+        .chip { display: inline-block; padding: 6px 15px; background: #fff; border: 1px solid #ddd; border-radius: 20px; font-size: 13px; cursor: pointer; color: #555; }
+        .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .p-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; padding-bottom: 10px; }
         .p-img { width: 100%; height: 140px; object-fit: cover; }
-        .p-name { font-size: 14px; margin: 8px 0 4px; font-weight: 600; }
+        .p-name { font-size: 14px; margin: 8px 0 4px; font-weight: 600; padding: 0 5px; }
         .p-price { color: var(--accent); font-weight: bold; margin-bottom: 10px; display: block; }
         .btn-add { background: var(--accent); color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 90%; font-size: 13px; }
 
@@ -32,9 +40,6 @@
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
         .overlay-content { background: #fff; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; position: relative; }
         .close-btn { position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: #333; }
-
-        .qty-box { display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 5px 10px; border-radius: 5px; }
-        .qty-btn { border: none; background: #ddd; padding: 2px 8px; border-radius: 3px; cursor: pointer; }
         
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         .copy-btn { background: #f0f0f0; border: 1px solid #ccc; padding: 5px 8px; border-radius: 5px; font-size: 12px; cursor: pointer; margin-top: 5px; }
@@ -50,9 +55,19 @@
 </header>
 
 <div id="home-page">
-    <div class="search-container">
-        <input type="text" id="search-input" class="search-bar" placeholder="Search products..." onkeyup="filterProducts()">
-        <button class="filter-btn" onclick="togglePriceFilter()">⚖️</button>
+    <div class="search-area">
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-bar" placeholder="Search products..." onkeyup="filterBySearch()">
+            <div class="filter-logo" onclick="toggleFilterMenu()">⚖️</div>
+        </div>
+        <div id="filter-menu" class="filter-chips">
+            <div class="chip" onclick="applyFilter('all', this)">All</div>
+            <div class="chip" onclick="applyFilter('low-high', this)">Low to High</div>
+            <div class="chip" onclick="applyFilter('99', this)">Under 99</div>
+            <div class="chip" onclick="applyFilter('149', this)">Under 149</div>
+            <div class="chip" onclick="applyFilter('199', this)">Under 199</div>
+            <div class="chip" onclick="applyFilter('499', this)">Under 499</div>
+        </div>
     </div>
     <div id="product-list" class="container"></div>
 </div>
@@ -90,13 +105,14 @@
     const products = [
         { id: 1, name: "Premium Phone Case", price: 199, img: "https://via.placeholder.com/150" },
         { id: 2, name: "Bluetooth Earbuds", price: 499, img: "https://via.placeholder.com/150" },
-        { id: 3, name: "Charging Cable", price: 99, img: "https://via.placeholder.com/150" }
+        { id: 3, name: "USB Data Cable", price: 89, img: "https://via.placeholder.com/150" },
+        { id: 4, name: "Glass Protector", price: 49, img: "https://via.placeholder.com/150" },
+        { id: 5, name: "Wall Adapter", price: 145, img: "https://via.placeholder.com/150" }
     ];
 
     let cart = [];
     let userData = {};
     let timerInterval;
-    let filteredProducts = [...products];
 
     function renderProducts(data = products) {
         const list = document.getElementById('product-list');
@@ -110,15 +126,30 @@
     }
     renderProducts();
 
-    function filterProducts() {
+    function toggleFilterMenu() {
+        const menu = document.getElementById('filter-menu');
+        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function filterBySearch() {
         const query = document.getElementById('search-input').value.toLowerCase();
         const matches = products.filter(p => p.name.toLowerCase().includes(query));
         renderProducts(matches);
     }
 
-    function togglePriceFilter() {
-        const sorted = [...products].sort((a,b) => a.price - b.price);
-        renderProducts(sorted);
+    function applyFilter(type, el) {
+        // Chip highlight logic
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+
+        let result = [...products];
+        if(type === 'low-high') result.sort((a,b) => a.price - b.price);
+        else if(type === '99') result = products.filter(p => p.price <= 99);
+        else if(type === '149') result = products.filter(p => p.price <= 149);
+        else if(type === '199') result = products.filter(p => p.price <= 199);
+        else if(type === '499') result = products.filter(p => p.price <= 499);
+        
+        renderProducts(result);
     }
 
     function addToCart(id) {
@@ -192,7 +223,7 @@
                 <div class="timer-badge">⏱ Time Left: <span id="timer">02:00</span></div>
                 <h3>Payment</h3>
                 <p>Pay <b>₹${total}</b> to:</p>
-                <div style="background:#eee; padding:10px; border-radius:8px; display:inline-block;">
+                <div style="background:#eee; padding:10px; border-radius:8px; display:inline-block; margin-bottom:10px;">
                     <span id="upi-text">${upiID}</span>
                 </div><br>
                 <button class="copy-btn" onclick="copyUPI()">Copy UPI ID</button>
