@@ -8,13 +8,16 @@
         :root { --accent: #e91e63; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
         
-        /* Header Design */
         header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
         .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: red; color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
 
-        /* Product Grid */
+        /* Search & Filter Bar */
+        .search-container { padding: 10px 15px; display: flex; gap: 10px; }
+        .search-bar { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        .filter-btn { padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
+
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .p-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; padding-bottom: 10px; }
         .p-img { width: 100%; height: 140px; object-fit: cover; }
@@ -22,20 +25,20 @@
         .p-price { color: var(--accent); font-weight: bold; margin-bottom: 10px; display: block; }
         .btn-add { background: var(--accent); color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 90%; font-size: 13px; }
 
-        /* Navigation */
-        nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; }
+        nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; z-index: 1000; }
         .nav-item { text-align: center; font-size: 12px; color: #666; cursor: pointer; }
         .nav-item.active { color: var(--accent); font-weight: bold; }
 
-        /* Overlays */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
-        .overlay-content { background: #fff; width: 100%; max-height: 80vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; }
-        .close-btn { float: right; font-size: 20px; cursor: pointer; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
+        .overlay-content { background: #fff; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; position: relative; }
+        .close-btn { position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: #333; }
 
         .qty-box { display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 5px 10px; border-radius: 5px; }
         .qty-btn { border: none; background: #ddd; padding: 2px 8px; border-radius: 3px; cursor: pointer; }
         
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .copy-btn { background: #f0f0f0; border: 1px solid #ccc; padding: 5px 8px; border-radius: 5px; font-size: 12px; cursor: pointer; margin-top: 5px; }
+        .timer-badge { background: #ffebee; color: #c62828; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 14px; display: inline-block; margin-bottom: 10px; }
         .hidden { display: none; }
     </style>
 </head>
@@ -46,30 +49,32 @@
     <div class="cart-icon" onclick="openCart()">🛒 <span class="cart-count" id="cart-count">0</span></div>
 </header>
 
-<div id="home-page" class="container"></div>
+<div id="home-page">
+    <div class="search-container">
+        <input type="text" id="search-input" class="search-bar" placeholder="Search products..." onkeyup="filterProducts()">
+        <button class="filter-btn" onclick="togglePriceFilter()">⚖️</button>
+    </div>
+    <div id="product-list" class="container"></div>
+</div>
 
-<!-- My Orders Page -->
 <div id="orders-page" class="hidden" style="padding:20px;">
     <h3>My Orders</h3>
     <div id="orders-list"></div>
 </div>
 
-<!-- Tracking Page -->
 <div id="track-page" class="hidden" style="padding:20px;">
     <h3>Track Order</h3>
-    <input type="text" id="track-input" placeholder="Enter Order ID (e.g. VAR1234)">
+    <input type="text" id="track-input" placeholder="Enter Order ID">
     <button class="btn-add" onclick="trackOrder()" style="width:100%; margin-top:10px;">Track Now</button>
     <div id="track-result" style="margin-top:20px; font-weight:bold;"></div>
 </div>
 
-<!-- Navigation Bar -->
 <nav>
     <div class="nav-item active" onclick="switchPage('home', this)">🏠<br>Home</div>
     <div class="nav-item" onclick="switchPage('orders', this)">📋<br>Orders</div>
     <div class="nav-item" onclick="switchPage('track', this)">📦<br>Track</div>
 </nav>
 
-<!-- Main Overlay (Cart/Address/Payment) -->
 <div id="main-overlay" class="overlay">
     <div class="overlay-content">
         <span class="close-btn" onclick="closeOverlay()">×</span>
@@ -77,22 +82,25 @@
     </div>
 </div>
 
-<!-- Audio for Confirmation -->
 <audio id="conf-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxRdHR1HZ0KH-pvJUK4djXm5mtJnYWCgyQCSqyTK_Rg1zSbyf_E9LpPJHTbfBy9Zw7V/exec";
+    const upiID = "varungoyal7910@pnb";
     const products = [
         { id: 1, name: "Premium Phone Case", price: 199, img: "https://via.placeholder.com/150" },
-        { id: 2, name: "Bluetooth Earbuds", price: 499, img: "https://via.placeholder.com/150" }
+        { id: 2, name: "Bluetooth Earbuds", price: 499, img: "https://via.placeholder.com/150" },
+        { id: 3, name: "Charging Cable", price: 99, img: "https://via.placeholder.com/150" }
     ];
 
     let cart = [];
     let userData = {};
+    let timerInterval;
+    let filteredProducts = [...products];
 
-    function init() {
-        const list = document.getElementById('home-page');
-        list.innerHTML = products.map(p => `
+    function renderProducts(data = products) {
+        const list = document.getElementById('product-list');
+        list.innerHTML = data.map(p => `
             <div class="p-card">
                 <img src="${p.img}" class="p-img">
                 <div class="p-name">${p.name}</div>
@@ -100,7 +108,18 @@
                 <button class="btn-add" onclick="addToCart(${p.id})">Add to Bag</button>
             </div>`).join('');
     }
-    init();
+    renderProducts();
+
+    function filterProducts() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const matches = products.filter(p => p.name.toLowerCase().includes(query));
+        renderProducts(matches);
+    }
+
+    function togglePriceFilter() {
+        const sorted = [...products].sort((a,b) => a.price - b.price);
+        renderProducts(sorted);
+    }
 
     function addToCart(id) {
         let item = cart.find(x => x.id === id);
@@ -134,7 +153,7 @@
                     <span>${i.qty}</span>
                     <button class="qty-btn" onclick="updateQty(${i.id}, 1)">+</button>
                 </div>
-            </div>`).join('') + `<hr><h4>Total: ₹${total}</h4><button class="btn-add" style="width:100%" onclick="openAddress(${total})">Checkout</button>`;
+            </div>`).join('') + `<hr><h4>Total: ₹${total}</h4><button class="btn-add" style="width:100%" onclick="openAddress(${total})">Proceed Checkout</button>`;
     }
 
     function updateQty(id, change) {
@@ -149,11 +168,11 @@
     function openAddress(total) {
         document.getElementById('overlay-body').innerHTML = `
             <h3>Shipping Details</h3>
-            <input type="text" id="name" placeholder="Name">
-            <input type="text" id="phone" placeholder="Phone">
+            <input type="text" id="name" placeholder="Full Name">
+            <input type="text" id="phone" placeholder="Phone Number">
             <input type="text" id="address" placeholder="Full Address">
             <input type="text" id="pin" placeholder="Pincode">
-            <button class="btn-add" style="width:100%" onclick="saveAddress(${total})">Next</button>`;
+            <button class="btn-add" style="width:100%" onclick="saveAddress(${total})">Payment Page</button>`;
     }
 
     function saveAddress(total) {
@@ -163,33 +182,59 @@
             addr: document.getElementById('address').value, 
             pin: document.getElementById('pin').value 
         };
-        if(!userData.name || !userData.phone || !userData.addr) return alert("Fill all fields!");
+        if(!userData.name || !userData.phone || !userData.addr) return alert("Fill all details!");
         openPayment(total);
     }
 
     function openPayment(total) {
         document.getElementById('overlay-body').innerHTML = `
-            <h3>Payment</h3>
-            <p>Pay ₹${total} to <b>varungoyal17910@pnb</b></p>
-            <input type="text" id="pay-ref" placeholder="Enter Transaction Ref ID">
-            <button class="btn-add" style="width:100%" onclick="confirmOrder(${total})">Confirm Order</button>`;
+            <div style="text-align:center;">
+                <div class="timer-badge">⏱ Time Left: <span id="timer">02:00</span></div>
+                <h3>Payment</h3>
+                <p>Pay <b>₹${total}</b> to:</p>
+                <div style="background:#eee; padding:10px; border-radius:8px; display:inline-block;">
+                    <span id="upi-text">${upiID}</span>
+                </div><br>
+                <button class="copy-btn" onclick="copyUPI()">Copy UPI ID</button>
+                <input type="text" id="pay-ref" placeholder="Enter Transaction Ref ID (UTR)">
+                <button class="btn-add" style="width:100%; margin-top:10px;" onclick="confirmOrder(${total})">Confirm Order</button>
+            </div>`;
+        startTimer(120);
+    }
+
+    function copyUPI() {
+        navigator.clipboard.writeText(upiID);
+        alert("UPI ID Copied!");
+    }
+
+    function startTimer(duration) {
+        let time = duration;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            let mins = Math.floor(time / 60);
+            let secs = time % 60;
+            document.getElementById('timer').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            if (--time < 0) {
+                clearInterval(timerInterval);
+                alert("Time Out! Please try again.");
+                closeOverlay();
+            }
+        }, 1000);
     }
 
     async function confirmOrder(total) {
         const ref = document.getElementById('pay-ref').value;
-        if(!ref) return alert("Enter Ref ID!");
+        if(!ref) return alert("Please enter Transaction ID!");
         
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
         const orderData = { ...userData, total, payRef: ref, orderID, date: new Date().toLocaleString() };
 
         document.getElementById('overlay-body').innerHTML = "<h4>Processing Order...</h4>";
-
-        // Sound Play [CONFIRMATION SOUND]
         document.getElementById('conf-sound').play();
+        clearInterval(timerInterval);
 
         await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(orderData) });
 
-        // Save to My Orders
         let history = JSON.parse(localStorage.getItem('myOrders')) || [];
         history.unshift(orderData);
         localStorage.setItem('myOrders', JSON.stringify(history));
@@ -198,7 +243,7 @@
             <div style="text-align:center;">
                 <h2 style="color:green;">✔ Order Placed!</h2>
                 <p>Order ID: <b>${orderID}</b></p>
-                <button class="btn-add" onclick="location.reload()">Continue Shopping</button>
+                <button class="btn-add" onclick="location.reload()">Done</button>
             </div>`;
         cart = []; updateUI();
     }
@@ -208,7 +253,7 @@
         document.getElementById('orders-list').innerHTML = list.length ? list.map(o => `
             <div style="background:#fff; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid #eee;">
                 <b>ID: ${o.orderID}</b><br>Total: ₹${o.total} | ${o.date}
-            </div>`).join('') : "No orders found.";
+            </div>`).join('') : "No orders yet.";
     }
 
     function trackOrder() {
@@ -222,7 +267,10 @@
             });
     }
 
-    function closeOverlay() { document.getElementById('main-overlay').style.display = 'none'; }
+    function closeOverlay() { 
+        document.getElementById('main-overlay').style.display = 'none'; 
+        clearInterval(timerInterval);
+    }
 </script>
 </body>
 </html>
