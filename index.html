@@ -1,102 +1,254 @@
-<!-- ... (Pichla CSS wahi rahega) ... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Varun Store | Pro Shop</title>
+    <style>
+        :root { --amz-navy: #131921; --amz-yellow: #febd69; --amz-orange: #f3a847; --bg: #f0f2f2; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); padding-bottom: 85px; color: #0f1111; }
+
+        /* HEADER */
+        header { background: var(--amz-navy); padding: 12px 15px; color: white; position: sticky; top: 0; z-index: 1000; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logo { font-size: 22px; font-weight: 800; cursor: pointer; color: white; text-decoration: none; }
+        .logo span { color: var(--amz-yellow); }
+        .cart-icon { font-size: 22px; cursor: pointer; position: relative; }
+        #cart-count { position: absolute; top: -8px; right: -10px; background: var(--amz-orange); font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
+
+        /* SEARCH & FILTERS */
+        .search-box { background: white; display: flex; border-radius: 6px; overflow: hidden; border: 1px solid #ccc; }
+        .search-box input { border: none; padding: 10px; width: 100%; outline: none; }
+        .search-box button { background: var(--amz-yellow); border: none; padding: 10px 15px; cursor: pointer; }
+        .filter-row { display: flex; gap: 8px; padding: 12px; background: #fff; overflow-x: auto; border-bottom: 1px solid #ddd; }
+        .f-btn { background: #fff; border: 1px solid #ccc; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .f-btn.active { background: var(--amz-navy); color: white; }
+
+        /* PAGES */
+        .page { display: none; padding: 10px; animation: fadeIn 0.2s; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GRID & CARDS */
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .p-card { background: white; border-radius: 8px; border: 1px solid #ddd; padding: 10px; text-align: center; cursor: pointer; }
+        .p-img { width: 100%; height: 130px; object-fit: contain; }
+        .detail-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        .color-option { display: inline-block; width: 30px; height: 30px; border-radius: 50%; margin: 10px 5px; cursor: pointer; border: 2px solid #ddd; }
+        .color-option.selected { border-color: var(--amz-orange); transform: scale(1.1); }
+
+        /* BUTTONS */
+        .amz-btn { background: #FFD814; border: 1px solid #FCD200; border-radius: 20px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .amz-btn-orange { background: #FFA41C; border: 1px solid #FF8F00; }
+
+        /* FORMS */
+        input.form-input { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #888; border-radius: 6px; box-sizing: border-box; }
+
+        /* NAV */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; }
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; font-size: 10px; font-weight: 600; color: #555; cursor: pointer; }
+        .nav-item.active { color: var(--amz-orange); border-top: 3px solid var(--amz-orange); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-main">
+        <div class="logo" onclick="showPage('home-page')">VARUN<span>STORE</span></div>
+        <div class="cart-icon" onclick="openCart()">🛒<span id="cart-count">0</span></div>
+    </div>
+    <div class="search-box">
+        <input type="text" id="p-search" onkeyup="searchProducts()" placeholder="Search Products...">
+        <button onclick="searchProducts()">🔍</button>
+    </div>
+</header>
+
+<div class="filter-row">
+    <button class="f-btn active" onclick="filterData('all', this)">All Deals</button>
+    <button class="f-btn" onclick="filterData(99, this)">Under ₹99</button>
+    <button class="f-btn" onclick="filterData(149, this)">Under ₹149</button>
+</div>
+
+<div id="home-page" class="page active-page">
+    <div class="p-grid" id="product-list"></div>
+</div>
+
+<div id="detail-page" class="page">
+    <div id="detail-content" class="detail-card"></div>
+</div>
+
+<div id="address-page" class="page">
+    <div class="detail-card">
+        <h3>Delivery Details</h3>
+        <input type="text" id="u-name" class="form-input" placeholder="Full Name">
+        <input type="number" id="u-phone" class="form-input" placeholder="Phone Number">
+        <input type="text" id="u-address" class="form-input" placeholder="Full Address">
+        <input type="number" id="u-pin" class="form-input" placeholder="Pincode">
+        <button class="amz-btn amz-btn-orange" onclick="showPage('payment-page'); generateQR();">Continue to Payment</button>
+    </div>
+</div>
+
+<div id="payment-page" class="page">
+    <div class="detail-card" style="text-align:center;">
+        <h3>Scan to Pay</h3>
+        <div id="qr-area"></div>
+        <p>UPI: <b>varungoyal7910@pnb</b></p>
+        <input type="text" id="u-utr" class="form-input" placeholder="Enter Payment Ref / UTR No.">
+        <button class="amz-btn amz-btn-orange" onclick="confirmOrder()">Confirm Order</button>
+    </div>
+</div>
+
+<div id="my-orders-page" class="page">
+    <div class="detail-card">
+        <h3>My Orders</h3>
+        <div id="orders-list"></div>
+    </div>
+</div>
+
+<div id="track-page" class="page">
+    <div class="detail-card" style="text-align:center;">
+        <h3>Track Order</h3>
+        <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID">
+        <button class="amz-btn" onclick="trackNow()">Track Status</button>
+        <div id="track-msg" style="margin-top:15px; color:var(--amz-orange); font-weight:bold;"></div>
+    </div>
+</div>
+
+<div id="success-page" class="page" style="text-align:center; padding-top:50px;">
+    <h1 style="color:green;">✔️ Order Placed!</h1>
+    <p>Aapka order process ho raha hai.</p>
+    <button class="amz-btn" onclick="showPage('home-page')">Continue Shopping</button>
+</div>
+
+<nav>
+    <div class="nav-item active" id="n-home" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" id="n-orders" onclick="showPage('my-orders-page'); renderOrders();">📦<br>Orders</div>
+    <div class="nav-item" id="n-track" onclick="showPage('track-page')">📍<br>Track</div>
+</nav>
 
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec";
     
     const products = [
-        { id: 1, name: "Premium Vlogging Mic", price: 99, mrp: 499, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", desc: "Professional noise cancelling mic." },
-        { id: 2, name: "Mini Studio Tripod", price: 149, mrp: 699, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", desc: "Foldable and extra stable tripod." },
-        { id: 3, name: "10-inch LED Ring Light", price: 199, mrp: 999, img: "https://m.media-amazon.com/images/I/61p-I6R+m7L._SL1500_.jpg", desc: "Dimmable LED ring light." }
+        { id: 1, name: "Premium Vlogging Mic", price: 99, mrp: 499, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", desc: "Best for YouTube vlogs." },
+        { id: 2, name: "Mini Tripod Stand", price: 149, mrp: 599, img: "https://m.media-amazon.com/images/I/61Swn6S7unL._SL1500_.jpg", desc: "Stable and durable." },
+        { id: 3, name: "LED Ring Light", price: 199, mrp: 999, img: "https://m.media-amazon.com/images/I/61p-I6R+m7L._SL1500_.jpg", desc: "Professional studio light." }
     ];
 
-    let cartCount = 0;
-    let currentItem = null;
+    let cart = null;
     let selectedColor = "Black";
 
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
-        
-        // Nav highlights
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        const navMap = {'home-page':'n-home', 'my-orders-page':'n-orders', 'track-page':'n-track', 'help-page':'n-help'};
+        const navMap = {'home-page':'n-home', 'my-orders-page':'n-orders', 'track-page':'n-track'};
         if(navMap[id]) document.getElementById(navMap[id]).classList.add('active');
     }
 
-    // NAYA ADD TO CART FUNCTION
-    function addToCart(id) {
-        currentItem = products.find(x => x.id === id);
-        cartCount++;
-        document.getElementById('cart-count').innerText = cartCount;
-        alert(currentItem.name + " added to cart! 🛒");
-        // Ab hum page change nahi kar rahe, user wahin rahega
-    }
-
-    // Jab user upar Cart icon par click karega
-    function openCart() {
-        if(cartCount === 0) {
-            alert("Cart khali hai bhai!");
-        } else {
-            showPage('address-page'); // Cart khulne par seedha address pucho
-        }
+    function renderProducts(data) {
+        document.getElementById('product-list').innerHTML = data.map(p => `
+            <div class="p-card" onclick="viewProduct(${p.id})">
+                <img src="${p.img}" class="p-img">
+                <p style="font-size:12px; margin:5px 0;">${p.name}</p>
+                <b>₹${p.price}</b>
+            </div>
+        `).join('');
     }
 
     function viewProduct(id) {
         const p = products.find(x => x.id === id);
-        const disc = Math.round(((p.mrp - p.price) / p.mrp) * 100);
         document.getElementById('detail-content').innerHTML = `
-            <img src="${p.img}" style="width:100%; height:200px; object-fit:contain;">
+            <img src="${p.img}" style="width:100%; height:180px; object-fit:contain;">
             <h2>${p.name}</h2>
-            <p><span style="color:#CC0C39; font-size:24px;">-${disc}%</span> <span style="font-size:24px; font-weight:bold; margin-left:10px;">₹${p.price}</span></p>
-            <p>M.R.P: <span style="text-decoration:line-through;">₹${p.mrp}</span></p>
-            <p><b>Description:</b><br>${p.desc}</p>
-            <div style="margin:15px 0;">
-                <b>Select Color:</b><br>
-                <div class="color-option" style="background:black;" onclick="selColor(this,'Black')"></div>
-                <div class="color-option" style="background:red;" onclick="selColor(this,'Red')"></div>
-                <div class="color-option" style="background:blue;" onclick="selColor(this,'Blue')"></div>
-                <div class="color-option" style="background:silver;" onclick="selColor(this,'Silver')"></div>
-            </div>
+            <p style="color:#B12704; font-size:20px; font-weight:bold;">₹${p.price}</p>
+            <p>${p.desc}</p>
+            <b>Select Color:</b><br>
+            <div class="color-option" style="background:black;" onclick="selColor(this,'Black')"></div>
+            <div class="color-option" style="background:red;" onclick="selColor(this,'Red')"></div>
+            <div class="color-option" style="background:silver;" onclick="selColor(this,'Silver')"></div>
             <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
         `;
         showPage('detail-page');
     }
 
-    // ... (Confirm Order aur Payment logic wahi rahega) ...
+    function selColor(el, color) {
+        document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedColor = color;
+    }
+
+    function addToCart(id) {
+        cart = products.find(x => x.id === id);
+        document.getElementById('cart-count').innerText = "1";
+        alert("Added to Cart!");
+        showPage('home-page');
+    }
+
+    function openCart() {
+        if(!cart) return alert("Cart is empty!");
+        showPage('address-page');
+    }
+
+    function generateQR() {
+        const upi = `upi://pay?pa=varungoyal7910@pnb&pn=VarunStore&am=${cart.price}&cu=INR`;
+        document.getElementById('qr-area').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upi)}">`;
+    }
 
     function confirmOrder() {
         const utr = document.getElementById('u-utr').value;
-        if(!utr) return alert("UTR Number dalo.");
+        if(!utr) return alert("Enter UTR!");
         
         const oid = "VAR" + Math.floor(1000 + Math.random() * 9000);
-        
-        const formData = new FormData();
-        formData.append("name", document.getElementById('u-name').value);
-        formData.append("phone", document.getElementById('u-phone').value);
-        formData.append("address", document.getElementById('u-address').value);
-        formData.append("pincode", document.getElementById('u-pin').value);
-        formData.append("paymentRef", utr);
-        formData.append("totalPrice", currentItem.price);
-        formData.append("orderID", oid);
-        formData.append("product", currentItem.name);
-        formData.append("color", selectedColor);
+        const fd = new FormData();
+        fd.append("name", document.getElementById('u-name').value);
+        fd.append("phone", document.getElementById('u-phone').value);
+        fd.append("address", document.getElementById('u-address').value);
+        fd.append("pincode", document.getElementById('u-pin').value);
+        fd.append("paymentRef", utr);
+        fd.append("totalPrice", cart.price);
+        fd.append("orderID", oid);
+        fd.append("product", cart.name);
+        fd.append("color", selectedColor);
 
-        fetch(scriptURL, { method: 'POST', body: formData })
+        fetch(scriptURL, { method: 'POST', body: fd })
         .then(() => {
-            // Success hone par cart reset
-            cartCount = 0;
-            document.getElementById('cart-count').innerText = "0";
-            
             let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
-            orders.push({orderID: oid, product: currentItem.name, color: selectedColor, date: new Date().toLocaleDateString(), status: "Processing"});
+            orders.push({orderID: oid, product: cart.name, date: new Date().toLocaleDateString(), status: "Processing"});
             localStorage.setItem('myOrders', JSON.stringify(orders));
-            
-            new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3').play().catch(()=>{});
+            cart = null;
+            document.getElementById('cart-count').innerText = "0";
             showPage('success-page');
-        })
-        .catch(() => alert("Error connecting to sheet!"));
+        });
     }
 
-    // Header mein cart icon update kar dena:
-    // <div onclick="openCart()" style="font-size:22px; cursor:pointer;">🛒...</div>
+    function renderOrders() {
+        const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+        document.getElementById('orders-list').innerHTML = orders.map(o => `
+            <div style="border-bottom:1px solid #ddd; padding:10px 0;">
+                <b>ID: ${o.orderID}</b><br>${o.product} - <span style="color:orange;">${o.status}</span>
+            </div>`).join('') || "No orders yet.";
+    }
+
+    function trackNow() {
+        const id = document.getElementById('track-input').value.toUpperCase();
+        const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+        const found = orders.find(o => o.orderID === id);
+        document.getElementById('track-msg').innerText = found ? `Status: ${found.status}` : "Order not found!";
+    }
+
+    function filterData(l, b) {
+        document.querySelectorAll('.f-btn').forEach(btn => btn.classList.remove('active'));
+        b.classList.add('active');
+        renderProducts(l === 'all' ? products : products.filter(x => x.price <= l));
+    }
+
+    function searchProducts() {
+        const q = document.getElementById('p-search').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    renderProducts(products);
 </script>
+</body>
+</html>
