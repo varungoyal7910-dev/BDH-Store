@@ -72,7 +72,6 @@
     <button class="f-btn" onclick="filterData(199, this)">Under ₹199</button>
 </div>
 
-<!-- PAGES -->
 <div id="home-page" class="page active-page">
     <div class="p-grid" id="product-list"></div>
 </div>
@@ -85,10 +84,10 @@
     <div class="detail-card">
         <h3>Delivery Address</h3>
         <input type="text" id="u-name" class="form-input" placeholder="Full Name">
-        <input type="number" id="u-phone" class="form-input" placeholder="Phone Number (10 Digits)">
+        <input type="number" id="u-phone" class="form-input" placeholder="Phone Number">
         <input type="text" id="u-address" class="form-input" placeholder="Full Address">
-        <input type="number" id="u-pin" class="form-input" placeholder="Pin Code (6 Digits)">
-        <button class="amz-btn amz-btn-orange" onclick="goToPayment()">Make Payment</button>
+        <input type="number" id="u-pin" class="form-input" placeholder="Pin Code">
+        <button class="amz-btn amz-btn-orange" onclick="goToPayment()">Continue to Payment</button>
     </div>
 </div>
 
@@ -114,8 +113,9 @@
 <div id="track-page" class="page">
     <div class="detail-card" style="text-align:center; padding:40px 20px;">
         <h3>Track Your Package</h3>
-        <input type="text" id="track-id" class="form-input" placeholder="Enter Order ID">
-        <button class="amz-btn amz-btn-orange" onclick="alert('Order Status: 30 mins processing...')">Track Now</button>
+        <input type="text" id="track-id-input" class="form-input" placeholder="Enter Order ID (e.g. VAR1234)">
+        <button class="amz-btn amz-btn-orange" onclick="trackOrder()">Track Now</button>
+        <div id="track-result" style="margin-top:20px; font-weight:bold; color:var(--amz-orange);"></div>
     </div>
 </div>
 
@@ -123,14 +123,15 @@
     <div class="detail-card">
         <h3>Help & Support</h3>
         <p>Email: <b>varungoyal7910@gmail.com</b></p>
+        <p>Working Hours: 10 AM - 6 PM</p>
     </div>
 </div>
 
 <div id="success-page" class="page" style="text-align:center; padding-top:50px;">
     <h1 style="color:green; font-size:80px;">✔️</h1>
     <h2>Order Confirmed!</h2>
-    <p>30 minutes mein hum ise process karenge.</p>
-    <button class="amz-btn" onclick="showPage('home-page')">Continue Shopping</button>
+    <p>Hum ise 30 mins mein process karenge.</p>
+    <button class="amz-btn" onclick="showPage('home-page')">Back to Home</button>
 </div>
 
 <nav>
@@ -141,7 +142,7 @@
 </nav>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxfoHDe7kKojTS6b_u0fkG_rrgliVXSDBeQnltEo5Xi8QNL7QDopaGNSGPSFn5neujG/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec";
     
     const products = [
         { id: 1, name: "Premium Vlogging Mic", price: 99, mrp: 499, img: "https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg", desc: "Professional noise cancelling mic." },
@@ -156,10 +157,8 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(id === 'home-page') document.getElementById('n-home').classList.add('active');
-        if(id === 'my-orders-page') document.getElementById('n-orders').classList.add('active');
-        if(id === 'track-page') document.getElementById('n-track').classList.add('active');
-        if(id === 'help-page') document.getElementById('n-help').classList.add('active');
+        const navMap = {'home-page':'n-home', 'my-orders-page':'n-orders', 'track-page':'n-track', 'help-page':'n-help'};
+        if(navMap[id]) document.getElementById(navMap[id]).classList.add('active');
     }
 
     function renderProducts(data) {
@@ -170,18 +169,6 @@
                 <b>₹${p.price}</b>
             </div>
         `).join('');
-    }
-
-    function filterData(limit, btn) {
-        document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if(limit === 'all') renderProducts(products);
-        else renderProducts(products.filter(x => x.price <= limit));
-    }
-
-    function searchProducts() {
-        const query = document.getElementById('p-search').value.toLowerCase();
-        renderProducts(products.filter(p => p.name.toLowerCase().includes(query)));
     }
 
     function viewProduct(id) {
@@ -200,12 +187,7 @@
                 <div class="color-option" style="background:blue;" onclick="selColor(this,'Blue')"></div>
                 <div class="color-option" style="background:silver;" onclick="selColor(this,'Silver')"></div>
             </div>
-            <div class="trust-badges">
-                <div>🔄<br>7 Days Replace</div>
-                <div>🚚<br>Free Delivery</div>
-                <div>⭐<br>Guaranteed</div>
-            </div>
-            <button class="amz-btn amz-btn-orange" onclick="buyNow(${p.id})">Buy Now</button>
+            <button class="amz-btn amz-btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
         `;
         showPage('detail-page');
     }
@@ -216,14 +198,14 @@
         selectedColor = color;
     }
 
-    function buyNow(id) {
+    function addToCart(id) {
         currentItem = products.find(x => x.id === id);
         showPage('address-page');
     }
 
     function goToPayment() {
         const ph = document.getElementById('u-phone').value;
-        if(ph.length !== 10) return alert("10-digit phone number dalo.");
+        if(ph.length < 10) return alert("Sahi Phone number dalo.");
         const upi = `upi://pay?pa=varungoyal7910@pnb&pn=VarunStore&am=${currentItem.price}&cu=INR`;
         document.getElementById('qr-display').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upi)}">`;
         showPage('payment-page');
@@ -234,32 +216,64 @@
     function confirmOrder() {
         const utr = document.getElementById('u-utr').value;
         if(!utr) return alert("UTR Number dalo.");
-        const orderData = {
-            orderID: "VAR" + Math.floor(1000 + Math.random() * 9000),
-            name: document.getElementById('u-name').value,
-            product: currentItem.name,
-            color: selectedColor,
-            price: currentItem.price,
-            date: new Date().toLocaleDateString()
-        };
         
-        let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
-        orders.push(orderData);
-        localStorage.setItem('myOrders', JSON.stringify(orders));
+        const oid = "VAR" + Math.floor(1000 + Math.random() * 9000);
+        const name = document.getElementById('u-name').value;
+        const phone = document.getElementById('u-phone').value;
+        const address = document.getElementById('u-address').value;
+        const pin = document.getElementById('u-pin').value;
 
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(orderData) });
-        new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3').play().catch(()=>{});
-        showPage('success-page');
+        // Bhejne wala data
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("phone", phone);
+        formData.append("address", address);
+        formData.append("pincode", pin);
+        formData.append("paymentRef", utr);
+        formData.append("totalPrice", currentItem.price);
+        formData.append("orderID", oid);
+        formData.append("product", currentItem.name);
+        formData.append("color", selectedColor);
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+        .then(() => {
+            let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+            orders.push({orderID: oid, product: currentItem.name, color: selectedColor, date: new Date().toLocaleDateString(), status: "Processing"});
+            localStorage.setItem('myOrders', JSON.stringify(orders));
+            new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3').play().catch(()=>{});
+            showPage('success-page');
+        })
+        .catch(() => alert("Sheet error!"));
     }
 
     function renderOrders() {
         const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
         document.getElementById('orders-list').innerHTML = orders.length ? orders.map(o => `
-            <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
+            <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px; background:#fff;">
                 <b>ID: ${o.orderID}</b> | ${o.date}<br>
                 ${o.product} (${o.color})<br>
-                Status: <span style="color:orange;">Processing</span>
-            </div>`).join('') : "<p>No orders yet.</p>";
+                Status: <span style="color:orange;">${o.status}</span>
+            </div>`).join('') : "<p>Koi order nahi mila.</p>";
+    }
+
+    function trackOrder() {
+        const id = document.getElementById('track-id-input').value.toUpperCase();
+        const orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+        const found = orders.find(o => o.orderID === id);
+        const res = document.getElementById('track-result');
+        if(found) res.innerHTML = `Order Found! Status: ${found.status} <br> <small>Aapka package pack ho raha hai.</small>`;
+        else res.innerHTML = "Order ID nahi mili. Sahi ID dalo.";
+    }
+
+    function filterData(limit, btn) {
+        document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderProducts(limit === 'all' ? products : products.filter(x => x.price <= limit));
+    }
+
+    function searchProducts() {
+        const q = document.getElementById('p-search').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
     }
 
     renderProducts(products);
