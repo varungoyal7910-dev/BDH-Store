@@ -6,47 +6,67 @@
     <title>Varun Store | Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; --accent: #fff; --sub: #888; --green: #34c759; }
+        :root { --bg: #000; --card: #111; --accent: #fff; --sub: #888; --green: #34c759; --red: #ff3b30; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; background: var(--bg); color: #fff; -webkit-font-smoothing: antialiased; }
         
-        /* Header & Cart Position */
         header { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); padding: 15px 25px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 18px; font-weight: 800; letter-spacing: 2px; }
-        .cart-top { cursor: pointer; position: relative; font-weight: 600; font-size: 14px; background: #222; padding: 8px 15px; border-radius: 50px; }
+        .logo { font-size: 18px; font-weight: 800; letter-spacing: 4px; }
+        .cart-top { cursor: pointer; font-weight: 600; font-size: 14px; background: #222; padding: 8px 15px; border-radius: 50px; }
         
         .container { padding: 20px; padding-bottom: 120px; max-width: 500px; margin: auto; }
         
-        /* Product Card */
-        .product-card { background: var(--card); border-radius: 25px; padding: 12px; margin-bottom: 20px; border: 1px solid #222; overflow: hidden; }
-        .product-img { width: 100%; border-radius: 20px; height: 350px; object-fit: cover; cursor: pointer; transition: transform 0.3s; }
-        .product-img:active { transform: scale(0.98); }
-        
-        /* Buttons Hidden by Default */
-        .action-area { display: none; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; animation: slideDown 0.3s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Search & Filter Styling */
+        .filter-section { margin-bottom: 20px; }
+        .search-box input { background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 20px; color: #fff; width: 100%; box-sizing: border-box; margin-bottom: 15px; }
+        .price-filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px; }
+        .price-filters::-webkit-scrollbar { display: none; }
+        .chip { background: #111; border: 1px solid #222; padding: 8px 18px; border-radius: 50px; font-size: 12px; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .chip.active { background: #fff; color: #000; }
 
+        /* Product Card */
+        .product-card { background: var(--card); border-radius: 25px; padding: 12px; margin-bottom: 20px; border: 1px solid #222; }
+        .product-img { width: 100%; border-radius: 20px; height: 350px; object-fit: cover; cursor: pointer; }
+        
+        .action-area { display: none; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; }
         .btn-group { display: flex; gap: 10px; }
         .btn-cart { flex: 1; padding: 16px; border-radius: 15px; background: #222; color: #fff; border: 1px solid #333; font-weight: 600; cursor: pointer; }
         .btn-buy { flex: 1; padding: 16px; border-radius: 15px; background: #fff; color: #000; border: none; font-weight: 800; cursor: pointer; }
 
-        /* Navigation Bottom */
         nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border-radius: 40px; display: flex; justify-content: space-around; padding: 15px 5px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1); }
         .nav-item { color: white; text-align: center; font-size: 11px; cursor: pointer; opacity: 0.7; font-weight: 600; }
 
-        /* Overlays */
         .overlay { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
         input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 18px; border-radius: 15px; margin-bottom: 15px; color: #fff; font-size: 15px; box-sizing: border-box; }
-        .upi-id { font-size: 18px; font-weight: 800; color: var(--green); text-align: center; margin: 15px 0; padding: 15px; border: 2px dashed #333; border-radius: 15px; }
+        
+        .upi-container { background: #111; padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; margin: 15px 0; }
+        .timer { font-size: 24px; color: var(--red); font-weight: 800; text-align: center; margin: 10px 0; }
+        .replace-btn { background: var(--sub); color: #000; padding: 10px; border-radius: 10px; font-size: 12px; border: none; font-weight: 700; margin-top: 10px; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">VARUNSTORE</div>
+    <div class="logo">VARUN STORE</div>
     <div class="cart-top" onclick="openCart()">CART (<span id="cart-count">0</span>)</div>
 </header>
 
-<div class="container" id="main-list"></div>
+<div class="container">
+    <!-- Search & Filters -->
+    <div class="filter-section">
+        <div class="search-box">
+            <input type="text" id="v-search" placeholder="Bhai kya dhund rahe ho?" onkeyup="filterProducts()">
+        </div>
+        <div class="price-filters">
+            <div class="chip active" onclick="filterByPrice(0, this)">All</div>
+            <div class="chip" onclick="filterByPrice(99, this)">Under 99</div>
+            <div class="chip" onclick="filterByPrice(149, this)">Under 149</div>
+            <div class="chip" onclick="filterByPrice(199, this)">Under 199</div>
+            <div class="chip" onclick="filterByPrice(499, this)">Under 499</div>
+        </div>
+    </div>
+
+    <div id="main-list"></div>
+</div>
 
 <div id="modal" class="overlay"></div>
 
@@ -59,21 +79,23 @@
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbwFuATW-egCFrwciXjexSyggNxzEWcdVgbxp3MMVuCHnuELc36oedJPxxHlYfbZKTQ1/exec";
     let cart = [];
+    let timerInterval;
 
     const products = [
-        { id: 1, name: "Premium Silicone Case", price: 95, mrp: 499, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500" }
+        { id: 1, name: "Premium Silicone Case", price: 95, mrp: 499, img: "https://images.unsplash.com/photo-1544117518-2b041580c79d?w=500" },
+        { id: 2, name: "Varun Special Cover", price: 145, mrp: 599, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500" }
     ];
 
     function renderHome() {
         let html = '';
         products.forEach(p => {
             html += `
-                <div class="product-card">
+                <div class="product-card" data-price="${p.price}">
                     <img src="${p.img}" class="product-img" onclick="toggleActions(${p.id})">
                     <div style="padding:15px 5px;">
                         <h3 style="margin:0">${p.name}</h3>
                         <div style="margin-top:5px;">
-                            <span style="font-size:22px; font-weight:800;">₹${p.price}</span>
+                            <span class="p-price" style="font-size:22px; font-weight:800;">₹${p.price}</span>
                             <span style="color:#555; text-decoration:line-through; margin-left:8px;">₹${p.mrp}</span>
                         </div>
                         <div class="action-area" id="actions-${p.id}">
@@ -88,6 +110,27 @@
         document.getElementById('main-list').innerHTML = html;
     }
 
+    // --- Search & Filter Logic ---
+    function filterProducts() {
+        let query = document.getElementById('v-search').value.toLowerCase();
+        let cards = document.getElementsByClassName('product-card');
+        for (let card of cards) {
+            let name = card.querySelector('h3').innerText.toLowerCase();
+            card.style.display = name.includes(query) ? "block" : "none";
+        }
+    }
+
+    function filterByPrice(max, el) {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        let cards = document.getElementsByClassName('product-card');
+        for (let card of cards) {
+            let price = parseInt(card.getAttribute('data-price'));
+            card.style.display = (max === 0 || price <= max) ? "block" : "none";
+        }
+    }
+
+    // --- Core Logic ---
     function toggleActions(id) {
         let el = document.getElementById(`actions-${id}`);
         el.style.display = el.style.display === 'block' ? 'none' : 'block';
@@ -114,17 +157,39 @@
         modal.style.display = 'flex';
         let total = cart.reduce((s, i) => s + i.price, 0);
         modal.innerHTML = `
-            <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="this.parentElement.style.display='none'">✕</div>
+            <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div>
             <h2>Checkout</h2>
             <input type="text" id="v-name" placeholder="Full Name">
-            <input type="tel" id="v-phone" placeholder="Phone Number" maxlength="10">
+            <input type="tel" id="v-phone" placeholder="Phone Number (10 Digits)" maxlength="10">
             <textarea id="v-addr" placeholder="Full Address" rows="3"></textarea>
             <input type="number" id="v-pin" placeholder="Pincode (6 Digits)">
-            <div class="upi-id">UPI ID: varungoyal7910@pnb</div>
-            <input type="text" id="v-pay-ref" placeholder="Enter Payment Number / Ref No." required>
+            <div class="upi-container">
+                <span id="upi-id" style="color:var(--green); font-weight:800;">varungoyal7910@pnb</span><br>
+                <button onclick="copyUPI()" style="margin-top:10px; background:#222; color:#fff; border:none; padding:5px 10px; border-radius:5px;">📋 Copy UPI ID</button>
+            </div>
+            <div class="timer" id="timer-display">02:00</div>
+            <input type="text" id="v-pay-ref" placeholder="Ref No. / Transaction ID" required>
             <button class="btn-buy" style="width:100%; padding:20px;" onclick="placeOrder(${total})">Place Order (₹${total})</button>
         `;
+        startTimer(120);
     }
+
+    function copyUPI() {
+        navigator.clipboard.writeText("varungoyal7910@pnb");
+        alert("UPI ID Copy ho gayi!");
+    }
+
+    function startTimer(sec) {
+        clearInterval(timerInterval);
+        let time = sec;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(time / 60), s = time % 60;
+            document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            if (--time < 0) { clearInterval(timerInterval); location.reload(); }
+        }, 1000);
+    }
+
+    function closeModal() { document.getElementById('modal').style.display = 'none'; clearInterval(timerInterval); }
 
     async function placeOrder(total) {
         const data = {
@@ -133,59 +198,52 @@
             address: document.getElementById('v-addr').value,
             pincode: document.getElementById('v-pin').value,
             payRef: document.getElementById('v-pay-ref').value,
-            total: total.toString(), // Price ko string bana kar bhej rahe hain taaki sheet mein date na bane
+            total: total.toString(),
             orderID: "VAR" + Math.floor(1000 + Math.random()*9000)
         };
 
-        if(!data.name || !data.payRef) return alert("Details bharna jaruri hai!");
+        if(data.phone.length !== 10 || data.pincode.length !== 6 || !data.payRef) return alert("Details check karein!");
 
         fetch(scriptURL, { method: "POST", body: JSON.stringify(data) });
-
         let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
-        history.unshift({ ...data, status: "Wait for order confirming" });
+        history.unshift({ ...data, status: "Wait for confirming" });
         localStorage.setItem('vOrders', JSON.stringify(history));
-
-        alert("Order Lag Gaya! Order ID: " + data.orderID);
+        alert("Order Successful! ID: " + data.orderID);
         location.reload();
     }
 
-    function openTrack() {
-        const modal = document.getElementById('modal');
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-            <div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="this.parentElement.style.display='none'">✕</div>
-            <h2>Track Order</h2>
-            <input type="text" id="track-id" placeholder="VARXXXX" style="text-align:center; letter-spacing:2px;">
-            <button class="btn-buy" style="width:100%; padding:20px;" onclick="fetchStatus()">Check Status</button>
-            <div id="track-res"></div>
-        `;
-    }
-
-    async function fetchStatus() {
-        const id = document.getElementById('track-id').value.trim();
-        if(!id) return;
-        document.getElementById('track-res').innerHTML = "<p>Checking...</p>";
-        const res = await fetch(`${scriptURL}?orderID=${id}`);
-        const status = await res.text();
-        document.getElementById('track-res').innerHTML = `
-            <div style="background:#111; padding:20px; border-radius:20px; margin-top:20px; border:1px solid #222;">
-                <p style="color:var(--sub); font-size:12px;">ID: ${id}</p>
-                <h3 style="color:var(--green); margin:0;">● ${status}</h3>
-            </div>`;
+    async function sendReplacementReq(orderID) {
+        if(!confirm("Bhai replacement request bhej de?")) return;
+        await fetch(scriptURL, { method: "POST", body: JSON.stringify({ type: "replacement", orderID: orderID, date: new Date().toLocaleString() }) });
+        alert("Request Sent! Sheet Check Karein.");
     }
 
     function showMyOrders() {
         const history = JSON.parse(localStorage.getItem('vOrders') || '[]');
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
-        let html = '<div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="this.parentElement.style.display=\'none\'">✕</div><h2>My Orders</h2>';
+        let html = '<div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div><h2>My Orders</h2>';
         history.forEach(o => {
             html += `<div style="background:#111; padding:15px; border-radius:15px; margin-bottom:10px; border:1px solid #222;">
                 <b>${o.orderID}</b> <span style="float:right">₹${o.total}</span><br>
-                <small style="color:var(--sub)">${o.status}</small>
+                <small>${o.status}</small><br>
+                <button class="replace-btn" onclick="sendReplacementReq('${o.orderID}')">Request Replacement</button>
             </div>`;
         });
-        modal.innerHTML = html || '<p>Abhi tak koi order nahi kiya.</p>';
+        modal.innerHTML = html || '<p>No orders yet.</p>';
+    }
+
+    function openTrack() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'flex';
+        modal.innerHTML = `<div style="font-size:30px; margin-bottom:20px; cursor:pointer;" onclick="closeModal()">✕</div><h2>Track Order</h2><input type="text" id="track-id" placeholder="VARXXXX"><button class="btn-buy" style="width:100%; padding:20px;" onclick="fetchStatus()">Track</button><div id="track-res"></div>`;
+    }
+
+    async function fetchStatus() {
+        const id = document.getElementById('track-id').value;
+        const res = await fetch(`${scriptURL}?orderID=${id}`);
+        const status = await res.text();
+        document.getElementById('track-res').innerHTML = `<h3>● ${status}</h3>`;
     }
 
     renderHome();
