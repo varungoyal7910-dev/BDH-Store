@@ -3,39 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varun Store</title>
+    <title>Varun Store | Shopping Hub</title>
     <style>
-        :root { --accent: #e91e63; --border: #ddd; }
-        body { font-family: sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        :root { --accent: #e91e63; --sub: #666; --border: #eee; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding-bottom: 70px; background: #f8f9fa; color: #333; }
         
-        /* Header Style */
-        header { background: #fff; padding: 15px; display: flex; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
-        .cart-icon { cursor: pointer; position: relative; }
-        .cart-count { background: var(--accent); color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -10px; }
+        /* Header & Logo */
+        header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+        .cart-icon { position: relative; font-size: 24px; cursor: pointer; }
+        .cart-count { position: absolute; top: -5px; right: -10px; background: var(--accent); color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
 
-        /* Product Card Style */
+        /* Navigation Tabs */
+        nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: var(--sub); cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--accent); font-weight: 700; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+
+        /* Search & Filters */
+        .search-section { padding: 15px; background: #fff; }
+        .search-bar { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; outline: none; }
+
+        /* Products Grid */
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .p-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .p-img { width: 100%; height: 150px; object-fit: cover; }
-        .p-info { padding: 10px; }
-        .btn-fill { background: var(--accent); color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
+        .p-img { width: 100%; height: 160px; object-fit: cover; }
+        .p-info { padding: 12px; }
+        .p-name { font-size: 14px; font-weight: 600; margin-bottom: 5px; height: 35px; overflow: hidden; }
+        .p-price { color: var(--accent); font-weight: 700; font-size: 16px; }
+        .btn-add { background: var(--accent); color: white; border: none; padding: 8px; width: 100%; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: 600; }
 
-        /* Modal & Timer Style */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-height: 80vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; }
+        /* Modal / Cart / Payment */
+        .full-overlay { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
+        .overlay-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
+        .overlay-content { flex: 1; overflow-y: auto; padding: 20px; }
         
-        #payment-timer { 
-            font-weight: bold; color: white; background: var(--accent); 
-            padding: 12px; border-radius: 8px; margin-bottom: 15px; 
-            text-align: center; font-size: 1.1rem; 
-        }
-
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .qty-controls { display: flex; align-items: center; gap: 10px; }
-        .qty-btn { background: #eee; border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        #payment-timer { background: #fff1f5; color: var(--accent); padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; border: 1px dashed var(--accent); margin-bottom: 20px; }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .qty-box { display: flex; align-items: center; gap: 12px; background: #f8f9fa; padding: 5px 10px; border-radius: 8px; }
+        .qty-btn { border: none; background: none; font-size: 18px; font-weight: bold; color: var(--accent); cursor: pointer; }
         
         .hidden { display: none; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -47,46 +57,80 @@
     </div>
 </header>
 
-<!-- Main Products Container -->
-<div class="container" id="product-list"></div>
-
-<!-- Modal for Cart & Payment -->
-<div id="main-modal" class="modal">
-    <div class="modal-content" id="modal-body"></div>
+<!-- HOME PAGE -->
+<div id="page-home">
+    <div class="search-section">
+        <input type="text" class="search-bar" placeholder="Search for products..." onkeyup="filterProducts(this.value)">
+    </div>
+    <div class="container" id="product-list"></div>
 </div>
 
+<!-- TRACKING PAGE -->
+<div id="page-track" class="hidden" style="padding: 20px;">
+    <h2>Track Your Order</h2>
+    <input type="text" id="track-id-input" placeholder="Enter Order ID (e.g. VAR1234)">
+    <button class="btn-add" onclick="trackOrder()">Check Status</button>
+    <div id="status-display" style="margin-top: 20px; padding: 15px; background: #fff; border-radius: 10px;"></div>
+</div>
+
+<!-- OVERLAY FOR CART/PAYMENT -->
+<div id="cart-overlay" class="full-overlay">
+    <div class="overlay-header">
+        <span onclick="closeOverlay()" style="font-size: 24px; cursor: pointer;">←</span>
+        <h3 id="overlay-title" style="margin:0;">My Cart</h3>
+    </div>
+    <div class="overlay-content" id="overlay-body"></div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<nav>
+    <div class="nav-item active" onclick="showPage('home', this)"><i>🏠</i>Home</div>
+    <div class="nav-item" onclick="showPage('track', this)"><i>📦</i>Track</div>
+    <div class="nav-item" onclick="openCart()"><i>🛍️</i>Cart</div>
+</nav>
+
 <script>
-    // 1. CONFIGURATION
     const scriptURL = "https://script.google.com/macros/s/AKfycbyxIXMyPky1pMzLfcvuVtQ5aGK_8t_uGePoho5bN6AB9AaMkkRDwr70ymsopJoMmQoZ/exec";
     
+    // Data from
     const products = [
-        { id: 1, name: "Premium Silicone Case", price: 95, img: "https://via.placeholder.com/150" },
-        { id: 2, name: "Party Supplies", price: 80, img: "https://via.placeholder.com/150" },
-        { id: 3, name: "Hair Toppers", price: 67, img: "https://via.placeholder.com/150" }
+        { id: 1, name: "Premium Silicone Case", price: 95, img: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400" },
+        { id: 2, name: "Attractive Party Supplies", price: 80, img: "https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=400" },
+        { id: 3, name: "Girls Hair Theme Toppers", price: 67, img: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400" }
     ];
 
     let cart = [];
-    let userData = { name: "Varun", phone: "1234567890", addr: "Maur, Punjab", pin: "151502" }; // Demo Data
+    let userData = { name: "Varun Goyal", phone: "1234567890", addr: "Maur, Punjab", pin: "151502" }; //
 
-    // 2. RENDER PRODUCTS
-    const productList = document.getElementById('product-list');
-    products.forEach(p => {
-        productList.innerHTML += `
+    // Initialize Home
+    function renderProducts(list = products) {
+        const container = document.getElementById('product-list');
+        container.innerHTML = list.map(p => `
             <div class="p-card">
                 <img src="${p.img}" class="p-img">
                 <div class="p-info">
-                    <b>${p.name}</b><br>₹${p.price}
-                    <button class="btn-fill" onclick="addToCart(${p.id})">Add to Cart</button>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">₹${p.price}</div>
+                    <button class="btn-add" onclick="addToCart(${p.id})">Add to Bag</button>
                 </div>
-            </div>`;
-    });
+            </div>
+        `).join('');
+    }
+    renderProducts();
 
-    // 3. CART LOGIC
+    function showPage(page, el) {
+        document.getElementById('page-home').classList.toggle('hidden', page !== 'home');
+        document.getElementById('page-track').classList.toggle('hidden', page !== 'track');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // CART LOGIC (+/-)
     function addToCart(id) {
         const item = cart.find(x => x.id === id);
         if (item) { item.qty++; } 
         else { const p = products.find(x => x.id === id); cart.push({ ...p, qty: 1 }); }
-        updateCount();
+        updateCartUI();
     }
 
     function updateQty(id, change) {
@@ -95,50 +139,58 @@
             item.qty += change;
             if (item.qty <= 0) cart = cart.filter(x => x.id !== id);
         }
-        openCart(); // Re-render cart modal
-        updateCount();
+        openCart();
+        updateCartUI();
     }
 
-    function updateCount() {
+    function updateCartUI() {
         document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
     }
 
-    // 4. MODAL & PAYMENT LOGIC
     function openCart() {
-        const modal = document.getElementById('main-modal');
-        const body = document.getElementById('modal-body');
-        modal.style.display = 'flex';
+        const overlay = document.getElementById('cart-overlay');
+        const body = document.getElementById('overlay-body');
+        document.getElementById('overlay-title').innerText = "My Cart";
+        overlay.style.display = 'flex';
         
+        if(cart.length === 0) {
+            body.innerHTML = "<p style='text-align:center;'>Your bag is empty!</p>";
+            return;
+        }
+
         let total = 0;
-        let html = `<h3>Your Cart</h3>`;
-        cart.forEach(item => {
+        let html = cart.map(item => {
             total += item.price * item.qty;
-            html += `
+            return `
                 <div class="cart-item">
                     <div><b>${item.name}</b><br>₹${item.price}</div>
-                    <div class="qty-controls">
+                    <div class="qty-box">
                         <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
                         <span>${item.qty}</span>
                         <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
                     </div>
                 </div>`;
-        });
+        }).join('');
 
-        html += `<div style="margin-top:20px;"><b>Total: ₹${total}</b></div>`;
-        html += `<button class="btn-fill" onclick="goToPayment(${total})">Checkout Now</button>`;
-        html += `<button onclick="closeModal()" style="width:100%; margin-top:10px; border:none; background:none;">Close</button>`;
+        html += `<div style="margin-top:30px; font-size:20px;">Total: <b>₹${total}</b></div>`;
+        html += `<button class="btn-add" style="padding:15px; font-size:16px;" onclick="goToCheckout(${total})">Checkout</button>`;
         body.innerHTML = html;
     }
 
-    function goToPayment(total) {
-        const body = document.getElementById('modal-body');
+    // CHECKOUT & TIMER
+    function goToCheckout(total) {
+        const body = document.getElementById('overlay-body');
+        document.getElementById('overlay-title').innerText = "Payment";
         body.innerHTML = `
             <div id="payment-timer">Complete Payment in: 2:00</div>
-            <h3>Payment Details</h3>
-            <p>UPI ID: <b>varungoyal17910@pnb</b></p>
-            <p>Amount: <b>₹${total}</b></p>
-            <input type="text" id="pay-ref" placeholder="Enter Transaction ID" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
-            <button class="btn-fill" onclick="processOrder(${total})">Confirm Order</button>
+            <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid var(--border);">
+                <p>Scan & Pay to UPI:</p>
+                <h3 style="color:var(--accent); margin:5px 0;">varungoyal17910@pnb</h3>
+                <p>Amount: <b>₹${total}</b></p>
+                <hr>
+                <input type="text" id="pay-ref" placeholder="Enter Transaction Reference ID">
+                <button class="btn-add" onclick="finalSubmit(${total})">Confirm Order</button>
+            </div>
         `;
         startTimer();
     }
@@ -147,35 +199,52 @@
         let time = 120;
         const display = document.getElementById('payment-timer');
         const timer = setInterval(() => {
-            let m = Math.floor(time / 60), s = time % 60;
-            if (display) display.innerText = `Complete Payment in: ${m}:${s < 10 ? '0' : ''}${s}`;
-            if (--time < 0) { clearInterval(timer); alert("Time Expired!"); location.reload(); }
+            let m = Math.floor(time/60), s = time % 60;
+            if(display) display.innerText = `Complete Payment in: ${m}:${s < 10 ? '0' : ''}${s}`;
+            if(--time < 0) { clearInterval(timer); alert("Time Expired!"); location.reload(); }
         }, 1000);
     }
 
-    async function processOrder(total) {
+    async function finalSubmit(total) {
         const ref = document.getElementById('pay-ref').value;
-        if (!ref) return alert("Enter Payment Ref ID!");
-
-        const orderID = "VAR" + Math.floor(1000 + Math.random() * 9000);
-        const data = { ...userData, payRef: ref, total: total, orderID: orderID };
-
-        document.getElementById('modal-body').innerHTML = "<h3>Placing Order...</h3>";
+        if(!ref) return alert("Ref ID missing!");
         
+        const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
+        const data = { ...userData, payRef: ref, total: total, orderID: orderID };
+        
+        document.getElementById('overlay-body').innerHTML = "<h3>Processing...</h3>";
         try {
             await fetch(scriptURL, { method: 'POST', body: JSON.stringify(data), mode: 'no-cors' });
-            document.getElementById('modal-body').innerHTML = `
-                <div style="text-align:center;">
-                    <h2 style="color:green;">✓ Success!</h2>
+            document.getElementById('overlay-body').innerHTML = `
+                <div style="text-align:center; padding-top:40px;">
+                    <div style="font-size:50px;">✅</div>
+                    <h2>Order Placed!</h2>
                     <p>Order ID: <b>${orderID}</b></p>
-                    <button class="btn-fill" onclick="location.reload()">Back to Home</button>
+                    <p>Status: Wait for confirmation</p>
+                    <button class="btn-add" onclick="location.reload()">Done</button>
                 </div>`;
-            cart = []; updateCount();
-        } catch (e) { alert("Error!"); }
+            cart = []; updateCartUI();
+        } catch(e) { alert("Error!"); }
     }
 
-    function closeModal() { document.getElementById('main-modal').style.display = 'none'; }
-</script>
+    // TRACKING (FIXED)
+    async function trackOrder() {
+        const id = document.getElementById('track-id-input').value;
+        const display = document.getElementById('status-display');
+        if(!id) return;
+        display.innerText = "Searching...";
+        try {
+            const res = await fetch(`${scriptURL}?orderID=${id}`);
+            const status = await res.text();
+            display.innerHTML = `<b>Status:</b> ${status === "undefined" ? "Wait for order confirming" : status}`;
+        } catch(e) { display.innerText = "Error!"; }
+    }
 
+    function closeOverlay() { document.getElementById('cart-overlay').style.display = 'none'; }
+    function filterProducts(val) {
+        const filtered = products.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
+        renderProducts(filtered);
+    }
+</script>
 </body>
 </html>
