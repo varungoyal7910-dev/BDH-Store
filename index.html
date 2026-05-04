@@ -3,36 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varun Store | Checkout Ready</title>
+    <title>Varun Store | Final</title>
     <style>
         :root { --accent: #e91e63; --sub: #666; --border: #eee; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 75px; background: #f8f9fa; }
-        
         header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .logo { font-size: 22px; font-weight: 800; color: var(--accent); }
         .cart-icon { position: relative; font-size: 24px; cursor: pointer; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: var(--accent); color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; }
-
         nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: var(--sub); cursor: pointer; width: 33%; }
         .nav-item.active { color: var(--accent); font-weight: 700; }
-
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .p-img { width: 100%; height: 150px; object-fit: cover; }
         .p-info { padding: 12px; }
-        .p-price { color: var(--accent); font-weight: 700; }
         .btn-add { background: var(--accent); color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: 600; }
-
         .full-overlay { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
         .overlay-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
         .overlay-content { flex: 1; overflow-y: auto; padding: 20px; }
-        
+        .qty-btn { background: #eee; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
         .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
-        #payment-timer { background: #fff1f5; color: var(--accent); padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; border: 1px dashed var(--accent); margin-bottom: 20px; }
         .hidden { display: none; }
     </style>
 </head>
@@ -43,15 +35,8 @@
     <div class="cart-icon" onclick="openCart()">🛒 <span class="cart-count" id="cart-count">0</span></div>
 </header>
 
-<div id="page-home">
-    <div class="container" id="product-list"></div>
-</div>
-
-<div id="page-orders" class="hidden" style="padding: 20px;">
-    <h2>My Orders</h2>
-    <div id="my-orders-list"><p style="text-align:center; color:#999;">No orders yet.</p></div>
-</div>
-
+<div id="page-home"><div class="container" id="product-list"></div></div>
+<div id="page-orders" class="hidden" style="padding: 20px;"><h2>My Orders</h2><div id="my-orders-list"></div></div>
 <div id="page-track" class="hidden" style="padding: 20px;">
     <h2>Track Order</h2>
     <input type="text" id="track-id-input" placeholder="Enter Order ID" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:10px;">
@@ -59,12 +44,8 @@
     <div id="status-display" style="margin-top:20px;"></div>
 </div>
 
-<!-- CART / ADDRESS / PAYMENT OVERLAY -->
 <div id="cart-overlay" class="full-overlay">
-    <div class="overlay-header">
-        <span onclick="closeOverlay()" style="font-size: 24px; cursor: pointer;">←</span>
-        <h3 id="overlay-title">My Cart</h3>
-    </div>
+    <div class="overlay-header"><span onclick="closeOverlay()" style="font-size: 24px; cursor: pointer;">←</span><h3 id="overlay-title">My Cart</h3></div>
     <div class="overlay-content" id="overlay-body"></div>
 </div>
 
@@ -75,28 +56,22 @@
 </nav>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyxIXMyPky1pMzLfcvuVtQ5aGK_8t_uGePoho5bN6AB9AaMkkRDwr70ymsopJoMmQoZ/exec";
-    
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxRdHR1HZ0KH-pvJUK4djXm5mtJnYWCgyQCSqyTK_Rg1zSbyf_E9LpPJHTbfBy9Zw7V/exec";
     const products = [
-        { id: 1, name: "Premium Silicone Case", price: 95, img: "https://via.placeholder.com/150" },
-        { id: 2, name: "Party Supplies", price: 80, img: "https://via.placeholder.com/150" },
-        { id: 3, name: "Hair Toppers", price: 67, img: "https://via.placeholder.com/150" }
+        { id: 1, name: "Premium Case", price: 95, img: "https://via.placeholder.com/150" },
+        { id: 2, name: "Party Props", price: 80, img: "https://via.placeholder.com/150" }
     ];
 
     let cart = [];
-    let tempAddress = {}; // User address store karne ke liye
+    let tempAddress = {};
 
     function renderProducts() {
         document.getElementById('product-list').innerHTML = products.map(p => `
             <div class="p-card">
                 <img src="${p.img}" class="p-img">
-                <div class="p-info">
-                    <div class="p-name">${p.name}</div>
-                    <div class="p-price">₹${p.price}</div>
-                    <button class="btn-add" onclick="addToCart(${p.id})">Add to Bag</button>
-                </div>
-            </div>
-        `).join('');
+                <div class="p-info"><b>${p.name}</b><br><span style="color:var(--accent)">₹${p.price}</span>
+                <button class="btn-add" onclick="addToCart(${p.id})">Add to Bag</button></div>
+            </div>`).join('');
     }
     renderProducts();
 
@@ -105,119 +80,95 @@
         document.getElementById('page-'+page).classList.remove('hidden');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
+        if(page === 'orders') renderMyOrders();
     }
 
     function addToCart(id) {
         const item = cart.find(x => x.id === id);
-        if (item) item.qty++; 
-        else cart.push({ ...products.find(x => x.id === id), qty: 1 });
+        if (item) item.qty++; else cart.push({ ...products.find(x => x.id === id), qty: 1 });
+        updateCartCount();
+    }
+
+    function updateCartCount() {
         document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+    }
+
+    function changeQty(id, delta) {
+        const item = cart.find(x => x.id === id);
+        if (item) {
+            item.qty += delta;
+            if (item.qty <= 0) cart = cart.filter(x => x.id !== id);
+        }
+        updateCartCount();
+        openCart();
     }
 
     function openCart() {
         const body = document.getElementById('overlay-body');
         document.getElementById('cart-overlay').style.display = 'flex';
         document.getElementById('overlay-title').innerText = "My Cart";
-        
         if(cart.length === 0) { body.innerHTML = "<p>Cart is empty</p>"; return; }
-
         let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-        body.innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span>${i.name} (x${i.qty})</span><span>₹${i.price * i.qty}</span>
-        </div>`).join('') + `<hr><h3>Total: ₹${total}</h3>
-        <button class="btn-add" onclick="openAddressPage(${total})">Proceed to Address</button>`;
+        body.innerHTML = cart.map(i => `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <div><b>${i.name}</b><br>₹${i.price * i.qty}</div>
+                <div>
+                    <button class="qty-btn" onclick="changeQty(${i.id}, -1)">-</button>
+                    <span style="margin:0 10px">${i.qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${i.id}, 1)">+</button>
+                </div>
+            </div>`).join('') + `<hr><h3>Total: ₹${total}</h3><button class="btn-add" onclick="openAddressPage(${total})">Proceed</button>`;
     }
 
-    // --- STEP 1: ADDRESS PAGE ---
     function openAddressPage(total) {
-        document.getElementById('overlay-title').innerText = "Delivery Address";
+        document.getElementById('overlay-title').innerText = "Address";
         document.getElementById('overlay-body').innerHTML = `
-            <div class="form-group"><label>Full Name</label><input type="text" id="u-name" placeholder="Varun Goyal"></div>
-            <div class="form-group"><label>Phone Number</label><input type="text" id="u-phone" placeholder="98765XXXXX"></div>
-            <div class="form-group"><label>Full Address</label><input type="text" id="u-addr" placeholder="House No, Street, City"></div>
-            <div class="form-group"><label>Pincode</label><input type="text" id="u-pin" placeholder="151502"></div>
-            <button class="btn-add" onclick="saveAddressAndPay(${total})">Continue to Payment</button>
-        `;
+            <div class="form-group"><input type="text" id="u-name" placeholder="Full Name"></div>
+            <div class="form-group"><input type="text" id="u-phone" placeholder="Phone"></div>
+            <div class="form-group"><input type="text" id="u-addr" placeholder="Full Address"></div>
+            <div class="form-group"><input type="text" id="u-pin" placeholder="Pincode"></div>
+            <button class="btn-add" onclick="saveAddr(${total})">Payment</button>`;
     }
 
-    function saveAddressAndPay(total) {
-        tempAddress = {
-            name: document.getElementById('u-name').value,
-            phone: document.getElementById('u-phone').value,
-            addr: document.getElementById('u-addr').value,
-            pin: document.getElementById('u-pin').value
-        };
-        if(!tempAddress.name || !tempAddress.phone || !tempAddress.addr) return alert("All fields are required!");
-        openPaymentPage(total);
+    function saveAddr(total) {
+        tempAddress = { name: document.getElementById('u-name').value, phone: document.getElementById('u-phone').value, addr: document.getElementById('u-addr').value, pin: document.getElementById('u-pin').value };
+        if(!tempAddress.name || !tempAddress.phone) return alert("Fill details!");
+        openPayment(total);
     }
 
-    // --- STEP 2: PAYMENT PAGE WITH TIMER ---
-    function openPaymentPage(total) {
-        document.getElementById('overlay-title').innerText = "Payment";
+    function openPayment(total) {
+        document.getElementById('overlay-title').innerText = "Payment (2:00)";
         document.getElementById('overlay-body').innerHTML = `
-            <div id="payment-timer">Complete Payment in: 2:00</div>
-            <div style="text-align:center; padding:15px; border:1px solid #eee; border-radius:10px;">
-                <p>Send ₹${total} to UPI ID:</p>
-                <h3 style="color:var(--accent);">varungoyal17910@pnb</h3>
-                <input type="text" id="pay-ref" placeholder="Enter Transaction Ref ID" style="width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px;">
+            <div style="text-align:center;">
+                <p>Pay ₹${total} to <b>varungoyal17910@pnb</b></p>
+                <input type="text" id="pay-ref" placeholder="Transaction Ref ID" style="width:100%; padding:12px; margin-bottom:10px;">
                 <button class="btn-add" onclick="submitOrder(${total})">Confirm Order</button>
-            </div>
-        `;
-        startTimer();
+            </div>`;
     }
 
-    function startTimer() {
-        let time = 120;
-        const timer = setInterval(() => {
-            let m = Math.floor(time/60), s = time % 60;
-            const display = document.getElementById('payment-timer');
-            if(display) display.innerText = `Complete Payment in: ${m}:${s < 10 ? '0' : ''}${s}`;
-            if(--time < 0) { clearInterval(timer); location.reload(); }
-        }, 1000);
-    }
-
-    // --- STEP 3: SUBMIT TO GOOGLE SHEETS ---
     async function submitOrder(total) {
         const ref = document.getElementById('pay-ref').value;
-        if(!ref) return alert("Enter Transaction ID!");
-        
+        if(!ref) return alert("Enter Ref ID!");
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
         const finalData = { ...tempAddress, total, payRef: ref, orderID, date: new Date().toLocaleDateString() };
+        
+        document.getElementById('overlay-body').innerHTML = "Saving...";
+        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(finalData) });
 
-        document.getElementById('overlay-body').innerHTML = "<h3>Saving Order... Please wait</h3>";
-
-        try {
-            // Google Sheets Connection
-            await fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(finalData)
-            });
-
-            // Local Storage for My Orders
-            let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
-            myOrders.unshift(finalData);
-            localStorage.setItem('myOrders', JSON.stringify(myOrders));
-
-            document.getElementById('overlay-body').innerHTML = `
-                <div style="text-align:center; padding-top:30px;">
-                    <h2 style="color:green;">✓ Order Placed!</h2>
-                    <p>Order ID: <b>${orderID}</b></p>
-                    <button class="btn-add" onclick="location.reload()">Back to Home</button>
-                </div>`;
-            cart = [];
-        } catch(e) { alert("Error connecting to sheet!"); }
+        let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
+        myOrders.unshift(finalData);
+        localStorage.setItem('myOrders', JSON.stringify(myOrders));
+        
+        document.getElementById('overlay-body').innerHTML = `<h2>Order Placed! ID: ${orderID}</h2><button class="btn-add" onclick="location.reload()">Done</button>`;
+        cart = []; updateCartCount();
     }
 
-    async function trackOrder() {
-        const id = document.getElementById('track-id-input').value;
-        const display = document.getElementById('status-display');
-        display.innerText = "Searching...";
-        try {
-            const res = await fetch(`${scriptURL}?orderID=${id}`);
-            const status = await res.text();
-            display.innerHTML = `<b>Status:</b> ${status === "undefined" ? "Processing" : status}`;
-        } catch(e) { display.innerText = "Error!"; }
+    function renderMyOrders() {
+        const list = JSON.parse(localStorage.getItem('myOrders')) || [];
+        document.getElementById('my-orders-list').innerHTML = list.length ? list.map(o => `
+            <div style="padding:15px; border:1px solid #eee; border-radius:10px; margin-bottom:10px;">
+                <b>ID: ${o.orderID}</b> | ₹${o.total}<br><small>${o.date}</small>
+            </div>`).join('') : "No orders.";
     }
 
     function closeOverlay() { document.getElementById('cart-overlay').style.display = 'none'; }
