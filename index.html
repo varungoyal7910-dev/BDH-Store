@@ -6,48 +6,52 @@
     <title>Varun Store</title>
     <style>
         :root { --accent: #e91e63; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; overflow-x: hidden; }
         
         header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
         .cart-icon { font-size: 24px; cursor: pointer; position: relative; }
         .cart-count { position: absolute; top: -5px; right: -10px; background: red; color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
 
-        /* Search & Permanent Filter Chips */
+        /* Permanent Filters */
         .search-area { background: #fff; padding: 10px 15px; position: sticky; top: 55px; z-index: 90; border-bottom: 1px solid #eee; }
         .filter-chips { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
         .filter-chips::-webkit-scrollbar { display: none; }
-        .chip { padding: 6px 15px; background: #f0f0f0; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; }
+        .chip { padding: 6px 15px; background: #f0f0f0; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; transition: 0.3s; }
         .chip.active { background: var(--accent); color: #fff; }
 
         /* Product Grid */
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .p-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; }
-        .p-img { width: 100%; height: 150px; object-fit: cover; }
-        .p-info { padding: 10px; text-align: left; }
-        .p-name { font-size: 14px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .price-row { margin-top: 5px; }
+        .p-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; transition: 0.3s; }
+        .p-img { width: 100%; height: 160px; object-fit: cover; }
+        .p-info { padding: 10px; }
+        .p-name { font-size: 14px; font-weight: 600; margin: 0; color: #333; }
+        .price-row { margin-top: 5px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .p-price { color: var(--accent); font-weight: bold; font-size: 16px; }
-        .p-mrp { text-decoration: line-through; color: #888; font-size: 12px; margin-left: 5px; }
-        .p-disc { color: green; font-size: 11px; font-weight: bold; }
+        .p-mrp { text-decoration: line-through; color: #888; font-size: 12px; }
+        .p-disc { color: #2e7d32; font-size: 11px; font-weight: bold; background: #e8f5e9; padding: 2px 5px; border-radius: 4px; }
 
-        /* Detail Modal */
+        /* Product Modal (Full Screen Detail) */
         .modal { position: fixed; inset: 0; background: #fff; z-index: 3000; display: none; flex-direction: column; overflow-y: auto; }
-        .modal-header { padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; }
+        .modal-header { padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 10; }
         .modal-body { padding: 15px; }
-        .detail-img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
-        .color-dot { width: 30px; height: 30px; border-radius: 50%; display: inline-block; margin-right: 10px; border: 2px solid #ddd; cursor: pointer; }
-        .policy-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 13px; }
+        .detail-img { width: 100%; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* Color dots */
+        .color-section { margin: 15px 0; }
+        .color-dot { width: 35px; height: 35px; border-radius: 50%; display: inline-block; margin-right: 12px; border: 2px solid #ddd; cursor: pointer; box-sizing: border-box; }
+        .policy-box { background: #fff9c4; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 13px; border: 1px dashed #fbc02d; color: #5d4037; }
 
-        /* General Overlay & Nav */
+        /* Cart/Payment Overlays */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
+        .overlay-content { background: #fff; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; box-sizing: border-box; }
+        
+        .btn-main { background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        
         nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; z-index: 1000; }
         .nav-item { text-align: center; font-size: 12px; color: #666; cursor: pointer; }
         .nav-item.active { color: var(--accent); font-weight: bold; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
-        .overlay-content { background: #fff; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; }
-        
-        .btn-buy { background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -59,50 +63,52 @@
 
 <div id="home-page">
     <div class="search-area">
-        <input type="text" id="search-input" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;" placeholder="Search products..." onkeyup="filterBySearch()">
+        <input type="text" id="search-input" placeholder="Search for products..." onkeyup="filterBySearch()">
         <div class="filter-chips">
-            <div class="chip active" onclick="applyFilter('all', this)">All</div>
-            <div class="chip" onclick="applyFilter('low-high', this)">Low to High</div>
-            <div class="chip" onclick="applyFilter('99', this)">Under 99</div>
-            <div class="chip" onclick="applyFilter('149', this)">Under 149</div>
-            <div class="chip" onclick="applyFilter('199', this)">Under 199</div>
-            <div class="chip" onclick="applyFilter('499', this)">Under 499</div>
+            <div class="chip active" onclick="applyFilter('all', this)">All Products</div>
+            <div class="chip" onclick="applyFilter('99', this)">Under ₹99</div>
+            <div class="chip" onclick="applyFilter('149', this)">Under ₹149</div>
+            <div class="chip" onclick="applyFilter('199', this)">Under ₹199</div>
+            <div class="chip" onclick="applyFilter('499', this)">Under ₹499</div>
         </div>
     </div>
     <div id="product-list" class="container"></div>
 </div>
 
-<!-- Product Detail Modal -->
+<!-- Details Modal -->
 <div id="product-modal" class="modal">
     <div class="modal-header">
         <span style="font-size: 24px; cursor: pointer;" onclick="closeModal()">←</span>
-        <b id="m-title">Product Details</b>
+        <b style="font-size: 18px;">Product Details</b>
     </div>
     <div class="modal-body" id="modal-content"></div>
 </div>
 
 <nav>
-    <div class="nav-item active" onclick="switchPage('home', this)">🏠<br>Home</div>
-    <div class="nav-item" onclick="switchPage('orders', this)">📋<br>Orders</div>
+    <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
+    <div class="nav-item" onclick="openCart()">🛒<br>Bag</div>
 </nav>
 
 <div id="main-overlay" class="overlay">
-    <div class="overlay-content">
-        <div id="overlay-body"></div>
-    </div>
+    <div class="overlay-content" id="overlay-body"></div>
 </div>
 
 <audio id="conf-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
 <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbw2R6GctQgS_Hs9YyuivpY9Qlp5lYCbw5IN113gqpDiMhNyrR2YwEzOcVUtE4PzhgA/exec";
     const upiID = "varungoyal7910@pnb";
+    
     const products = [
-        { id: 1, name: "Premium Silicone Case", price: 149, mrp: 399, disc: "62% OFF", img: "https://via.placeholder.com/300", desc: "Super soft silicone case with camera protection. Premium matte finish and dust proof.", colors: ["Black", "Blue", "Red"] },
-        { id: 2, name: "Wireless Earbuds Pro", price: 499, mrp: 999, disc: "50% OFF", img: "https://via.placeholder.com/300", desc: "Deep bass, 20hrs battery life, and noise cancellation technology.", colors: ["White", "Black"] },
-        { id: 3, name: "Fast Charging Cable", price: 89, mrp: 199, disc: "55% OFF", img: "https://via.placeholder.com/300", desc: "Braided 1.5m long cable. Supports 65W fast charging.", colors: ["Grey"] }
+        { id: 1, name: "Premium Silicone Case", price: 149, mrp: 499, disc: "70% OFF", img: "https://images.unsplash.com/photo-1603313011101-31cffde80a9d?w=400", desc: "Super soft silicone finish, internal microfiber lining. Best for phone protection.", colors: ["Black", "MidnightBlue", "Crimson"] },
+        { id: 2, name: "M10 TWS Wireless Earbuds", price: 499, mrp: 1299, disc: "61% OFF", img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400", desc: "LED Display, 2000mAh Power Bank Case, Bluetooth 5.1 Technology.", colors: ["Black", "Green"] },
+        { id: 3, name: "Fast Charging USB Cable", price: 99, mrp: 299, disc: "66% OFF", img: "https://images.unsplash.com/photo-1589492477829-5e65395b66cc?w=400", desc: "Long lasting braided cable. Supports up to 65W fast charging.", colors: ["Silver", "Black", "Red"] }
     ];
 
     let cart = [];
+    let selectedColor = "";
+    let userData = {};
+    let timerInterval;
 
     function renderProducts(data = products) {
         document.getElementById('product-list').innerHTML = data.map(p => `
@@ -113,7 +119,7 @@
                     <div class="price-row">
                         <span class="p-price">₹${p.price}</span>
                         <span class="p-mrp">₹${p.mrp}</span>
-                        <div class="p-disc">${p.disc}</div>
+                        <span class="p-disc">${p.disc}</span>
                     </div>
                 </div>
             </div>`).join('');
@@ -122,84 +128,159 @@
 
     function openProduct(id) {
         const p = products.find(x => x.id === id);
+        selectedColor = ""; 
         document.getElementById('product-modal').style.display = 'flex';
         document.getElementById('modal-content').innerHTML = `
             <img src="${p.img}" class="detail-img">
-            <h2>${p.name}</h2>
-            <div style="margin-bottom:10px;">
-                <span style="font-size:22px; font-weight:bold; color:var(--accent);">₹${p.price}</span>
-                <span style="text-decoration:line-through; color:#888; margin-left:10px;">₹${p.mrp}</span>
-                <span style="color:green; font-weight:bold; margin-left:10px;">${p.disc}</span>
+            <h2 style="margin:0;">${p.name}</h2>
+            <div class="price-row" style="font-size:20px; margin:10px 0;">
+                <span class="p-price">₹${p.price}</span>
+                <span class="p-mrp">₹${p.mrp}</span>
+                <span class="p-disc">${p.disc}</span>
             </div>
-            <p style="color:#555; line-height:1.5;">${p.desc}</p>
+            <p style="color:#555; line-height:1.6; font-size:14px;">${p.desc}</p>
             
-            <h4>Select Color:</h4>
-            ${p.colors.map(c => `<div class="color-dot" style="background:${c.toLowerCase()};" title="${c}"></div>`).join('')}
+            <div class="color-section">
+                <b>Select Color:</b><br><br>
+                ${p.colors.map(c => `<div class="color-dot" style="background:${c.toLowerCase()};" onclick="selectColor('${c}', this)"></div>`).join('')}
+            </div>
             
             <div class="policy-box">
                 <b>✓ 7 Days Replacement Policy</b><br>
-                <b>✓ High Quality Guaranteed</b><br>
-                <b>✓ Free Delivery on ₹499+</b>
+                <b>✓ Premium Quality Tested</b><br>
+                <b>✓ Secure Payment Gateway</b>
             </div>
             
-            <button class="btn-buy" onclick="addToCart(${p.id}); closeModal(); openCart();">Add to Cart</button>
+            <button class="btn-main" onclick="addToCart(${p.id})">Add to Bag</button>
         `;
     }
 
-    function closeModal() { document.getElementById('product-modal').style.display = 'none'; }
-
-    function applyFilter(type, el) {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        let res = [...products];
-        if(type === 'low-high') res.sort((a,b) => a.price - b.price);
-        else if(type !== 'all') res = products.filter(p => p.price <= parseInt(type));
-        renderProducts(res);
+    function selectColor(color, el) {
+        selectedColor = color;
+        document.querySelectorAll('.color-dot').forEach(d => d.style.border = "2px solid #ddd");
+        el.style.border = "3px solid black";
     }
 
     function addToCart(id) {
-        let item = cart.find(x => x.id === id);
-        if(item) item.qty++; else cart.push({...products.find(x => x.id === id), qty: 1});
+        const p = products.find(x => x.id === id);
+        if(!selectedColor) return alert("Pehle Color select karein!");
+        
+        let item = cart.find(x => x.id === id && x.color === selectedColor);
+        if(item) item.qty++; else cart.push({...p, qty: 1, color: selectedColor});
+        
+        updateUI();
+        closeModal();
+        openCart();
+    }
+
+    function updateUI() {
         document.getElementById('cart-count').innerText = cart.reduce((a,b) => a + b.qty, 0);
     }
 
-    // Previous Cart/Payment logic remains same with the 2:00 timer & correct UPI ID
     function openCart() {
         const body = document.getElementById('overlay-body');
         document.getElementById('main-overlay').style.display = 'flex';
-        if(cart.length === 0) { body.innerHTML = "<h3>Cart Empty</h3>"; return; }
+        if(cart.length === 0) { body.innerHTML = "<h3>Your Bag is Empty</h3><button class='btn-main' onclick='closeOverlay()'>Go Shopping</button>"; return; }
+        
         let total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
         body.innerHTML = `<h3>Your Bag</h3>` + cart.map(i => `
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <span>${i.name}</span>
-                <span>₹${i.price} x ${i.qty}</span>
-            </div>`).join('') + `<h4>Total: ₹${total}</h4><button class="btn-buy" onclick="openPayment(${total})">Pay Now</button>`;
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <div>
+                    <b>${i.name}</b><br>
+                    <small>Color: ${i.color} | Qty: ${i.qty}</small>
+                </div>
+                <b>₹${i.price * i.qty}</b>
+            </div>`).join('') + `<hr><h4>Total: ₹${total}</h4><button class="btn-main" onclick="openAddress(${total})">Place Order</button>`;
+    }
+
+    function openAddress(total) {
+        document.getElementById('overlay-body').innerHTML = `
+            <h3>Shipping Details</h3>
+            <input type="text" id="name" placeholder="Full Name">
+            <input type="text" id="phone" placeholder="Mobile Number">
+            <input type="text" id="addr" placeholder="House No, Street, Area">
+            <input type="text" id="pin" placeholder="Pincode">
+            <button class="btn-main" onclick="saveAddress(${total})">Continue to Payment</button>`;
+    }
+
+    function saveAddress(t) {
+        userData = { 
+            name: document.getElementById('name').value, 
+            phone: document.getElementById('phone').value, 
+            addr: document.getElementById('addr').value, 
+            pin: document.getElementById('pin').value 
+        };
+        if(!userData.name || !userData.phone || !userData.addr) return alert("Fill all details!");
+        openPayment(t);
     }
 
     function openPayment(total) {
         document.getElementById('overlay-body').innerHTML = `
             <div style="text-align:center;">
-                <div style="background:#ffebee; padding:5px; border-radius:20px; font-weight:bold; color:red; margin-bottom:10px;">⏱ <span id="timer">02:00</span></div>
-                <h3>Scan & Pay</h3>
-                <p>Pay <b>₹${total}</b> to <b>${upiID}</b></p>
-                <button onclick="navigator.clipboard.writeText('${upiID}'); alert('Copied!')" style="padding:5px 10px; margin-bottom:15px;">Copy UPI</button>
-                <input type="text" id="ref-id" style="width:100%; padding:10px;" placeholder="Enter Transaction ID">
-                <button class="btn-buy" onclick="confirmOrder()">Confirm Order</button>
+                <div style="background:#ffebee; color:#c62828; padding:8px; border-radius:20px; font-weight:bold; margin-bottom:15px;">⏱ <span id="timer">02:00</span></div>
+                <h3>Final Payment</h3>
+                <p>Total: <b>₹${total}</b></p>
+                <div style="background:#f5f5f5; padding:10px; border-radius:8px; font-family:monospace; margin-bottom:10px;">${upiID}</div>
+                <button onclick="navigator.clipboard.writeText('${upiID}'); alert('UPI ID Copied!')" style="background:none; border:1px solid #ccc; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px;">Copy UPI</button>
+                <input type="text" id="ref-id" placeholder="Enter Transaction Ref ID (UTR)">
+                <button class="btn-main" onclick="confirmOrder(${total})">Verify & Place Order</button>
             </div>`;
-        // Timer Logic
-        let time = 120;
-        const t = setInterval(() => {
-            let m = Math.floor(time/60), s = time%60;
-            document.getElementById('timer').innerText = `${m}:${s<10?'0':''}${s}`;
-            if(--time < 0) { clearInterval(t); alert("Time Over"); location.reload(); }
+        startTimer(120);
+    }
+
+    function startTimer(duration) {
+        let time = duration;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            let m = Math.floor(time / 60), s = time % 60;
+            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            if (--time < 0) { clearInterval(timerInterval); alert("Payment Timeout!"); location.reload(); }
         }, 1000);
     }
 
-    function confirmOrder() {
+    async function confirmOrder(total) {
+        const ref = document.getElementById('ref-id').value;
+        if(!ref) return alert("Please enter Transaction ID!");
+        
+        // Detailed string for Google Sheets
+        const orderDetailsString = cart.map(i => `${i.name} (Color: ${i.color}, Qty: ${i.qty})`).join(" | ");
+        const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
+        
+        const finalData = { ...userData, total, payRef: ref, orderID, orderDetails: orderDetailsString, date: new Date().toLocaleString() };
+
+        document.getElementById('overlay-body').innerHTML = "<h3>Booking Order...</h3>";
         document.getElementById('conf-sound').play();
-        alert("Order Placed Successfully!");
-        location.reload();
+        clearInterval(timerInterval);
+
+        try {
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(finalData) });
+            document.getElementById('overlay-body').innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <h1 style="color:green; font-size:50px;">✔</h1>
+                    <h2>Order Confirmed!</h2>
+                    <p>Order ID: <b>${orderID}</b></p>
+                    <p>Hamara agent aapse jald hi contact karega.</p>
+                    <button class="btn-main" onclick="location.reload()">Back to Home</button>
+                </div>`;
+            cart = []; updateUI();
+        } catch(e) { alert("Server Error. Order Saved locally."); }
     }
+
+    function applyFilter(type, el) {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        let res = [...products];
+        if(type !== 'all') res = products.filter(p => p.price <= parseInt(type));
+        renderProducts(res);
+    }
+
+    function filterBySearch() {
+        const q = document.getElementById('search-input').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    function closeModal() { document.getElementById('product-modal').style.display = 'none'; }
+    function closeOverlay() { document.getElementById('main-overlay').style.display = 'none'; clearInterval(timerInterval); }
 </script>
 </body>
 </html>
