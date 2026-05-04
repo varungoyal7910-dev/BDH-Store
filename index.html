@@ -205,10 +205,19 @@
         if(!payRef) return alert("Payment ID is required!");
 
         const orderID = "VAR" + Math.floor(1000 + Math.random()*9000);
-        const data = { ...window.userData, payRef, total, orderID, status: "Pending", date: new Date().toISOString() };
+      // Naya aur sahi data object
+    const data = { 
+        name: window.userData.name,      // Name
+        phone: window.userData.phone,    // Phone
+        address: window.userData.addr,   // ADDRESS (Ye zaroori hai)
+        pincode: window.userData.pin,    // PINCODE (Ye zaroori hai)
+        payRef: payRef, 
+        total: total, 
+        orderID: orderID 
+    };
 
-        // Save to Sheet
-        fetch(scriptURL, { method: 'POST', body: JSON.stringify(data), mode: 'no-cors' });
+    // Save to Sheet
+    fetch(scriptURL, { method: 'POST', body: JSON.stringify(data), mode: 'no-cors' });
 
         // Save to Local
         let history = JSON.parse(localStorage.getItem('vOrders') || '[]');
