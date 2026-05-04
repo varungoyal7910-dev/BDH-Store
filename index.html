@@ -173,11 +173,49 @@
 
     // --- Cart & Checkout Logic ---
     function addToCart(id) {
-        cart.push(products.find(x => x.id === id));
-        document.getElementById('cart-count').innerText = cart.length;
-        alert("Added to bag!");
+    const itemInCart = cart.find(x => x.id === id);
+    if (itemInCart) {
+        itemInCart.qty++;
+    } else {
+        const product = products.find(x => x.id === id);
+        cart.push({ ...product, qty: 1 });
     }
+    document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+    alert("Added to bag!");
+}
 
+// Quantity badhane/ghatane ke liye
+function updateQty(id, change) {
+    const item = cart.find(i => i.id === id);
+    if (item) {
+        item.qty += change;
+        if (item.qty <= 0) {
+            cart = cart.filter(i => i.id !== id);
+        }
+    }
+    renderCart(); // Ye function cart screen refresh karega
+}
+
+// 2 Minute Timer function
+function startPaymentTimer() {
+    let timeLeft = 120;
+    const display = document.getElementById('payment-timer');
+    if (window.paymentInterval) clearInterval(window.paymentInterval);
+
+    window.paymentInterval = setInterval(() => {
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        if (display) {
+            display.innerText = `Complete Payment in: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        if (--timeLeft < 0) {
+            clearInterval(window.paymentInterval);
+            alert("Bhai, time khatam! Order cancel.");
+            location.reload();
+        }
+    }, 1000);
+}
+    
     function quickBuy(id) {
         cart = [products.find(x => x.id === id)];
         openCheckoutStep1();
@@ -220,6 +258,12 @@
             <div style="padding:15px; font-size:24px;" onclick="openCheckoutStep1()">←</div>
             <div class="step-container">
                 <h2>Payment</h2>
+                <div class="step-container">
+    <h2>Payment</h2>
+    <!-- Timer yahan add karein -->
+    <div id="payment-timer">Complete Payment in: 2:00</div> 
+    
+    <div style="background:#f0f0f0; padding:20px; ...">
                 <div style="background:#f0f0f0; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px;">
                     <p style="margin:0; color:#666;">UPI ID</p>
                     <b style="font-size:18px;">varungoyal7910@pnb</b>
