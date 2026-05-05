@@ -124,6 +124,37 @@
             </div>
         </div>
     </div>
+    
+    <!-- Naya Payment Page (Line 127 par paste karein) -->
+        <div id="payment-page" class="page">
+            <div class="container" style="text-align:center;">
+                <button onclick="showPage('checkout-page')" style="border:none; background:none; font-weight:800; color:var(--navy); margin-bottom:15px; float:left;">← Back</button>
+                <div style="clear:both;"></div>
+                <div style="background:white; padding:20px; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+                    <h2 style="margin-bottom:5px;">Complete Payment</h2>
+                    <p style="color:#666; font-size:14px; margin-bottom:20px;">Payable: <b id="pay-amt" style="color:var(--navy);"></b></p>
+
+                    <div style="background:#f8f9fa; padding:15px; border-radius:15px; border:2px dashed #ddd; margin-bottom:20px;">
+                        <p style="font-size:12px; color:#888; margin-bottom:5px;">Copy UPI ID & Pay</p>
+                        <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
+                            <span id="upi-id-text" style="font-weight:800; font-size:18px; color:var(--navy);">varun@upi</span>
+                            <button onclick="copyUPI()" style="background:var(--navy); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:12px;">Copy</button>
+                        </div>
+                    </div>
+
+                    <div style="background:white; padding:10px; display:inline-block; border:1px solid #eee; border-radius:15px; margin-bottom:20px;">
+                        <img src="" id="qr-img" style="width:180px; height:180px;">
+                    </div>
+
+                    <div style="text-align:left; margin-top:10px;">
+                        <label style="font-size:12px; font-weight:700;">Ref / UTR No.*</label>
+                        <input type="text" id="u-utr" class="form-input" placeholder="12 Digit Number" style="border:2px solid var(--navy);">
+                    </div>
+
+                    <button class="btn-action" onclick="verifyAndSubmit()" style="background:#2ecc71;">Verify & Submit Order</button>
+                </div>
+            </div>
+        </div>
 
     <nav>
         <button class="nav-item active" id="n-home" onclick="showPage('home')"><i>🏠</i>Explore</button>
@@ -303,6 +334,70 @@
             const q = document.querySelector('.search-bar').value.toLowerCase();
             renderHome(PRODUCTS.filter(p => p.name.toLowerCase().includes(q)));
         }
+
+        // --- YAHAN SE PASTE KAREIN (Line 337 ke baad) ---
+
+function copyUPI() {
+    const upiText = document.getElementById('upi-id-text').innerText;
+    navigator.clipboard.writeText(upiText);
+    alert("UPI ID Copy ho gayi! Ab kisi bhi UPI app mein jaakar pay karein.");
+}
+
+// Ye naya placeOrder purane wale ko replace karega (agar pehle se hai)
+function placeOrder() {
+    const name = document.getElementById('u-name').value;
+    const pin = document.getElementById('u-pincode').value;
+    if(!name || !pin || cart.length === 0) return alert("Bhai, saari details bharo!");
+
+    const total = document.getElementById('sum-total').innerText;
+    document.getElementById('pay-amt').innerText = total;
+
+    const amount = total.replace('₹', '');
+    const upiId = "varun@upi"; // APNI ID YAHAN DALO
+    document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=VarunStore%26am=${amount}%26cu=INR`;
+
+    showPage('payment-page');
+}
+
+async function verifyAndSubmit() {
+    const utr = document.getElementById('u-utr').value;
+    if(utr.length < 6) return alert("Sahi UTR number ya Ref ID dalo!");
+
+    showPage('status-page');
+    document.getElementById('processing-box').style.display = 'block';
+    document.getElementById('success-box').style.display = 'none';
+
+    const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
+    const payload = {
+        orderId: oid,
+        name: document.getElementById('u-name').value,
+        phone: document.getElementById('u-phone').value,
+        address: document.getElementById('u-addr').value,
+        pincode: document.getElementById('u-pincode').value,
+        total: document.getElementById('sum-total').innerText,
+        utr: utr,
+        product: cart.map(i => `${i.name} (x${i.qty})`).join(", "),
+        date: new Date().toLocaleDateString(),
+        status: 'pending'
+    };
+
+    // Google Sheet link se data bhej raha hai
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+
+    myOrders.unshift(payload);
+    localStorage.setItem('myOrders', JSON.stringify(myOrders));
+
+    setTimeout(() => {
+        document.getElementById('processing-box').style.display = 'none';
+        document.getElementById('success-box').style.display = 'block';
+        document.getElementById('final-oid').innerText = "Order ID: " + oid;
+        cart = []; 
+        saveCart();
+    }, 2500);
+}
+
+// --- PASTE KHATAM (Iske baad updateCartUI() aur renderHome() pehle se hain) ---
+        
 
         updateCartUI();
         renderHome();
