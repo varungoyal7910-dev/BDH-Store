@@ -8,7 +8,6 @@
         :root { --g-orange: #FFB400; --g-navy: #131921; --g-white: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 80px; color: #111; }
         
-        /* HEADER */
         header { background: var(--g-navy); padding: 12px 15px; color: white; position: sticky; top: 0; z-index: 1000; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .logo { font-size: 22px; font-weight: 900; }
@@ -23,31 +22,26 @@
 
         .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 10px; font-size: 11px; font-weight: bold; border-bottom: 1px solid #ddd; }
 
-        /* PAGES */
         .page { display: none; padding: 15px; min-height: 80vh; }
         .active-page { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from {opacity:0} to {opacity:1} }
 
-        /* PRODUCT CARDS */
         .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .p-card { background: white; border-radius: 8px; padding: 12px; position: relative; border: 1px solid #ddd; }
         .discount-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 2px; }
         .p-card img { width: 100%; height: 120px; object-fit: contain; }
         .rating-stars { color: #ffa41c; font-size: 18px; margin: 5px 0; }
 
-        /* CART & ORDERS */
         .item-row { background: white; padding: 15px; border-radius: 8px; display: flex; gap: 12px; margin-bottom: 10px; border: 1px solid #ddd; }
         .item-row img { width: 70px; height: 70px; object-fit: contain; }
         .qty-box { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
         .qty-btn { background: #e7e9ec; border: 1px solid #adb1b8; width: 30px; height: 30px; border-radius: 4px; font-weight: bold; }
 
-        /* BUTTONS */
         .btn-main { background: #FFD814; border: 1px solid #FCD200; color: #0f1111; width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 12px 0; z-index: 1000; }
         .nav-item { flex: 1; text-align: center; font-size: 11px; color: #555; cursor: pointer; }
-        .nav-item.active { color: var(--g-orange); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -58,7 +52,7 @@
         <div class="cart-btn" onclick="showPage('cart-page')">🛒 Cart (<span id="cart-count">0</span>)</div>
     </div>
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search premium products..." onkeyup="searchFun()">
+        <input type="text" id="search-input" placeholder="Search products..." onkeyup="searchFun()">
     </div>
     <div class="filters">
         <div class="chip" onclick="filterPrice('All')">All Items</div>
@@ -76,16 +70,14 @@
 <!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
     <div class="p-grid" id="p-container">
-        <!-- Mic -->
-        <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 599, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', 'Noise cancellation, 3.5mm jack, 2-meter long wire for professional vlogging and interviews.')">
+        <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 599, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', 'Noise cancellation, 3.5mm jack, wire for professional vlogging.')">
             <span class="discount-tag"></span>
             <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg">
             <div class="rating-stars">★★★★☆</div>
             <h4 style="margin:5px 0; font-size:14px;">Pro Vlog Microphone</h4>
             <b>₹99</b> <span style="text-decoration:line-through; color:gray; font-size:12px;">₹599</span>
         </div>
-        <!-- Mouse -->
-        <div class="p-card" data-price="299" onclick="openDetails('Gaming Mouse', 299, 999, 'https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg', 'RGB lighting, 3200 DPI, ergonomic design for long gaming sessions and smooth office work.')">
+        <div class="p-card" data-price="299" onclick="openDetails('Gaming Mouse', 299, 999, 'https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg', 'RGB lighting, ergonomic design for long gaming sessions.')">
             <span class="discount-tag"></span>
             <img src="https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg">
             <div class="rating-stars">★★★★★</div>
@@ -105,18 +97,8 @@
         <span id="det-old" style="text-decoration:line-through; color:gray; margin-left:10px;"></span>
         <span id="det-perc" style="color:#cc0c39; font-weight:bold; margin-left:10px;"></span>
     </div>
-    
     <h4>Description:</h4>
     <p id="det-desc" style="color:#444; line-height:1.5; font-size:14px;"></p>
-    
-    <div style="margin:20px 0;">
-        <b>Select Color:</b><br>
-        <div style="display:flex; gap:15px; margin-top:10px;">
-            <div style="width:30px; height:30px; border-radius:50%; background:black; border:3px solid var(--g-orange);"></div>
-            <div style="width:30px; height:30px; border-radius:50%; background:silver; border:1px solid #ccc;"></div>
-        </div>
-    </div>
-
     <button class="btn-main" onclick="addToCart()">Add to Cart 🛒</button>
 </div>
 
@@ -125,8 +107,15 @@
     <h3 style="border-bottom:2px solid #ddd; padding-bottom:10px;">Your Cart</h3>
     <div id="cart-items"></div>
     <div id="cart-summary" style="display:none; background:white; padding:15px; border-radius:8px; margin-top:20px; border:1px solid #ddd;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span>Total Amount:</span><b id="final-total">₹0</b>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: #555;">
+            <span>Total MRP:</span><span id="total-mrp">₹0</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: green; font-weight: bold;">
+            <span>Discount:</span><span id="total-discount">-₹0</span>
+        </div>
+        <hr>
+        <div style="display:flex; justify-content:space-between; margin-top:10px; font-size: 18px; font-weight: bold;">
+            <span>Final Rate:</span><span id="final-total">₹0</span>
         </div>
         <button class="btn-main" onclick="showPage('checkout-page')">Proceed to Checkout</button>
     </div>
@@ -155,7 +144,6 @@
     </div>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
         <input type="radio" name="pay" id="p-cod"> <b>Cash on Delivery (COD)</b>
-        <p style="font-size:12px; color:gray;">Extra ₹40 delivery charges for COD</p>
     </div>
     <button class="btn-main" style="margin-top:20px;" onclick="confirmOrder()">Confirm Order</button>
 </div>
@@ -169,14 +157,13 @@
 <!-- TRACK PAGE -->
 <div id="track-page" class="page">
     <h3>Track Order 📍</h3>
-    <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID (e.g. GC1234)">
+    <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID">
     <button class="btn-main" onclick="runTrack()">Track Status</button>
     <div id="track-result" style="margin-top:20px;"></div>
 </div>
 
 <nav>
     <div class="nav-item" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" onclick="showPage('cart-page')">🛒<br>Cart</div>
     <div class="nav-item" onclick="loadOrders()">📦<br>Orders</div>
     <div class="nav-item" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
@@ -186,7 +173,6 @@
     let currentProd = {};
     let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
 
-    // Auto-Calculate Discount % on load
     window.onload = () => {
         document.querySelectorAll('.p-card').forEach(card => {
             let price = parseInt(card.getAttribute('data-price'));
@@ -199,12 +185,11 @@
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
-        window.scrollTo(0,0);
     }
 
     function openDetails(t, p, o, i, d) {
         let off = Math.round(((o - p) / o) * 100);
-        currentProd = {title: t, price: p, img: i, qty: 1};
+        currentProd = {title: t, price: p, mrp: o, img: i, qty: 1};
         document.getElementById('det-title').innerText = t;
         document.getElementById('det-price').innerText = "₹" + p;
         document.getElementById('det-old').innerText = "₹" + o;
@@ -235,14 +220,17 @@
         document.getElementById('empty-cart').style.display = 'none';
         document.getElementById('cart-summary').style.display = 'block';
         
-        let total = 0;
+        let totalMrp = 0;
+        let finalPrice = 0;
+
         list.innerHTML = cart.map((item, index) => {
-            total += (item.price * item.qty);
+            totalMrp += (item.mrp * item.qty);
+            finalPrice += (item.price * item.qty);
             return `<div class="item-row">
                 <img src="${item.img}">
                 <div style="flex:1;">
                     <b>${item.title}</b><br>
-                    <span style="color:#B12704; font-weight:bold;">₹${item.price}</span>
+                    <span style="color:#B12704; font-weight:bold;">₹${item.price}</span> <small style="text-decoration:line-through; color:gray;">₹${item.mrp}</small>
                     <div class="qty-box">
                         <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
                         <span>${item.qty}</span>
@@ -251,7 +239,10 @@
                 </div>
             </div>`;
         }).join('');
-        document.getElementById('final-total').innerText = "₹" + total;
+
+        document.getElementById('total-mrp').innerText = "₹" + totalMrp;
+        document.getElementById('total-discount').innerText = "-₹" + (totalMrp - finalPrice);
+        document.getElementById('final-total').innerText = "₹" + finalPrice;
     }
 
     function changeQty(index, delta) {
@@ -263,7 +254,6 @@
     function confirmOrder() {
         const method = document.getElementById('p-cod').checked ? "COD" : "Online";
         if(method === "Online" && !document.getElementById('u-utr').value) return alert("Please enter UTR!");
-        
         const orderId = "GC" + Math.floor(1000 + Math.random() * 9000);
         myOrders.push({ orderId, status: "Order Placed", date: new Date().toLocaleDateString(), method: method });
         localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
