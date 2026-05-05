@@ -353,37 +353,103 @@
     changePage('payment-page');
      }
 
-    function placeOrder() {
-        const utr = document.getElementById('c-utr').value;
-        if(utr.length < 8) return alert("Sahi Transaction Number dalo!");
+   // 1. Order Bhejne Wala Function
+    
+function placeOrder() {
+    // APNA NAYA URL YAHAN DALEIN
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtOOhWe8LyGHgQwh35RHrDkjFVKE9lEyLFwGGhrjFzl4I8o0GNNUtpXcKRZaSS2a0L/exec";
 
-        changePage('status-page');
-        const orderId = "VAR" + Math.floor(1000 + Math.random() * 9000);
-        
-        const data = {
+    const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Color select karne ka logic
+    const colorBtn = document.querySelector('.color-dot.active');
+    const selectedColor = colorBtn ? colorBtn.style.background : "Standard";
+    
+    // Product + Color string banana
+    const itemsWithColor = cart.map(i => `${i.name}(x${i.qty}) [Color: ${selectedColor}]`).join(', ');
+
+    // SHET KE 11 COLUMNS KE HISAB SE DATA
+    const orderData = {
+        action: "placeOrder",
+        name: document.getElementById('c-name').value,        // Column A
+        phone: document.getElementById('c-phone').value,      // Column B
+        address: document.getElementById('c-address').value,  // Column C
+        pincode: document.getElementById('c-pincode').value,  // Column D
+        utr: document.getElementById('c-utr').value,          // Column E (Payment Ref)
+        amount: document.getElementById('pay-amt').innerText, // Column F (Price)
+        orderId: orderId,                                     // Column H
+        items: itemsWithColor                                 // Column K
+    };
+
+    // Google Sheet ko data bhej rahe hain
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(orderData)
+    }).then(() => {
+        // LocalStorage mein bhi save karo taaki 'My Orders' mein dikhe
+        let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
+        myOrders.push({
             orderId: orderId,
-            name: document.getElementById('c-name').value,
-            phone: document.getElementById('c-phone').value,
-            address: document.getElementById('c-address').value + " PIN:" + document.getElementById('c-pincode').value,
-            utr: utr,
-            items: cart.map(i => `${i.name}(x${i.qty})`).join(', '),
-            amount: document.getElementById('pay-amt').innerText,
-            status: 'Processing'
-        };
-
-        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
-        .then(() => {
-            myOrders.unshift(data);
-            localStorage.setItem('varunOrders', JSON.stringify(myOrders));
-            cart = []; saveCart();
-            
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('success').style.display = 'block';
-                document.getElementById('order-id-txt').innerText = "ID: " + orderId;
-            }, 2500);
+            items: itemsWithColor,
+            status: "Pending",
+            date: new Date().toLocaleString()
         });
-    }
+        localStorage.setItem('varunOrders', JSON.stringify(myOrders));
+        
+        alert("Order Successful! Order ID: " + orderId);
+        window.location.href = "success.html"; 
+    }).catch(err => alert("Error: " + err));
+}
+
+// 2. Return/Replace Button Logic (My Orders Page Ke Liye)
+function renderOrders() {
+    const container = document.getElementById('my-orders-list');
+    container.innerHTML = "";
+    const myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
+
+    myOrders.forEach((order, index) => {
+        const orderDate = new Date(order.date);
+        const diffDays = Math.floor((new Date() - orderDate) / (1000 * 60 * 60 * 24));
+
+        let actionHtml = "";
+        // Status 'Delivered' hone par aur 7 din ke andar return dikhega
+        if (order.status === "Delivered" && diffDays <= 7) {
+            actionHtml = `<button onclick="sendReturn('${order.orderId}', ${index})" style="background:orange; color:white; border:none; padding:8px; border-radius:5px; width:100%; cursor:pointer;">Return/Replace</button>`;
+        } else if (order.status === "Return Req") {
+            actionHtml = `<p style="color:orange; font-weight:bold;">Return Requested</p>`;
+        }
+
+        container.innerHTML += `
+            <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
+                <p>Order ID: ${order.orderId}</p>
+                <p>Status: ${order.status}</p>
+                ${actionHtml}
+            </div>`;
+    });
+}
+
+// 3. Return Request Bhejne ka Function
+function sendReturn(orderId, index) {
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtOOhWe8LyGHgQwh35RHrDkjFVKE9lEyLFwGGhrjFzl4I8o0GNNUtpXcKRZaSS2a0L/exec";
+    
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+            action: "updateReturn",
+            orderId: orderId,
+            val: "YES - Requested"
+        })
+    }).then(() => {
+        let orders = JSON.parse(localStorage.getItem('varunOrders'));
+        orders[index].status = "Return Req";
+        localStorage.setItem('varunOrders', JSON.stringify(orders));
+        renderOrders();
+        alert("Return request bhej di gayi hai!");
+    });
+}
 
     function renderOrders() {
         const list = document.getElementById('orders-list');
