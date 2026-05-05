@@ -1,200 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART | Shop More Pay Less</title>
-    <style>
-        :root { --g-orange: #FF6600; --g-navy: #131921; --g-white: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: #f7f7f7; padding-bottom: 80px; }
-
-        /* HEADER AREA */
-        header { background: var(--g-navy); padding: 15px; color: white; position: sticky; top: 0; z-index: 1000; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .logo { font-size: 22px; font-weight: 900; color: var(--g-orange); letter-spacing: 1px; }
-        .cart-box { font-size: 24px; cursor: pointer; position: relative; }
-        #cart-count { position: absolute; top: -5px; right: -10px; background: var(--g-orange); font-size: 10px; padding: 2px 6px; border-radius: 50%; }
-
-        /* SEARCH & FILTER */
-        .search-container { background: white; border-radius: 8px; display: flex; overflow: hidden; }
-        .search-container input { border: none; padding: 12px; width: 100%; outline: none; }
-        .search-container button { background: var(--g-orange); border: none; padding: 0 15px; color: white; font-weight: bold; }
-        .price-filters { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .chip { background: white; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; }
-
-        /* PRODUCT GRID */
-        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .p-card { background: white; border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .p-card img { width: 100%; height: 140px; object-fit: contain; cursor: pointer; border-radius: 8px; }
-        .p-name { font-size: 14px; font-weight: 600; margin: 8px 0; height: 35px; overflow: hidden; }
-        .p-price { color: #B12704; font-size: 18px; font-weight: 800; }
-
-        /* BOTTOM NAVIGATION */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; padding: 10px 0; z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; font-size: 11px; font-weight: 700; color: #666; cursor: pointer; }
-        .nav-item.active { color: var(--g-navy); }
-
-        /* PAGE HANDLING */
-        .page { display: none; padding: 15px; }
-        .active-page { display: block; }
-
-        /* FORMS */
-        .form-box input { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .action-btn { background: var(--g-orange); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
-
-        /* CART QTY */
-        .qty-box { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
-        .qty-btn { background: #eee; border: none; padding: 5px 12px; border-radius: 4px; font-weight: bold; }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="header-top">
-        <div class="logo">GOCART</div>
-        <div class="cart-box" onclick="showPage('cart-page')">🛒<span id="cart-count">0</span></div>
-    </div>
-    <div class="search-container">
-        <input type="text" placeholder="Search premium items...">
-        <button>Search</button>
-    </div>
-    <div class="price-filters">
-        <div class="chip">Under ₹199</div>
-        <div class="chip">₹200 - ₹499</div>
-        <div class="chip">Price: Low to High</div>
-    </div>
-</header>
-
-<!-- HOME PAGE -->
-<div id="home-page" class="page active-page">
-    <div class="p-grid" id="product-list">
-        <!-- Sample Product -->
-        <div class="p-card">
-            <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg" onclick="viewProduct(1)">
-            <div class="p-name">Vlogging Mic with Noise Cancellation</div>
-            <div class="p-price">₹149</div>
-            <button class="action-btn" style="padding:8px; font-size:12px; margin-top:5px;" onclick="addToCart(1, 'Mic', 149)">Add to Cart</button>
-        </div>
-    </div>
-</div>
-
-<!-- CART PAGE -->
-<div id="cart-page" class="page">
-    <h3>Shopping Cart</h3>
-    <div id="cart-items-list"></div>
-    <div style="margin: 20px 0; font-size: 20px; font-weight: bold;">Total: ₹<span id="cart-total">0</span></div>
-    <button class="action-btn" onclick="showPage('address-page')">Buy Now</button>
-</div>
-
-<!-- ADDRESS PAGE -->
-<div id="address-page" class="page">
-    <div class="form-box">
-        <h3>Delivery Details</h3>
-        <input type="text" id="u-name" placeholder="Full Name">
-        <input type="tel" id="u-phone" maxlength="10" placeholder="Phone Number (10 Digit)">
-        <input type="text" id="u-address" placeholder="Full Address">
-        <input type="number" id="u-pin" maxlength="6" placeholder="Pincode (6 Digit)">
-        <button class="action-btn" onclick="validateAddress()">Proceed to Payment</button>
-    </div>
-</div>
-
-<!-- PAYMENT PAGE -->
-<div id="payment-page" class="page">
-    <div style="text-align: center;">
-        <h3>Scan & Pay</h3>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=varungoyal7910@pnb" style="width:200px;">
-        <p>UPI ID: <b>varungoyal7910@pnb</b></p>
-        <input type="text" id="pay-ref" placeholder="Enter Payment Ref No. / UTR" style="width:100%; padding:12px; margin:10px 0; border:1px solid #ccc; border-radius:8px;">
-        <button class="action-btn" onclick="confirmOrder()">Confirm Order</button>
-    </div>
-</div>
-
-<!-- NAV BAR -->
-<nav>
-    <div class="nav-item active" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" onclick="alert('My Orders section coming soon')">📦<br>My Orders</div>
-    <div class="nav-item" onclick="alert('Track Order section coming soon')">📍<br>Track Order</div>
-</nav>
-
 <script>
     let cart = [];
+    let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec';
 
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.getElementById(pageId).classList.add('active-page');
-        window.scrollTo(0,0);
+    // 1. Order ID Generator
+    function generateOrderID() {
+        return 'GC' + Math.floor(100000 + Math.random() * 900000);
     }
 
-    function addToCart(id, name, price) {
-        let item = cart.find(i => i.id === id);
-        if(item) { item.qty++; } else { cart.push({id, name, price, qty: 1}); }
-        updateCart();
-    }
-
-    function updateCart() {
-        document.getElementById('cart-count').innerText = cart.length;
-        const list = document.getElementById('cart-items-list');
-        let total = 0;
-        list.innerHTML = cart.map((item, index) => {
-            total += (item.price * item.qty);
-            return `
-                <div style="background:white; padding:10px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                    <div><b>${item.name}</b><br>₹${item.price}</div>
-                    <div class="qty-box">
-                        <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                        <span>${item.qty}</span>
-                        <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        document.getElementById('cart-total').innerText = total;
-    }
-
-    function changeQty(index, delta) {
-        cart[index].qty += delta;
-        if(cart[index].qty <= 0) cart.splice(index, 1);
-        updateCart();
-    }
-
-    function validateAddress() {
-        const name = document.getElementById('u-name').value;
-        const phone = document.getElementById('u-phone').value;
-        const pin = document.getElementById('u-pin').value;
-        if(name && phone.length === 10 && pin.length === 6) {
-            showPage('payment-page');
-        } else {
-            alert("Bhai, Details sahi se bharo! (10 Digit Phone & 6 Digit Pin)");
-        }
-    }
-
+    // 2. Confirm Order with Processing Screen
     async function confirmOrder() {
         const ref = document.getElementById('pay-ref').value;
         if(!ref) return alert("Please enter payment reference!");
+
+        const orderId = generateOrderID();
+        const now = new Date();
+        
+        // Processing Screen Show
+        document.body.innerHTML = `
+            <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:#fff;">
+                <div class="loader"></div> <!-- Add CSS for loader -->
+                <h2 style="color:#FF6600;">Processing Please Wait...</h2>
+                <p>Generating Order ID: ${orderId}</p>
+            </div>
+        `;
 
         const orderData = {
             name: document.getElementById('u-name').value,
             phone: document.getElementById('u-phone').value,
             address: document.getElementById('u-address').value,
+            pincode: document.getElementById('u-pin').value,
             utr: ref,
-            total: document.getElementById('cart-total').innerText,
-            items: JSON.stringify(cart)
+            price: document.getElementById('cart-total').innerText,
+            dateTime: now.toLocaleString(),
+            orderId: orderId,
+            status: "Pending", // Default Status
+            items: cart.map(i => `${i.name} (${i.color || 'No Color'})`).join(', ')
         };
 
-        // Connecting to your Apps Script
-        alert("Bhai, Order process ho raha hai...");
-        
-        fetch(scriptURL, { method: 'POST', body: JSON.stringify(orderData) })
-        .then(res => {
-            alert("Order Confirmed! Aapka order jaldi hi deliver hoga.");
-            cart = [];
-            updateCart();
-            showPage('home-page');
-        })
-        .catch(err => alert("Error: Order place nahi ho paya."));
+        try {
+            // Google Sheets Connection
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(orderData) });
+            
+            // Save to My Orders (Local Storage)
+            myOrders.push(orderData);
+            localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
+
+            // Success Screen
+            setTimeout(() => {
+                location.reload(); // App reload to Home
+                alert("Order Placed! ID: " + orderId);
+            }, 2000);
+
+        } catch (err) {
+            alert("Connection Error! Sheet check karein.");
+            location.reload();
+        }
+    }
+
+    // 3. My Orders Section (Working)
+    function showMyOrders() {
+        const list = document.getElementById('orders-display-area'); // Add this div in your My Orders page
+        if(myOrders.length === 0) {
+            list.innerHTML = "<p>Koi order nahi mila.</p>";
+        } else {
+            list.innerHTML = myOrders.map(o => `
+                <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border-left:5px solid #FF6600;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>ID: ${o.orderId}</b>
+                        <span style="color:orange;">${o.status}</span>
+                    </div>
+                    <small>${o.dateTime}</small><br>
+                    <span>${o.items}</span><br>
+                    <b>Total: ₹${o.price}</b>
+                    <div id="replace-section-${o.orderId}" style="display:none; margin-top:10px;">
+                         <button class="action-btn" style="background:#444; padding:5px;">Replacement Request</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        showPage('my-orders-page');
+    }
+
+    // 4. Replacement Button Control (Jab aap command doge)
+    function enableReplacement(orderId) {
+        const btn = document.getElementById(`replace-section-${orderId}`);
+        if(btn) btn.style.display = 'block';
     }
 </script>
-
-</body>
-</html>
