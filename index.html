@@ -175,22 +175,25 @@
         let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
 
         function renderHome(list = PRODUCTS) {
-            document.getElementById('main-grid').innerHTML = list.map(p => {
-                const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
-                return `
-                <div class="card" onclick="viewDetail(${p.id})">
-                    <div class="p-off-pill">-${off}%</div>
-                    <img src="${p.img}">
-                    <div class="card-info">
-                        <div class="card-title">${p.name}</div>
-                        <div style="margin-top:5px;">
-                            <span class="p-price">₹${p.price}</span>
-                            <span class="p-mrp">₹${p.mrp}</span>
-                        </div>
+    const grid = document.getElementById('main-grid'); // ID sahi check karein
+    if(!grid) return;
+    
+    grid.innerHTML = list.map(p => {
+        const off = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+        return `
+            <div class="card" onclick="viewDetail(${p.id})">
+                <div class="p-off-pill">-${off}%</div>
+                <img src="${p.img}">
+                <div class="card-info">
+                    <div class="card-title">${p.name}</div>
+                    <div style="margin-top:5px;">
+                        <span class="p-price">₹${p.price}</span>
+                        <span class="p-mrp">₹${p.mrp}</span>
                     </div>
-                </div>`;
-            }).join('');
-        }
+                </div>
+            </div>`;
+    }).join("");
+}
 
         function viewDetail(id) {
             const p = PRODUCTS.find(x => x.id === id);
@@ -397,6 +400,12 @@ async function verifyAndSubmit() {
 }
 
 // --- PASTE KHATAM (Iske baad updateCartUI() aur renderHome() pehle se hain) ---
+
+        // Sabse niche paste karein
+document.addEventListener('DOMContentLoaded', () => {
+    renderHome();
+    updateCartUI();
+});
         
 
         updateCartUI();
