@@ -6,175 +6,342 @@
     <title>GOCART | Varun Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --navy: #001f3f; --yellow: #f1c40f; --light: #f4f7f6; --green: #2ecc71; --red: #e74c3c; }
+        :root { --navy: #001f3f; --yellow: #f1c40f; --light: #f4f7f6; --red: #e74c3c; --green: #2ecc71; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--light); padding-bottom: 80px; }
-        header { background: var(--navy); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
-        .brand { font-size: 24px; font-weight: 900; }
+        body { background: var(--light); padding-bottom: 70px; overflow-x: hidden; }
+
+        /* Top Bar */
+        .top-bar { background: var(--navy); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .brand { font-size: 22px; font-weight: 900; }
         .brand span { color: var(--yellow); }
-        .filter-row { display: flex; gap: 10px; margin-top: 10px; padding: 0 10px; }
-        .search-box { flex: 2; background: white; border-radius: 5px; padding: 8px; display: flex; align-items: center; }
-        .search-box input { border: none; outline: none; width: 100%; margin-left: 5px; }
-        .price-filter select { flex: 1; padding: 8px; border-radius: 5px; border: none; font-weight: bold; }
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
-        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .card img { width: 100%; height: 150px; object-fit: cover; }
-        .card-info { padding: 10px; }
-        .p-price { color: var(--navy); font-weight: bold; font-size: 16px; }
+        .cart-icon { position: relative; cursor: pointer; font-size: 22px; }
+        .badge { position: absolute; -10px; right: -10px; background: var(--yellow); color: black; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--navy); }
+
+        /* Filter Section */
+        .filters { background: var(--navy); padding: 0 15px 15px 15px; display: flex; gap: 10px; }
+        .search-box { flex: 2; background: white; border-radius: 8px; display: flex; align-items: center; padding: 8px 12px; }
+        .search-box input { border: none; outline: none; width: 100%; margin-left: 8px; font-size: 14px; }
+        .price-select { flex: 1; border-radius: 8px; border: none; padding: 8px; font-weight: bold; font-size: 13px; }
+
+        /* Product Grid */
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 160px; object-fit: cover; }
+        .card-info { padding: 10px; text-align: center; }
+        .card-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 4px; height: 32px; overflow: hidden; }
+        .p-price { font-size: 16px; font-weight: 800; color: var(--navy); }
+        .p-mrp { text-decoration: line-through; color: #999; font-size: 11px; margin-left: 5px; }
+        .rating { color: #ff9800; font-size: 11px; margin-top: 4px; }
+
+        /* Product Detail Tab */
+        #detail-tab { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; overflow-y: auto; padding: 20px; animation: slideUp 0.3s; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .close-tab { font-size: 30px; position: sticky; top: 0; float: right; cursor: pointer; }
+        .detail-img { width: 100%; border-radius: 15px; max-height: 300px; object-fit: contain; }
+        .policy-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 13px; border-left: 4px solid var(--navy); }
+        .color-select { margin: 15px 0; }
+        .color-dot { display: inline-block; width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; border: 2px solid #ddd; cursor: pointer; }
+        .color-dot.active { border-color: var(--navy); transform: scale(1.1); }
+
+        /* Footer Nav */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .nav-item { border: none; background: none; color: #888; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item i { font-size: 20px; margin-bottom: 3px; }
+        .nav-item.active { color: var(--navy); font-weight: bold; }
+
+        /* Common Elements */
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; }
-        .nav-item { border: none; background: none; color: #888; font-size: 12px; display: flex; flex-direction: column; align-items: center; }
-        .nav-item.active { color: var(--navy); }
-        .cart-float { position: fixed; bottom: 70px; right: 20px; background: var(--navy); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .badge { position: absolute; top: 0; right: 0; background: var(--yellow); color: black; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .cart-item { display: flex; align-items: center; background: white; padding: 10px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .cart-item img { width: 50px; height: 50px; border-radius: 5px; margin-right: 10px; }
-        .qty-btn { background: #eee; border: none; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-        .input-field { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        .btn-block { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-buy { width: 100%; background: var(--navy); color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .input-field { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; }
+        .cart-item { display: flex; align-items: center; margin-bottom: 15px; background: white; padding: 10px; border-radius: 10px; }
+        .cart-item img { width: 60px; height: 60px; border-radius: 8px; margin-right: 12px; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="brand"><span>GO</span>CART</div>
-    <div class="filter-row">
-        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="search-input" placeholder="Search..." oninput="applyFilters()"></div>
-        <select id="price-sort" class="price-filter" onchange="applyFilters()">
-            <option value="all">All Prices</option>
-            <option value="1000">Under ₹1000</option>
-            <option value="5000">Under ₹5000</option>
-        </select>
+<!-- Header -->
+<div class="top-bar">
+    <div class="brand">GO<span>CART</span></div>
+    <div class="cart-icon" onclick="changePage('cart-page')">
+        <i class="fas fa-shopping-bag"></i>
+        <div class="badge" id="badge-count">0</div>
     </div>
-</header>
+</div>
 
-<div id="home-page" class="page active"><div class="main-grid" id="main-grid"></div></div>
+<div class="filters" id="filter-section">
+    <div class="search-box">
+        <i class="fas fa-search" style="color: #aaa;"></i>
+        <input type="text" id="search-input" placeholder="Search products..." oninput="applyFilters()">
+    </div>
+    <select id="price-sort" class="price-select" onchange="applyFilters()">
+        <option value="all">All Prices</option>
+        <option value="1000">Under ₹1000</option>
+        <option value="5000">Under ₹5000</option>
+    </select>
+</div>
 
+<!-- Home Page -->
+<div id="home-page" class="page active">
+    <div class="main-grid" id="main-grid"></div>
+</div>
+
+<!-- Product Detail Tab -->
+<div id="detail-tab">
+    <span class="close-tab" onclick="closeDetail()">&times;</span>
+    <img id="d-img" class="detail-img">
+    <h2 id="d-title" style="margin-top:15px; font-size:18px;"></h2>
+    <div style="margin:10px 0;">
+        <span id="d-price" class="p-price" style="font-size:24px;"></span>
+        <span id="d-mrp" class="p-mrp" style="font-size:16px;"></span>
+        <span id="d-off" style="color:var(--red); font-weight:bold; margin-left:10px;"></span>
+    </div>
+    
+    <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4;"></p>
+
+    <div class="color-select">
+        <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">Select Colour:</p>
+        <div class="color-dot active" style="background:black;" onclick="selColor(this)"></div>
+        <div class="color-dot" style="background:silver;" onclick="selColor(this)"></div>
+        <div class="color-dot" style="background:white;" onclick="selColor(this)"></div>
+    </div>
+
+    <div class="policy-box">
+        <p><i class="fas fa-undo"></i> 7 Days Return Policy</p>
+        <p><i class="fas fa-wallet"></i> No Cash on Delivery (Prepaid Only)</p>
+        <p><i class="fas fa-shield-alt"></i> 100% Guaranteed Product</p>
+    </div>
+
+    <button class="btn-buy" onclick="addToCart()"><i class="fas fa-cart-plus"></i> Add To 🛒</button>
+</div>
+
+<!-- Cart Page -->
 <div id="cart-page" class="page">
-    <h3>Shopping Cart</h3>
+    <h3 style="margin-bottom:15px;">Your Shopping 🛒</h3>
     <div id="cart-list"></div>
-    <div style="font-size: 20px; font-weight: bold; margin: 20px 0;">Total: <span id="cart-total">₹0</span></div>
-    <button onclick="changePage('address-page')" class="btn-block" style="background: var(--navy); color: white;">Checkout Now</button>
+    <div style="font-size:22px; font-weight:bold; margin:20px 0;">Total: <span id="cart-total">₹0</span></div>
+    <button class="btn-buy" onclick="changePage('address-page')">Continue to Payment</button>
 </div>
 
+<!-- Address Page -->
 <div id="address-page" class="page">
-    <h3>Delivery Details</h3>
-    <input type="text" id="c-name" class="input-field" placeholder="Name">
-    <input type="number" id="c-phone" class="input-field" placeholder="Number">
-    <textarea id="c-address" class="input-field" placeholder="Address"></textarea>
+    <h3>Delivery Address</h3>
+    <br>
+    <input type="text" id="c-name" class="input-field" placeholder="Full Name">
+    <input type="number" id="c-phone" class="input-field" placeholder="Mobile Number">
+    <textarea id="c-address" class="input-field" placeholder="Complete Address" rows="3"></textarea>
     <input type="number" id="c-pincode" class="input-field" placeholder="Pincode">
-    <button onclick="changePage('payment-page')" class="btn-block" style="background: var(--navy); color: white;">Continue</button>
+    <button class="btn-buy" onclick="goToPayment()">Pay Now</button>
 </div>
 
-<div id="payment-page" class="page" style="text-align: center;">
-    <h3>Pay ₹<span id="pay-amt"></span></h3>
-    <p>UPI ID: <b>varungoyal7910@pnb</b></p>
-    <input type="text" id="c-utr" class="input-field" placeholder="Enter Transaction ID (UTR)">
-    <button onclick="processOrder()" class="btn-block" style="background: var(--green); color: white;">Place Order</button>
+<!-- Payment Page -->
+<div id="payment-page" class="page" style="text-align:center;">
+    <h3>Final Payment</h3>
+    <p style="margin:10px 0; color:#666;">Payable Amount: <b id="pay-amt" style="color:var(--red);"></b></p>
+    <div style="background:#f4f4f4; padding:15px; border-radius:10px; font-weight:bold; margin-bottom:20px; border:1px dashed #000;">
+        UPI ID: varungoyal7910@pnb
+    </div>
+    <input type="text" id="c-utr" class="input-field" placeholder="Enter 12-digit UTR Number" style="text-align:center;">
+    <button class="btn-buy" style="background:var(--green);" onclick="placeOrder()">Place Order (Prepaid)</button>
 </div>
 
-<div id="status-page" class="page" style="text-align: center; padding-top: 50px;">
-    <div id="loader"><h2>Processing...</h2></div>
+<!-- Status Page -->
+<div id="status-page" class="page" style="text-align:center; padding-top:40px;">
+    <div id="loader"><h2>Processing Your Order...</h2></div>
     <div id="success" style="display:none;">
-        <i class="fas fa-check-circle" style="font-size: 50px; color: var(--green);"></i>
-        <h2>Order Success!</h2>
-        <button onclick="location.reload()" class="btn-block">Done</button>
+        <i class="fas fa-check-circle" style="font-size:60px; color:var(--green);"></i>
+        <h2 style="margin-top:20px;">Order Confirmed!</h2>
+        <p id="order-id-txt" style="font-weight:bold; color:var(--red); font-size:20px; margin:15px 0;"></p>
+        <button class="btn-buy" onclick="location.reload()">Continue Shopping</button>
     </div>
 </div>
 
-<button class="cart-float" onclick="changePage('cart-page')">
-    <i class="fas fa-shopping-bag"></i>
-    <div class="badge" id="badge-count">0</div>
-</button>
+<!-- Orders Page -->
+<div id="my-orders-page" class="page">
+    <h3 style="margin-bottom:15px;">Order History</h3>
+    <div id="orders-list"></div>
+</div>
 
+<!-- Track Page -->
+<div id="track-page" class="page">
+    <h3>Track Order</h3>
+    <input type="text" id="track-input" class="input-field" placeholder="Enter Order ID (e.g. VAR1213)" style="margin-top:15px;">
+    <button class="btn-buy" onclick="trackNow()">Search Status</button>
+    <div id="track-res" style="margin-top:20px; text-align:center; font-weight:bold;"></div>
+</div>
+
+<!-- Bottom Nav -->
 <nav>
-    <button class="nav-item active" onclick="changePage('home-page')"><i class="fas fa-home"></i>Home</button>
-    <button class="nav-item" onclick="changePage('cart-page')"><i class="fas fa-shopping-cart"></i>Cart</button>
+    <button class="nav-item active" id="n-explore" onclick="changePage('home-page')"><i class="fas fa-compass"></i>Explore</button>
+    <button class="nav-item" id="n-orders" onclick="changePage('my-orders-page')"><i class="fas fa-box"></i>My Orders</button>
+    <button class="nav-item" id="n-track" onclick="changePage('track-page')"><i class="fas fa-truck-loading"></i>Track</button>
+    <button class="nav-item" onclick="window.location.href='mailto:varungoyal7910@gmail.com'"><i class="fas fa-headset"></i>Help</button>
 </nav>
 
 <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVLUxfcobEC_AQKaHtdmLg3jw1yr2Ke7TZInC8i4HrxSfYVRVubZFDyDwK9iY-aje0/exec';
+
     const PRODUCTS = [
-        { id: 1, name: 'Vlog Mic', price: 599, img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg' },
-        { id: 2, name: 'Ring Light', price: 1299, img: 'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg' },
-        { id: 3, name: 'RGB LED Panel', price: 2199, img: 'https://m.media-amazon.com/images/I/61y2VVw9DL._SL1000_.jpg' }
+        { id: 1, name: 'Professional Vlog Mic Ultra', mrp: 1499, price: 599, rating: '4.8 ★', img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', desc: 'Noise cancellation mic for creators.' },
+        { id: 2, name: '18" Studio Ring Light', mrp: 2999, price: 1299, rating: '4.5 ★', img: 'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg', desc: 'Bright LED light with adjustable stand.' },
+        { id: 3, name: 'RGB Studio LED Panel', mrp: 4999, price: 2199, rating: '4.9 ★', img: 'https://m.media-amazon.com/images/I/61y2VVw9DL._SL1000_.jpg', desc: 'Multiple RGB colors for aesthetic setup.' }
     ];
 
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('varunCart')) || [];
+    let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
+    let curProduct = null;
+
+    // Load App
+    window.onload = () => { renderHome(PRODUCTS); updateBadge(); };
 
     function renderHome(items) {
         const grid = document.getElementById('main-grid');
-        grid.innerHTML = items.map(p => `
-            <div class="card" onclick="addToCart(${p.id})">
+        grid.innerHTML = items.map(p => {
+            const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
+            return `
+            <div class="card" onclick="openDetail(${p.id})">
                 <img src="${p.img}">
                 <div class="card-info">
-                    <p style="font-size:13px;">${p.name}</p>
-                    <p class="p-price">₹${p.price}</p>
-                    <button style="width:100%; margin-top:5px; background:var(--navy); color:white; border:none; padding:5px; border-radius:4px;">Buy +</button>
+                    <div class="card-title">${p.name}</div>
+                    <div><span class="p-price">₹${p.price}</span><span class="p-mrp">₹${p.mrp}</span></div>
+                    <div class="rating">${p.rating} (Verified)</div>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     function applyFilters() {
         const q = document.getElementById('search-input').value.toLowerCase();
-        const pLimit = document.getElementById('price-sort').value;
-        const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) && (pLimit === 'all' || p.price <= pLimit));
+        const pL = document.getElementById('price-sort').value;
+        const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) && (pL === 'all' || p.price <= pL));
         renderHome(filtered);
     }
 
-    function addToCart(id) {
-        const p = PRODUCTS.find(x => x.id === id);
-        const exist = cart.find(x => x.id === id);
-        if(exist) exist.qty++; else cart.push({...p, qty: 1});
-        updateUI();
-        alert("Added to Cart!");
+    // Detail Tab Logic
+    function openDetail(id) {
+        curProduct = PRODUCTS.find(p => p.id === id);
+        const off = Math.round(((curProduct.mrp - curProduct.price)/curProduct.mrp)*100);
+        document.getElementById('d-img').src = curProduct.img;
+        document.getElementById('d-title').innerText = curProduct.name;
+        document.getElementById('d-price').innerText = "₹" + curProduct.price;
+        document.getElementById('d-mrp').innerText = "₹" + curProduct.mrp;
+        document.getElementById('d-off').innerText = off + "% OFF";
+        document.getElementById('d-desc').innerText = curProduct.desc;
+        document.getElementById('detail-tab').style.display = 'block';
     }
 
-    function updateUI() {
+    function closeDetail() { document.getElementById('detail-tab').style.display = 'none'; }
+
+    function selColor(el) {
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // Cart Logic
+    function addToCart() {
+        const exist = cart.find(i => i.id === curProduct.id);
+        if(exist) exist.qty++; else cart.push({...curProduct, qty:1});
+        saveCart();
+        alert("Added to 🛒");
+        closeDetail();
+    }
+
+    function saveCart() {
+        localStorage.setItem('varunCart', JSON.stringify(cart));
+        updateBadge();
+    }
+
+    function updateBadge() {
         document.getElementById('badge-count').innerText = cart.reduce((a,b) => a+b.qty, 0);
+    }
+
+    function renderCart() {
         const list = document.getElementById('cart-list');
         let total = 0;
-        list.innerHTML = cart.map((c, i) => {
-            total += (c.price * c.qty);
+        if(cart.length === 0) return list.innerHTML = "<p>Cart Khali Hai Bhai!</p>";
+        list.innerHTML = cart.map((item, i) => {
+            total += (item.price * item.qty);
             return `<div class="cart-item">
-                <img src="${c.img}">
-                <div style="flex:1"><b>${c.name}</b><br>₹${c.price}</div>
-                <div>
-                    <button class="qty-btn" onclick="updateQty(${i},-1)">-</button>
-                    <span>${c.qty}</span>
-                    <button class="qty-btn" onclick="updateQty(${i},1)">+</button>
-                </div>
+                <img src="${item.img}">
+                <div style="flex:1"><b>${item.name}</b><br>₹${item.price} x ${item.qty}</div>
+                <button onclick="remCart(${i})" style="border:none; color:red; background:none; font-size:18px;"><i class="fas fa-trash"></i></button>
             </div>`;
         }).join('');
         document.getElementById('cart-total').innerText = "₹" + total;
-        document.getElementById('pay-amt').innerText = total;
+        document.getElementById('pay-amt').innerText = "₹" + total;
     }
 
-    function updateQty(i, d) {
-        cart[i].qty += d;
-        if(cart[i].qty <= 0) cart.splice(i, 1);
-        updateUI();
-    }
+    function remCart(i) { cart.splice(i, 1); saveCart(); renderCart(); }
 
-    function changePage(pageId) {
+    // Page Switching
+    function changePage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        if(pageId === 'cart-page') updateUI();
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('filter-section').style.display = (id === 'home-page') ? 'flex' : 'none';
+        
+        if(id === 'home-page') document.getElementById('n-explore').classList.add('active');
+        if(id === 'my-orders-page') { document.getElementById('n-orders').classList.add('active'); renderOrders(); }
+        if(id === 'track-page') document.getElementById('n-track').classList.add('active');
+        if(id === 'cart-page') renderCart();
+        window.scrollTo(0,0);
     }
 
-    function processOrder() {
-        if(!document.getElementById('c-utr').value) return alert("UTR Number dalo!");
+    // Checkout Logic
+    function goToPayment() {
+        if(!document.getElementById('c-name').value) return alert("Pura Detail Bharo!");
+        changePage('payment-page');
+    }
+
+    function placeOrder() {
+        const utr = document.getElementById('c-utr').value;
+        if(utr.length < 6) return alert("Sahi UTR dalo!");
+
         changePage('status-page');
-        // Yahan aapka Google Script fetch aayega
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('success').style.display = 'block';
-        }, 2000);
+        const orderId = "VAR" + Math.floor(1000 + Math.random() * 9000);
+        
+        const data = {
+            orderId: orderId,
+            name: document.getElementById('c-name').value,
+            phone: document.getElementById('c-phone').value,
+            address: document.getElementById('c-address').value,
+            utr: utr,
+            items: cart.map(i => `${i.name}(x${i.qty})`).join(', '),
+            amount: document.getElementById('pay-amt').innerText,
+            status: 'Processing'
+        };
+
+        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
+        .then(() => {
+            myOrders.unshift(data);
+            localStorage.setItem('varunOrders', JSON.stringify(myOrders));
+            cart = []; saveCart();
+            
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('success').style.display = 'block';
+                document.getElementById('order-id-txt').innerText = "ID: " + orderId;
+            }, 2000);
+        });
     }
 
-    // Yeh line bohot zaroori hai products dikhane ke liye
-    window.onload = () => renderHome(PRODUCTS);
+    function renderOrders() {
+        const list = document.getElementById('orders-list');
+        if(myOrders.length === 0) return list.innerHTML = "<p>Koi order nahi mila.</p>";
+        list.innerHTML = myOrders.map(o => `<div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border-left:5px solid var(--navy);">
+            <b>${o.orderId}</b><br><small>${o.items}</small><br><b style="color:red">${o.amount}</b> - ${o.status}</div>`).join('');
+    }
+
+    async function trackNow() {
+        const id = document.getElementById('track-input').value;
+        const res = document.getElementById('track-res');
+        res.innerHTML = "Dhoond rahe hain...";
+        try {
+            const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`);
+            const j = await r.json();
+            res.innerHTML = j.status ? `Status: <span style="color:green">${j.status}</span>` : "❌ ID Not Found";
+        } catch(e) { res.innerHTML = "Internet check karo!"; }
+    }
 </script>
 </body>
 </html>
