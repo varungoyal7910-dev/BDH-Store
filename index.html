@@ -10,22 +10,45 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         body { background: var(--light); padding-bottom: 70px; overflow-x: hidden; }
 
-        /* Top Bar */
-        .top-bar { background: var(--navy); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .brand { font-size: 22px; font-weight: 900; }
-        .brand span { color: var(--yellow); }
-        .cart-icon { position: relative; cursor: pointer; font-size: 22px; }
-        .badge { position: absolute; -10px; right: -10px; background: var(--yellow); color: black; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--navy); }
+        /* Updated Header with your Colors */
+        .top-bar { 
+            background: var(--navy); 
+            color: white; 
+            padding: 15px 15px 5px 15px; 
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        
+        .brand { font-size: 26px; font-weight: 900; letter-spacing: 1px; }
+        .brand .go { color: var(--yellow); }
+        .brand .cart-text { color: white; }
+        
+        .tagline { 
+            font-size: 10px; 
+            color: white; 
+            font-weight: bold; 
+            letter-spacing: 1.2px; 
+            margin-top: 5px; 
+            display: block;
+            padding-bottom: 10px;
+        }
+        .tagline span { color: var(--yellow); }
+
+        .cart-icon { position: relative; cursor: pointer; font-size: 22px; color: white; }
+        .badge { position: absolute; top: -8px; right: -10px; background: var(--yellow); color: black; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--navy); }
 
         /* Filter Section */
         .filters { background: var(--navy); padding: 0 15px 15px 15px; display: flex; gap: 10px; }
         .search-box { flex: 2; background: white; border-radius: 8px; display: flex; align-items: center; padding: 8px 12px; }
         .search-box input { border: none; outline: none; width: 100%; margin-left: 8px; font-size: 14px; }
-        .price-select { flex: 1; border-radius: 8px; border: none; padding: 8px; font-weight: bold; font-size: 13px; }
+        .price-select { flex: 1; border-radius: 8px; border: none; padding: 8px; font-weight: bold; font-size: 13px; background: white; color: var(--navy); }
 
         /* Product Grid */
         .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: 0.3s; }
         .card img { width: 100%; height: 160px; object-fit: cover; }
         .card-info { padding: 10px; text-align: center; }
         .card-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 4px; height: 32px; overflow: hidden; }
@@ -36,7 +59,7 @@
         /* Product Detail Tab */
         #detail-tab { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; overflow-y: auto; padding: 20px; animation: slideUp 0.3s; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .close-tab { font-size: 30px; position: sticky; top: 0; float: right; cursor: pointer; }
+        .close-tab { font-size: 30px; position: sticky; top: 0; float: right; cursor: pointer; color: var(--navy); }
         .detail-img { width: 100%; border-radius: 15px; max-height: 300px; object-fit: contain; }
         .policy-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 13px; border-left: 4px solid var(--navy); }
         .color-select { margin: 15px 0; }
@@ -49,24 +72,28 @@
         .nav-item i { font-size: 20px; margin-bottom: 3px; }
         .nav-item.active { color: var(--navy); font-weight: bold; }
 
-        /* Common Elements */
+        /* Pages */
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
         .btn-buy { width: 100%; background: var(--navy); color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .input-field { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; }
-        .cart-item { display: flex; align-items: center; margin-bottom: 15px; background: white; padding: 10px; border-radius: 10px; }
+        .input-field { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
+        .cart-item { display: flex; align-items: center; margin-bottom: 15px; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .cart-item img { width: 60px; height: 60px; border-radius: 8px; margin-right: 12px; }
     </style>
 </head>
 <body>
 
-<!-- Header -->
+<!-- Updated Header -->
 <div class="top-bar">
-    <div class="brand">GO<span>CART</span></div>
-    <div class="cart-icon" onclick="changePage('cart-page')">
-        <i class="fas fa-shopping-bag"></i>
-        <div class="badge" id="badge-count">0</div>
+    <div class="header-content">
+        <div style="width: 30px;"></div> <!-- Spacer -->
+        <div class="brand"><span class="go">GO</span><span class="cart-text">CART</span></div>
+        <div class="cart-icon" onclick="changePage('cart-page')">
+            <i class="fas fa-shopping-bag"></i>
+            <div class="badge" id="badge-count">0</div>
+        </div>
     </div>
+    <div class="tagline"><span>-----</span> SHOP MORE, PAY LESS <span>-----</span></div>
 </div>
 
 <div class="filters" id="filter-section">
@@ -90,14 +117,14 @@
 <div id="detail-tab">
     <span class="close-tab" onclick="closeDetail()">&times;</span>
     <img id="d-img" class="detail-img">
-    <h2 id="d-title" style="margin-top:15px; font-size:18px;"></h2>
+    <h2 id="d-title" style="margin-top:15px; font-size:18px; color: var(--navy);"></h2>
     <div style="margin:10px 0;">
         <span id="d-price" class="p-price" style="font-size:24px;"></span>
         <span id="d-mrp" class="p-mrp" style="font-size:16px;"></span>
         <span id="d-off" style="color:var(--red); font-weight:bold; margin-left:10px;"></span>
     </div>
     
-    <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4;"></p>
+    <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
 
     <div class="color-select">
         <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">Select Colour:</p>
@@ -107,9 +134,9 @@
     </div>
 
     <div class="policy-box">
-        <p><i class="fas fa-undo"></i> 7 Days Return Policy</p>
-        <p><i class="fas fa-wallet"></i> No Cash on Delivery (Prepaid Only)</p>
-        <p><i class="fas fa-shield-alt"></i> 100% Guaranteed Product</p>
+        <p><i class="fas fa-undo" style="color: var(--navy); margin-right: 5px;"></i> 7 Days Return Policy</p>
+        <p><i class="fas fa-wallet" style="color: var(--navy); margin-right: 5px;"></i> No Cash on Delivery (Prepaid Only)</p>
+        <p><i class="fas fa-shield-alt" style="color: var(--navy); margin-right: 5px;"></i> 100% Guaranteed Product</p>
     </div>
 
     <button class="btn-buy" onclick="addToCart()"><i class="fas fa-cart-plus"></i> Add To 🛒</button>
@@ -117,57 +144,62 @@
 
 <!-- Cart Page -->
 <div id="cart-page" class="page">
-    <h3 style="margin-bottom:15px;">Your Shopping 🛒</h3>
+    <h3 style="margin-bottom:15px; color: var(--navy);">Your Shopping 🛒</h3>
     <div id="cart-list"></div>
-    <div style="font-size:22px; font-weight:bold; margin:20px 0;">Total: <span id="cart-total">₹0</span></div>
+    <div style="font-size:22px; font-weight:bold; margin:20px 0; border-top: 2px solid #ddd; padding-top: 10px;">Total: <span id="cart-total" style="color: var(--red);">₹0</span></div>
     <button class="btn-buy" onclick="changePage('address-page')">Continue to Payment</button>
 </div>
 
 <!-- Address Page -->
 <div id="address-page" class="page">
-    <h3>Delivery Address</h3>
+    <h3 style="color: var(--navy);">Delivery Address</h3>
     <br>
     <input type="text" id="c-name" class="input-field" placeholder="Full Name">
     <input type="number" id="c-phone" class="input-field" placeholder="Mobile Number">
     <textarea id="c-address" class="input-field" placeholder="Complete Address" rows="3"></textarea>
     <input type="number" id="c-pincode" class="input-field" placeholder="Pincode">
-    <button class="btn-buy" onclick="goToPayment()">Pay Now</button>
+    <button class="btn-buy" onclick="goToPayment()">Proceed to Payment</button>
 </div>
 
 <!-- Payment Page -->
 <div id="payment-page" class="page" style="text-align:center;">
     <h3>Final Payment</h3>
-    <p style="margin:10px 0; color:#666;">Payable Amount: <b id="pay-amt" style="color:var(--red);"></b></p>
-    <div style="background:#f4f4f4; padding:15px; border-radius:10px; font-weight:bold; margin-bottom:20px; border:1px dashed #000;">
+    <p style="margin:10px 0; color:#666;">Amount to pay: <b id="pay-amt" style="color:var(--red); font-size: 20px;"></b></p>
+    <div style="background:#fff9c4; padding:20px; border-radius:10px; font-weight:bold; margin-bottom:20px; border:2px dashed var(--navy); font-size: 18px;">
         UPI ID: varungoyal7910@pnb
     </div>
-    <input type="text" id="c-utr" class="input-field" placeholder="Enter 12-digit UTR Number" style="text-align:center;">
-    <button class="btn-buy" style="background:var(--green);" onclick="placeOrder()">Place Order (Prepaid)</button>
+    <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Enter the Transaction ID after paying</p>
+    <input type="text" id="c-utr" class="input-field" placeholder="12-digit UTR / Ref Number" style="text-align:center; font-weight: bold;">
+    <button class="btn-buy" style="background:var(--green);" onclick="placeOrder()">Place Order Now</button>
 </div>
 
 <!-- Status Page -->
-<div id="status-page" class="page" style="text-align:center; padding-top:40px;">
-    <div id="loader"><h2>Processing Your Order...</h2></div>
+<div id="status-page" class="page" style="text-align:center; padding-top:60px;">
+    <div id="loader">
+        <i class="fas fa-spinner fa-spin" style="font-size: 50px; color: var(--navy);"></i>
+        <h2 style="margin-top: 15px;">Processing...</h2>
+    </div>
     <div id="success" style="display:none;">
-        <i class="fas fa-check-circle" style="font-size:60px; color:var(--green);"></i>
-        <h2 style="margin-top:20px;">Order Confirmed!</h2>
-        <p id="order-id-txt" style="font-weight:bold; color:var(--red); font-size:20px; margin:15px 0;"></p>
-        <button class="btn-buy" onclick="location.reload()">Continue Shopping</button>
+        <i class="fas fa-check-circle" style="font-size:70px; color:var(--green);"></i>
+        <h2 style="margin-top:20px; color: var(--navy);">Order Confirmed!</h2>
+        <p id="order-id-txt" style="font-weight:bold; color:var(--red); font-size:24px; margin:15px 0;"></p>
+        <p style="color: #666; margin-bottom: 20px;">Screenshot le lo bhai!</p>
+        <button class="btn-buy" onclick="location.reload()">Shop More</button>
     </div>
 </div>
 
 <!-- Orders Page -->
 <div id="my-orders-page" class="page">
-    <h3 style="margin-bottom:15px;">Order History</h3>
+    <h3 style="margin-bottom:15px; color: var(--navy);">Order History</h3>
     <div id="orders-list"></div>
 </div>
 
 <!-- Track Page -->
 <div id="track-page" class="page">
-    <h3>Track Order</h3>
-    <input type="text" id="track-input" class="input-field" placeholder="Enter Order ID (e.g. VAR1213)" style="margin-top:15px;">
-    <button class="btn-buy" onclick="trackNow()">Search Status</button>
-    <div id="track-res" style="margin-top:20px; text-align:center; font-weight:bold;"></div>
+    <h3 style="color: var(--navy);">Track Order</h3>
+    <input type="text" id="track-input" class="input-field" placeholder="Enter Order ID (e.g. VAR1234)" style="margin-top:15px;">
+    <button class="btn-buy" onclick="trackNow()">Check Status</button>
+    <div id="track-res" style="margin-top:30px; text-align:center; font-size: 18px; font-weight:bold;"></div>
 </div>
 
 <!-- Bottom Nav -->
@@ -181,22 +213,22 @@
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVLUxfcobEC_AQKaHtdmLg3jw1yr2Ke7TZInC8i4HrxSfYVRVubZFDyDwK9iY-aje0/exec';
 
+    // Apne Products
     const PRODUCTS = [
-        { id: 1, name: 'Professional Vlog Mic Ultra', mrp: 1499, price: 599, rating: '4.8 ★', img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', desc: 'Noise cancellation mic for creators.' },
-        { id: 2, name: '18" Studio Ring Light', mrp: 2999, price: 1299, rating: '4.5 ★', img: 'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg', desc: 'Bright LED light with adjustable stand.' },
-        { id: 3, name: 'RGB Studio LED Panel', mrp: 4999, price: 2199, rating: '4.9 ★', img: 'https://m.media-amazon.com/images/I/61y2VVw9DL._SL1000_.jpg', desc: 'Multiple RGB colors for aesthetic setup.' }
+        { id: 1, name: 'Professional Vlog Mic Ultra', mrp: 1499, price: 599, rating: '4.8 ★', img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', desc: 'Best noise cancellation mic for YouTube vlogging and streaming.' },
+        { id: 2, name: '18" Studio Ring Light', mrp: 2999, price: 1299, rating: '4.5 ★', img: 'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg', desc: '18-inch LED Ring Light with 3 color modes and heavy tripod stand.' },
+        { id: 3, name: 'RGB Studio LED Panel', mrp: 4999, price: 2199, rating: '4.9 ★', img: 'https://m.media-amazon.com/images/I/61y2VVw9DL._SL1000_.jpg', desc: 'Adjustable RGB LED panel for professional background lighting.' }
     ];
 
     let cart = JSON.parse(localStorage.getItem('varunCart')) || [];
     let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
     let curProduct = null;
 
-    // Load App
     window.onload = () => { renderHome(PRODUCTS); updateBadge(); };
 
     function renderHome(items) {
         const grid = document.getElementById('main-grid');
-        grid.innerHTML = items.map(p => {
+        grid.innerHTML = items.length ? items.map(p => {
             const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
             return `
             <div class="card" onclick="openDetail(${p.id})">
@@ -207,7 +239,7 @@
                     <div class="rating">${p.rating} (Verified)</div>
                 </div>
             </div>`;
-        }).join('');
+        }).join('') : '<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>';
     }
 
     function applyFilters() {
@@ -217,7 +249,6 @@
         renderHome(filtered);
     }
 
-    // Detail Tab Logic
     function openDetail(id) {
         curProduct = PRODUCTS.find(p => p.id === id);
         const off = Math.round(((curProduct.mrp - curProduct.price)/curProduct.mrp)*100);
@@ -237,12 +268,11 @@
         el.classList.add('active');
     }
 
-    // Cart Logic
     function addToCart() {
         const exist = cart.find(i => i.id === curProduct.id);
         if(exist) exist.qty++; else cart.push({...curProduct, qty:1});
         saveCart();
-        alert("Added to 🛒");
+        alert("Added to 🛒 Success!");
         closeDetail();
     }
 
@@ -258,13 +288,13 @@
     function renderCart() {
         const list = document.getElementById('cart-list');
         let total = 0;
-        if(cart.length === 0) return list.innerHTML = "<p>Cart Khali Hai Bhai!</p>";
+        if(cart.length === 0) return list.innerHTML = "<p style='text-align:center; padding:30px;'>Your cart is empty!</p>";
         list.innerHTML = cart.map((item, i) => {
             total += (item.price * item.qty);
             return `<div class="cart-item">
                 <img src="${item.img}">
-                <div style="flex:1"><b>${item.name}</b><br>₹${item.price} x ${item.qty}</div>
-                <button onclick="remCart(${i})" style="border:none; color:red; background:none; font-size:18px;"><i class="fas fa-trash"></i></button>
+                <div style="flex:1"><b>${item.name}</b><br><span style="color:var(--red); font-weight:bold;">₹${item.price}</span> x ${item.qty}</div>
+                <button onclick="remCart(${i})" style="border:none; color:red; background:none; font-size:18px;"><i class="fas fa-trash-alt"></i></button>
             </div>`;
         }).join('');
         document.getElementById('cart-total').innerText = "₹" + total;
@@ -273,7 +303,6 @@
 
     function remCart(i) { cart.splice(i, 1); saveCart(); renderCart(); }
 
-    // Page Switching
     function changePage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -287,15 +316,14 @@
         window.scrollTo(0,0);
     }
 
-    // Checkout Logic
     function goToPayment() {
-        if(!document.getElementById('c-name').value) return alert("Pura Detail Bharo!");
+        if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) return alert("Pura Detail Bharo Bhai!");
         changePage('payment-page');
     }
 
     function placeOrder() {
         const utr = document.getElementById('c-utr').value;
-        if(utr.length < 6) return alert("Sahi UTR dalo!");
+        if(utr.length < 8) return alert("Sahi Transaction Number dalo!");
 
         changePage('status-page');
         const orderId = "VAR" + Math.floor(1000 + Math.random() * 9000);
@@ -304,7 +332,7 @@
             orderId: orderId,
             name: document.getElementById('c-name').value,
             phone: document.getElementById('c-phone').value,
-            address: document.getElementById('c-address').value,
+            address: document.getElementById('c-address').value + " PIN:" + document.getElementById('c-pincode').value,
             utr: utr,
             items: cart.map(i => `${i.name}(x${i.qty})`).join(', '),
             amount: document.getElementById('pay-amt').innerText,
@@ -321,26 +349,34 @@
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('success').style.display = 'block';
                 document.getElementById('order-id-txt').innerText = "ID: " + orderId;
-            }, 2000);
+            }, 2500);
         });
     }
 
     function renderOrders() {
         const list = document.getElementById('orders-list');
-        if(myOrders.length === 0) return list.innerHTML = "<p>Koi order nahi mila.</p>";
-        list.innerHTML = myOrders.map(o => `<div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border-left:5px solid var(--navy);">
-            <b>${o.orderId}</b><br><small>${o.items}</small><br><b style="color:red">${o.amount}</b> - ${o.status}</div>`).join('');
+        if(myOrders.length === 0) return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
+        list.innerHTML = myOrders.map(o => `
+            <div style="background:white; padding:15px; border-radius:10px; margin-bottom:12px; border-left:5px solid var(--navy); box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between;">
+                    <b>${o.orderId}</b>
+                    <span style="color:var(--yellow); font-size:12px; font-weight:bold; background:var(--navy); padding:2px 8px; border-radius:10px;">${o.status}</span>
+                </div>
+                <div style="font-size:12px; color:#666; margin: 8px 0;">${o.items}</div>
+                <b style="color:var(--red)">${o.amount}</b>
+            </div>`).join('');
     }
 
     async function trackNow() {
-        const id = document.getElementById('track-input').value;
+        const id = document.getElementById('track-input').value.toUpperCase();
         const res = document.getElementById('track-res');
+        if(!id) return;
         res.innerHTML = "Dhoond rahe hain...";
         try {
             const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`);
             const j = await r.json();
-            res.innerHTML = j.status ? `Status: <span style="color:green">${j.status}</span>` : "❌ ID Not Found";
-        } catch(e) { res.innerHTML = "Internet check karo!"; }
+            res.innerHTML = j.status ? `Order Status: <span style="color:var(--green)">${j.status}</span>` : "❌ ID Not Found! Check again.";
+        } catch(e) { res.innerHTML = "Network problem!"; }
     }
 </script>
 </body>
