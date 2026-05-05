@@ -3,59 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART ULTIMATE | Pro Edition</title>
+    <title>GOCART PRO | Varun Edition</title>
     <style>
         :root {
             --primary: #FFB400; --navy: #131921; --bg: #f3f3f3; --text: #111;
-            --link: #007185; --success: #2e7d32; --error: #d32f2f;
+            --link: #007185; --success: #2e7d32;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 75px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 75px; }
 
         /* HEADER */
         header { background: var(--navy); padding: 12px 16px; position: sticky; top: 0; z-index: 5000; color: white; }
         .h-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: 1px; }
+        .logo { font-size: 24px; font-weight: 900; }
         .logo span { color: var(--primary); }
         .cart-trigger { background: var(--primary); color: var(--navy); padding: 8px 15px; border-radius: 8px; font-weight: 800; cursor: pointer; border: none; }
 
         .search-bar { display: flex; background: white; border-radius: 6px; overflow: hidden; }
-        .search-bar input { border: none; padding: 12px; width: 100%; outline: none; font-size: 16px; color: #333; }
-        .search-btn { background: var(--primary); padding: 12px 18px; border: none; cursor: pointer; font-weight: bold; }
+        .search-bar input { border: none; padding: 12px; width: 100%; outline: none; font-size: 16px; }
+        .search-btn { background: var(--primary); padding: 12px 18px; border: none; font-weight: bold; }
 
-        /* BACK ARROW STYLE */
+        /* NAVIGATION & BACK */
         .back-nav { display: flex; align-items: center; color: var(--link); font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 16px; gap: 8px; }
-        .back-nav:active { opacity: 0.6; }
 
         /* PAGE ENGINE */
-        .view-page { display: none; padding: 16px; min-height: 80vh; animation: fadeIn 0.3s ease; }
-        .active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .view-page { display: none; padding: 16px; min-height: 80vh; }
+        .active-view { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* PRODUCT CARD */
+        /* CARDS */
         .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .p-card { background: white; border-radius: 12px; padding: 12px; border: 1px solid #ddd; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .p-card img { width: 100%; height: 130px; object-fit: contain; }
-        .p-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; }
-        .p-price { font-size: 18px; font-weight: 800; margin-top: 5px; }
-
-        /* DETAILS */
-        .det-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .stars { color: #ffa41c; margin: 10px 0; }
-        .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 3px solid #eee; cursor: pointer; display: inline-block; margin-right: 10px; }
-        .color-dot.active { border-color: var(--primary); }
+        .p-card { background: white; border-radius: 12px; padding: 12px; border: 1px solid #ddd; position: relative; }
+        .p-card img { width: 100%; height: 120px; object-fit: contain; }
+        .p-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; }
 
         /* BUTTONS */
-        .btn-prime { background: #FFD814; border: 1px solid #FCD200; width: 100%; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-prime { background: #FFD814; border: 1px solid #FCD200; width: 100%; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .input-box { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
 
-        /* LISTS */
-        .list-row { background: white; padding: 12px; border-radius: 10px; display: flex; gap: 12px; margin-bottom: 10px; border: 1px solid #ddd; align-items: center; }
-        .list-row img { width: 55px; height: 55px; object-fit: contain; }
+        /* PROCESSING LOADER */
+        .loader { border: 6px solid #f3f3f3; border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* LIST ITEM */
+        .list-item { background: white; padding: 12px; border-radius: 10px; display: flex; gap: 12px; margin-bottom: 10px; border: 1px solid #ddd; align-items: center; }
+        .list-item img { width: 50px; height: 50px; object-fit: contain; }
 
         /* BOTTOM NAV */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 10px 0; z-index: 5000; }
-        .nav-tab { flex: 1; text-align: center; font-size: 11px; color: #666; cursor: pointer; border: none; background: none; }
+        .nav-tab { flex: 1; text-align: center; font-size: 11px; color: #666; cursor: pointer; background: none; border: none; }
         .nav-tab.active { color: var(--primary); font-weight: bold; }
     </style>
 </head>
@@ -64,62 +61,70 @@
 <header>
     <div class="h-top">
         <div class="logo">GO<span>CART</span></div>
-        <button class="cart-trigger" onclick="showPage('cart-page')">🛒 Bag (<span id="c-count">0</span>)</button>
+        <button class="cart-trigger" onclick="showPage('cart-page')">🛒 Cart (<span id="c-count">0</span>)</button>
     </div>
     <div class="search-bar">
-        <input type="text" id="s-input" placeholder="Search for items..." onkeyup="searchNow()">
+        <input type="text" id="s-input" placeholder="Search..." onkeyup="searchNow()">
         <button class="search-btn">🔍</button>
     </div>
 </header>
 
-<!-- HOME -->
+<!-- PAGES -->
 <div id="home-page" class="view-page active-view">
     <div class="p-grid" id="catalog"></div>
 </div>
 
-<!-- DETAILS -->
 <div id="details-page" class="view-page">
-    <div class="back-nav" onclick="showPage('home-page')">← Back to Gallery</div>
-    <div class="det-card">
-        <center><img id="d-img" style="width:100%; max-height:250px; object-fit:contain;"></center>
-        <h2 id="d-title" style="margin:15px 0 5px 0;"></h2>
-        <div class="stars">★★★★★ <small style="color:gray;">(8.5k+ Sold)</small></div>
-        <div style="font-size: 26px; font-weight: 900; color: #B12704;" id="d-price"></div>
-        <div style="margin: 20px 0;">
-            <b>Select Color:</b><br><br>
-            <div class="color-dot active" style="background:black;" onclick="selCol(this)"></div>
-            <div class="color-dot" style="background:silver;" onclick="selCol(this)"></div>
-        </div>
-        <p id="d-desc" style="color:#555; line-height:1.6;"></p>
-        <button class="btn-prime" onclick="addToBag()">Add to Bag 🛒</button>
+    <div class="back-nav" onclick="showPage('home-page')">← Back</div>
+    <div style="background:white; padding:20px; border-radius:15px;">
+        <center><img id="d-img" style="width:100%; max-height:200px; object-fit:contain;"></center>
+        <h2 id="d-title"></h2>
+        <div style="font-size: 24px; font-weight: 900; color: #B12704;" id="d-price"></div>
+        <p id="d-desc" style="color:#555;"></p>
+        <button class="btn-prime" onclick="addToBag()">Add to Cart</button>
     </div>
 </div>
 
-<!-- CART -->
 <div id="cart-page" class="view-page">
-    <div class="back-nav" onclick="showPage('home-page')">← Continue Shopping</div>
-    <h3>Shopping Bag</h3>
+    <div class="back-nav" onclick="showPage('home-page')">← Back</div>
+    <h3>Your Cart</h3>
     <div id="cart-list"></div>
-    <div id="cart-sum" style="display:none; background:white; padding:20px; border-radius:15px; margin-top:15px; border:1px solid #ddd;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Subtotal:</span><span id="s-mrp"></span></div>
-        <div style="display:flex; justify-content:space-between; color:green; font-weight:bold;"><span>Discount:</span><span id="s-perc"></span>%</div>
+    <div id="cart-sum" style="display:none; background:white; padding:15px; border-radius:10px; border:1px solid #ddd;">
+        <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="s-mrp"></span></div>
+        <div style="display:flex; justify-content:space-between; color:green;"><span>Discount:</span><span id="s-perc"></span>%</div>
         <hr>
-        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:900;"><span>Total:</span><span id="s-final"></span></div>
-        <button class="btn-prime" onclick="showPage('check-page')">Checkout Now</button>
+        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Total:</span><span id="s-final"></span></div>
+        <button class="btn-prime" onclick="showPage('checkout-page')">Checkout</button>
     </div>
 </div>
 
-<!-- CHECKOUT -->
-<div id="check-page" class="view-page">
-    <div class="back-nav" onclick="showPage('cart-page')">← Back to Bag</div>
-    <h3>Delivery Address</h3>
-    <input type="text" class="btn-prime" style="background:white; text-align:left; font-weight:normal;" placeholder="Full Name">
-    <input type="number" class="btn-prime" style="background:white; text-align:left; font-weight:normal;" placeholder="Phone Number">
-    <textarea class="btn-prime" style="background:white; text-align:left; font-weight:normal; height:100px;" placeholder="Full Address"></textarea>
-    <button class="btn-prime" onclick="alert('Order Placed Successfully!')">Place Order</button>
+<div id="checkout-page" class="view-page">
+    <div class="back-nav" onclick="showPage('cart-page')">← Back</div>
+    <h3>Shipping Details</h3>
+    <input type="text" id="cust-name" class="input-box" placeholder="Full Name">
+    <input type="number" id="cust-phone" class="input-box" placeholder="Mobile Number">
+    <textarea id="cust-addr" class="input-box" style="height:80px;" placeholder="Address"></textarea>
+    <button class="btn-prime" onclick="startProcessing()">Confirm & Pay</button>
 </div>
 
-<!-- HISTORY -->
+<!-- PROCESSING PAGE -->
+<div id="process-page" class="view-page" style="text-align:center; padding-top:100px;">
+    <div class="loader"></div>
+    <h3>Processing Payment...</h3>
+    <p>Please do not refresh this page.</p>
+</div>
+
+<!-- CONFIRMATION PAGE -->
+<div id="success-page" class="view-page" style="text-align:center; padding-top:50px;">
+    <div style="font-size: 60px;">✅</div>
+    <h2 style="color:var(--success);">Order Confirmed!</h2>
+    <div style="background:white; padding:20px; border-radius:15px; border:1px solid #ddd; margin:20px 0;">
+        <p>Order ID: <b id="order-id"></b></p>
+        <p>Your items will be delivered in 3-5 days.</p>
+    </div>
+    <button class="btn-prime" onclick="showPage('home-page')">Continue Shopping</button>
+</div>
+
 <div id="order-page" class="view-page">
     <h3>My Orders</h3>
     <div id="hist-list"></div>
@@ -128,92 +133,114 @@
 <nav>
     <button class="nav-tab active" onclick="showPage('home-page')">🏠<br>Home</button>
     <button class="nav-tab" onclick="showPage('order-page')">📦<br>Orders</button>
-    <button class="nav-tab" onclick="alert('Tracking active after order!')">📍<br>Track</button>
+    <button class="nav-tab" onclick="alert('Tracking coming soon!')">📍<br>Track</button>
 </nav>
 
 <script>
     const ITEMS = [
-        { id: 1, title: 'Creator Vlog Mic', price: 99, mrp: 599, img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', desc: 'Professional sound for your videos.' },
-        { id: 2, title: 'Ring Light Studio', price: 199, mrp: 999, img: 'https://m.media-amazon.com/images/I/61NfT-jV9OL._SL1500_.jpg', desc: '3 light modes with tripod.' },
-        { id: 3, title: 'Wireless Lavalier', price: 299, mrp: 1299, img: 'https://m.media-amazon.com/images/I/61T7Y4T4RTL._SL1500_.jpg', desc: 'Best for outdoor creator vlogs.' },
-        { id: 4, title: 'Pro Phone Tripod', price: 149, mrp: 499, img: 'https://m.media-amazon.com/images/I/41-pW8P72sL.jpg', desc: 'Sturdy and flexible for all phones.' }
+        { id: 1, title: 'Pro Vlog Mic', price: 99, mrp: 599, img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', desc: 'Noise cancelling for professional audio.' },
+        { id: 2, title: 'LED Ring Light', price: 199, mrp: 999, img: 'https://m.media-amazon.com/images/I/61NfT-jV9OL._SL1500_.jpg', desc: '10 inch ring light with stand.' },
+        { id: 3, title: 'Phone Tripod', price: 149, mrp: 499, img: 'https://m.media-amazon.com/images/I/41-pW8P72sL.jpg', desc: 'Flexible Gorilla tripod for mobile.' }
     ];
 
     let bag = [];
-    let curItem = null;
+    let activeItem = null;
+    let orderHistory = JSON.parse(localStorage.getItem('my_orders')) || [];
 
-    function renderItems(arr) {
-        const div = document.getElementById('catalog');
-        div.innerHTML = arr.map(p => `
-            <div class="p-card" onclick="viewProd(${p.id})">
+    function renderCatalog(arr) {
+        document.getElementById('catalog').innerHTML = arr.map(p => `
+            <div class="p-card" onclick="openP(${p.id})">
                 <span class="p-tag">-${Math.round(((p.mrp-p.price)/p.mrp)*100)}%</span>
                 <img src="${p.img}">
-                <div style="font-size:14px; margin-top:8px; height:32px; overflow:hidden;">${p.title}</div>
-                <div class="p-price">₹${p.price}</div>
+                <div style="font-size:14px; margin-top:5px; height:35px; overflow:hidden;">${p.title}</div>
+                <div style="font-weight:bold;">₹${p.price}</div>
             </div>
         `).join('');
     }
 
-    function viewProd(id) {
-        const p = ITEMS.find(x => x.id === id);
-        curItem = p;
-        document.getElementById('d-title').innerText = p.title;
-        document.getElementById('d-price').innerText = "₹" + p.price;
-        document.getElementById('d-img').src = p.img;
-        document.getElementById('d-desc').innerText = p.desc;
+    function openP(id) {
+        activeItem = ITEMS.find(x => x.id === id);
+        document.getElementById('d-title').innerText = activeItem.title;
+        document.getElementById('d-price').innerText = "₹" + activeItem.price;
+        document.getElementById('d-img').src = activeItem.img;
+        document.getElementById('d-desc').innerText = activeItem.desc;
         showPage('details-page');
     }
 
     function showPage(id) {
         document.querySelectorAll('.view-page').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
-        
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        if(id==='home-page') document.querySelectorAll('.nav-tab')[0].classList.add('active');
-        if(id==='order-page') document.querySelectorAll('.nav-tab')[1].classList.add('active');
-        
+        if(id === 'order-page') renderOrders();
         window.scrollTo(0,0);
     }
 
     function addToBag() {
-        bag.push({...curItem});
+        bag.push({...activeItem});
         document.getElementById('c-count').innerText = bag.length;
-        alert("Added to Bag!");
         updateBagUI();
+        alert("Added to Cart!");
     }
 
     function updateBagUI() {
         const list = document.getElementById('cart-list');
         const sum = document.getElementById('cart-sum');
-        if(bag.length === 0) {
-            list.innerHTML = "<center>Bag is empty</center>";
-            sum.style.display = 'none';
-            return;
-        }
+        if(bag.length === 0) { list.innerHTML = "Cart is empty"; sum.style.display='none'; return; }
         sum.style.display = 'block';
-        let totalMrp = 0, final = 0;
+        let tm = 0, tf = 0;
         list.innerHTML = bag.map(i => {
-            totalMrp += i.mrp; final += i.price;
-            return `<div class="list-row"><img src="${i.img}"><b>${i.title}</b><span>₹${i.price}</span></div>`;
+            tm += i.mrp; tf += i.price;
+            return `<div class="list-item"><img src="${i.img}"><b>${i.title}</b><span>₹${i.price}</span></div>`;
         }).join('');
+        document.getElementById('s-mrp').innerText = "₹" + tm;
+        document.getElementById('s-perc').innerText = Math.round(((tm-tf)/tm)*100);
+        document.getElementById('s-final').innerText = "₹" + tf;
+    }
+
+    function startProcessing() {
+        const name = document.getElementById('cust-name').value;
+        if(!name) return alert("Please enter name");
+        showPage('process-page');
+        setTimeout(completeOrder, 3000); // 3 Second ka delay asli feeling ke liye
+    }
+
+    function completeOrder() {
+        const rid = "VAR" + Math.floor(Math.random() * 999999);
+        const newOrder = {
+            id: rid,
+            name: bag[0].title,
+            price: document.getElementById('s-final').innerText,
+            date: new Date().toLocaleDateString()
+        };
+        orderHistory.push(newOrder);
+        localStorage.setItem('my_orders', JSON.stringify(orderHistory));
         
-        document.getElementById('s-mrp').innerText = "₹" + totalMrp;
-        document.getElementById('s-perc').innerText = Math.round(((totalMrp-final)/totalMrp)*100);
-        document.getElementById('s-final').innerText = "₹" + final;
+        document.getElementById('order-id').innerText = rid;
+        bag = [];
+        document.getElementById('c-count').innerText = 0;
+        updateBagUI();
+        showPage('success-page');
+    }
+
+    function renderOrders() {
+        const list = document.getElementById('hist-list');
+        if(orderHistory.length === 0) { list.innerHTML = "<center>No orders yet</center>"; return; }
+        list.innerHTML = orderHistory.map(o => `
+            <div class="list-item" style="border-left: 5px solid var(--primary);">
+                <div style="flex:1">
+                    <b>Order #${o.id}</b><br>
+                    <small>${o.name}</small>
+                </div>
+                <div style="font-weight:bold; color:var(--success);">${o.price}</div>
+            </div>
+        `).reverse().join('');
     }
 
     function searchNow() {
         const val = document.getElementById('s-input').value.toLowerCase();
-        const filtered = ITEMS.filter(i => i.title.toLowerCase().includes(val));
-        renderItems(filtered);
+        renderCatalog(ITEMS.filter(i => i.title.toLowerCase().includes(val)));
     }
 
-    function selCol(el) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    renderItems(ITEMS);
+    renderCatalog(ITEMS);
 </script>
 </body>
 </html>
