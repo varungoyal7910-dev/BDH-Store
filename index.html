@@ -163,7 +163,7 @@
     </nav>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZiAtCiSXknefI9Qnnd01Ce_FtItvXyJ3HMpjV92MbKpb3rg4aAH9E9xy1b_Quz5tk/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVLUxfcobEC_AQKaHtdmLg3jw1yr2Ke7TZInC8i4HrxSfYVRVubZFDyDwK9iY-aje0/exec';
 
         const PRODUCTS = [
             { id: 1, name: 'Vlog Mic Pro Ultra', mrp: 1499, price: 599, img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', desc: 'Professional wireless mic with noise cancellation.', colors: ['Black', 'Silver'] },
@@ -330,15 +330,17 @@
     
     const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
     const payload = {
-        orderId: oid,
-        name: document.getElementById('u-name').value,
-        phone: document.getElementById('u-phone').value,
-        address: document.getElementById('u-addr').value,
-        total: document.getElementById('sum-total').innerText,
-        utr: utr,
-        date: new Date().toLocaleDateString(),
-        status: 'pending'
-    };
+    orderId: oid,
+    name: document.getElementById('u-name').value,
+    phone: document.getElementById('u-phone').value,
+    address: document.getElementById('u-addr').value,
+    pincode: document.getElementById('u-pincode').value, // Add if needed
+    payment: utr, // Apps Script 'data.payment' mang raha hai
+    price: document.getElementById('sum-total').innerText, // Apps Script 'data.price' mang raha hai
+    date: new Date().toLocaleDateString(),
+    status: 'pending',
+    product: cart.map(i => i.name).join(", ") // Apps Script 'data.product' mang raha hai
+};
 
     // 1. Google Sheet Link (CORS error fix)
     fetch(SCRIPT_URL, { 
@@ -426,44 +428,6 @@ function placeOrder() {
     showPage('payment-page');
 }
 
-async function verifyAndSubmit() {
-    const utr = document.getElementById('u-utr').value;
-    if(utr.length < 6) return alert("Sahi UTR number ya Ref ID dalo!");
-
-    showPage('status-page');
-    document.getElementById('processing-box').style.display = 'block';
-    document.getElementById('success-box').style.display = 'none';
-
-    const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
-    const payload = {
-        orderId: oid,
-        name: document.getElementById('u-name').value,
-        phone: document.getElementById('u-phone').value,
-        address: document.getElementById('u-addr').value,
-        pincode: document.getElementById('u-pincode').value,
-        total: document.getElementById('sum-total').innerText,
-        utr: utr,
-        product: cart.map(i => `${i.name} (x${i.qty})`).join(", "),
-        date: new Date().toLocaleDateString(),
-        status: 'pending'
-    };
-
-    // Google Sheet link se data bhej raha hai
-    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-
-    myOrders.unshift(payload);
-    localStorage.setItem('myOrders', JSON.stringify(myOrders));
-
-    setTimeout(() => {
-        document.getElementById('processing-box').style.display = 'none';
-        document.getElementById('success-box').style.display = 'block';
-        document.getElementById('final-oid').innerText = "Order ID: " + oid;
-        cart = []; 
-        saveCart();
-    }, 2500);
-}
-
-// --- PASTE KHATAM (Iske baad updateCartUI() aur renderHome() pehle se hain) ---
 
         // Sabse niche paste karein
 document.addEventListener('DOMContentLoaded', () => {
