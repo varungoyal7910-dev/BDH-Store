@@ -301,14 +301,25 @@
         }
 
         function renderHistory() {
-            document.getElementById('orders-history-list').innerHTML = myOrders.map(o => `
-                <div class="order-card">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>${o.orderId}</span><span style="color:var(--green);">${o.status.toUpperCase()}</span></div>
-                    <div style="font-size:13px; color:#666; margin-top:5px;">Date: ${o.date}</div>
-                    <div style="font-weight:700; margin-top:5px;">${o.total}</div>
-                </div>
-            `).join('') || "<p style='text-align:center;'>No orders yet.</p>";
-        }
+    const listDiv = document.getElementById('orders-history-list');
+    if (!listDiv) return;
+
+    if (myOrders.length === 0) {
+        listDiv.innerHTML = "<p style='text-align:center; padding:20px;'>No orders yet.</p>";
+        return;
+    }
+
+    listDiv.innerHTML = myOrders.map(o => `
+        <div class="order-card" style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border:1px solid #eee;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                <span>${o.orderId}</span>
+                <span style="color:var(--green);">${o.status.toUpperCase()}</span>
+            </div>
+            <div style="font-size:13px; color:#666; margin-top:5px;">Date: ${o.date}</div>
+            <div style="font-weight:700; margin-top:5px;">Total: ${o.total}</div>
+        </div>
+    `).join('');
+}
 
         async function trackOrder() {
             const id = document.getElementById('track-id').value.trim();
@@ -356,7 +367,7 @@ function placeOrder() {
     document.getElementById('pay-amt').innerText = total;
 
     const amount = total.replace('₹', '');
-    const upiId = "varun@upi"; // APNI ID YAHAN DALO
+    const upiId = "varungoyal7910@pnb"; // APNI ID YAHAN DALO
     document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=VarunStore%26am=${amount}%26cu=INR`;
 
     showPage('payment-page');
