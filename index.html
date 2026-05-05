@@ -325,8 +325,26 @@
     }
 
     function goToPayment() {
-        if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) return alert("Pura Detail Bharo Bhai!");
-        changePage('payment-page');
+    // Basic validation: Name aur Phone check karna
+    if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) {
+        return alert("Pura Detail Bharo Bhai!");
+    }
+
+    // 1. Amount nikalna (Currency symbol hata kar)
+    const amountStr = document.getElementById('pay-amt').innerText;
+    const amount = amountStr.replace(/[^\d.-]/g, ''); // Sirf number rakhega
+
+    // 2. UPI Details (Aapki details)
+    const upiId = "varungoyal7910@pnb";
+    const name = "Varun Goyal";
+    
+    // 3. QR URL banana (Google Chart API ya QRServer use karke)
+    // Hum amount ke saath QR generate kar rahe hain taaki scan karte hi paise aa jayein
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=${encodeURIComponent(name)}%26am=${amount}%26cu=INR`;
+    
+    // 4. Image update karna aur page badalna
+    document.getElementById('upi-qr').src = qrUrl;
+    changePage('payment-page');
     }
 
     function placeOrder() {
