@@ -3,45 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART PRO | Premium</title>
+    <title>GOCART PRO | Premium Edition</title>
     <style>
         :root { --primary: #FFB400; --navy: #131921; --amazon-red: #CC0C39; --bg: #f7f8fa; --card: #ffffff; --text: #1a1a1a; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background: var(--bg); padding-bottom: 90px; color: var(--text); }
         
-        /* Premium Header */
-        header { background: var(--navy); padding: 18px 20px; color: white; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        header { background: var(--navy); padding: 18px 20px; color: white; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 20px 20px; }
         .logo { font-size: 22px; font-weight: 800; }
         .logo span { color: var(--primary); }
         .bag-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; position: relative; }
         #bag-badge { background: var(--primary); color: var(--navy); border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; position: absolute; top: -5px; right: -5px; font-weight: bold; }
 
-        /* Pages */
         .page { display: none; padding: 15px; animation: slideUp 0.4s ease-out; }
         .active { display: block; }
-        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Grid & Cards */
+        /* Price Filter (Line Wala) */
+        .search-area { background: white; padding: 20px; margin: -10px 0 15px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
+        .search-bar { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 12px; font-size: 16px; }
+        .filter-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #666; }
+        input[type=range] { flex: 1; margin-left: 15px; accent-color: var(--navy); }
+
+        /* Grid */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--card); border-radius: 20px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative; }
+        .card { background: var(--card); border-radius: 24px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative; transition: 0.2s; }
+        .card:active { transform: scale(0.96); }
         .card img { width: 100%; height: 130px; object-fit: contain; }
         .p-price { font-size: 18px; font-weight: 800; }
         .p-mrp { text-decoration: line-through; color: #999; font-size: 12px; margin-left: 5px; }
-        .p-off { color: var(--amazon-red); font-weight: bold; font-size: 12px; }
+        .p-off-pill { background: #fee; color: var(--amazon-red); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; position: absolute; top: 12px; left: 12px; }
 
-        /* Cart +/- Styling */
-        .cart-item { background: white; border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .qty-controls { display: flex; align-items: center; gap: 12px; background: #f0f0f0; padding: 5px 12px; border-radius: 10px; }
-        .qty-btn { border: none; background: none; font-size: 18px; font-weight: bold; cursor: pointer; color: var(--navy); }
+        /* Cart +/- */
+        .cart-item { background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .qty-controls { display: flex; align-items: center; gap: 12px; background: #f0f0f0; padding: 6px 14px; border-radius: 12px; }
+        .qty-btn { border: none; background: none; font-size: 20px; font-weight: bold; cursor: pointer; }
 
-        /* General UI */
-        .btn-action { background: var(--navy); color: white; width: 100%; padding: 16px; border-radius: 15px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .search-bar { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 15px; }
+        /* UI Buttons */
+        .btn-action { background: var(--navy); color: white; width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         
         /* Bottom Nav */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 12px 0; border-top: 1px solid #eee; }
-        .nav-item { flex: 1; text-align: center; border: none; background: none; color: #aaa; font-size: 12px; font-weight: 600; cursor: pointer; }
-        .nav-item.active { color: var(--navy); }
+        nav { position: fixed; bottom: 0; width: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; padding: 12px 0; border-top: 1px solid #eee; }
+        .nav-item { flex: 1; text-align: center; border: none; background: none; color: #aaa; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--navy); transform: translateY(-3px); }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
 
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--navy); border-radius: 50%; width: 25px; height: 25px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -50,61 +55,80 @@
 <body>
 
 <header>
-    <div class="logo" onclick="showPage('home')">GO<span>CART</span> PRO</div>
+    <div class="logo">GO<span>CART</span> PRO</div>
     <button class="bag-btn" onclick="showPage('cart-page')">🛍️ <span id="bag-badge">0</span></button>
 </header>
 
 <!-- HOME -->
 <div id="home" class="page active">
-    <input type="text" class="search-bar" placeholder="Search gadgets..." oninput="filter(this.value)">
+    <div class="search-area">
+        <input type="text" class="search-bar" placeholder="Dhoondhiye behtareen gadgets..." oninput="filter()">
+        <div class="filter-row">
+            <span>Budget: ₹<b id="p-val">2000</b></span>
+            <input type="range" id="p-range" min="100" max="2000" value="2000" oninput="filter()">
+        </div>
+    </div>
     <div class="grid" id="main-grid"></div>
 </div>
 
-<!-- DETAILS -->
-<div id="details-page" class="page">
-    <div id="det-content"></div>
-</div>
-
-<!-- CART -->
-<div id="cart-page" class="page">
-    <h3 style="margin-bottom:20px;">Your Bag</h3>
-    <div id="cart-list"></div>
-    <div id="cart-summary" style="display:none; background:white; padding:20px; border-radius:20px; margin-top:15px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Total MRP:</span><span id="sum-mrp">₹0</span></div>
-        <div style="display:flex; justify-content:space-between; color:green; font-weight:600;"><span>Savings:</span><span id="sum-disc">-₹0</span></div>
-        <hr style="border:0.5px solid #eee; margin:15px 0;">
-        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:800;"><span>Total Pay:</span><span id="sum-total">₹0</span></div>
-        <button class="btn-action" style="background:var(--primary); color:var(--navy);" onclick="showPage('checkout-page')">Checkout Now</button>
-    </div>
-    <div id="cart-empty" style="text-align:center; margin-top:60px; display:none;">
-        <div style="font-size:50px;">🛍️</div>
-        <p style="color:#666;">No items in bag</p>
-        <button onclick="showPage('home')" style="color:var(--primary); border:none; background:none; font-weight:bold;">Start Shopping</button>
+<!-- ORDERS PAGE -->
+<div id="orders-page" class="page">
+    <h2 style="font-weight:800;">My Orders</h2>
+    <div id="orders-list">
+        <!-- Empty State -->
+        <div style="text-align:center; margin-top:60px; opacity:0.5;">
+            <div style="font-size:60px;">📦</div>
+            <p style="font-weight:700; font-size:18px;">No order yet</p>
+            <button onclick="showPage('home')" style="color:var(--primary); border:none; background:none; font-weight:bold; font-size:16px;">Browse Products</button>
+        </div>
     </div>
 </div>
 
-<!-- TRACK -->
+<!-- TRACK PAGE -->
 <div id="track-page" class="page">
-    <h3>Track Order</h3>
-    <input type="text" id="track-id" class="search-bar" placeholder="Enter Order ID (e.g. GCP-123)">
+    <h2 style="font-weight:800;">Track Order</h2>
+    <input type="text" id="track-id" class="search-bar" placeholder="Enter Order ID (e.g. GCP-123456)">
     <button class="btn-action" onclick="trackOrder()">Track Status</button>
     <div id="track-res" style="margin-top:20px;"></div>
 </div>
 
+<!-- DETAILS PAGE -->
+<div id="details-page" class="page">
+    <div id="det-content"></div>
+</div>
+
+<!-- CART PAGE -->
+<div id="cart-page" class="page">
+    <h2 style="font-weight:800;">Your Bag</h2>
+    <div id="cart-list"></div>
+    <div id="cart-summary" style="display:none; background:white; padding:20px; border-radius:25px; margin-top:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:#666;"><span>Total MRP:</span><span id="sum-mrp">₹0</span></div>
+        <div style="display:flex; justify-content:space-between; color:green; font-weight:700;"><span>Instant Discount:</span><span id="sum-disc">-₹0</span></div>
+        <hr style="border:0.5px dashed #eee; margin:15px 0;">
+        <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:900;"><span>Total Pay:</span><span id="sum-total">₹0</span></div>
+        <button class="btn-action" style="background:var(--primary); color:var(--navy); margin-top:20px;" onclick="showPage('checkout-page')">Secure Checkout</button>
+    </div>
+    <div id="cart-empty" style="text-align:center; margin-top:60px; display:none;">
+        <div style="font-size:60px;">🛍️</div>
+        <p style="font-weight:700; color:#999;">Empty Bag</p>
+    </div>
+</div>
+
 <!-- CHECKOUT -->
 <div id="checkout-page" class="page">
-    <div style="background:white; padding:20px; border-radius:20px;">
-        <h3>Delivery Info</h3>
-        <input type="text" id="u-name" class="search-bar" placeholder="Full Name">
+    <div style="background:white; padding:25px; border-radius:30px;">
+        <h3 style="margin-top:0;">Shipping Details</h3>
+        <input type="text" id="u-name" class="search-bar" placeholder="Receiver's Name">
         <input type="number" id="u-phone" class="search-bar" placeholder="WhatsApp Number">
-        <textarea id="u-addr" class="search-bar" placeholder="Address with Pincode" style="height:80px;"></textarea>
-        <button class="btn-action" onclick="placeOrder()">Confirm Order</button>
+        <textarea id="u-addr" class="search-bar" placeholder="Complete Address" style="height:100px;"></textarea>
+        <button class="btn-action" onclick="placeOrder()">Confirm & Pay</button>
     </div>
 </div>
 
 <nav>
-    <button class="nav-item active" id="n-home" onclick="showPage('home')">🏠<br>Explore</button>
-    <button class="nav-item" id="n-track" onclick="showPage('track-page')">📍<br>Track</button>
+    <button class="nav-item active" id="n-home" onclick="showPage('home')"><i>🏠</i>Explore</button>
+    <button class="nav-item" id="n-orders" onclick="showPage('orders-page')"><i>📦</i>Orders</button>
+    <button class="nav-item" id="n-track" onclick="showPage('track-page')"><i>📍</i>Track</button>
 </nav>
 
 <script>
@@ -113,63 +137,62 @@
     const PRODUCTS = [
         { id: 1, name: 'Vlog Mic Pro Ultra', mrp: 1499, price: 599, img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg' },
         { id: 2, name: 'Premium Ring Light 18"', mrp: 2999, price: 1299, img: 'https://m.media-amazon.com/images/I/61NfT-jV9OL._SL1500_.jpg' },
-        { id: 3, name: 'Flexi Tripod 5ft', mrp: 899, price: 349, img: 'https://m.media-amazon.com/images/I/41-pW8P72sL.jpg' }
+        { id: 3, name: 'Professional Tripod 5ft', mrp: 899, price: 349, img: 'https://m.media-amazon.com/images/I/41-pW8P72sL.jpg' }
     ];
 
-    let cart = []; // Format: {id, name, price, mrp, img, qty}
+    let cart = [];
 
-    function renderHome(data = PRODUCTS) {
-        document.getElementById('main-grid').innerHTML = data.map(p => {
+    function renderHome(list = PRODUCTS) {
+        document.getElementById('main-grid').innerHTML = list.map(p => {
             const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
             return `
             <div class="card" onclick="viewDetail(${p.id})">
+                <div class="p-off-pill">-${off}% OFF</div>
                 <img src="${p.img}">
-                <div style="font-weight:600; font-size:14px; margin:10px 0 5px;">${p.name}</div>
-                <div>
-                    <span class="p-off">-${off}%</span>
-                    <span class="p-price">₹${p.price}</span>
-                </div>
-                <div class="p-mrp">M.R.P: ₹${p.mrp}</div>
+                <div style="font-weight:700; font-size:14px; margin:10px 0 5px; height:35px; overflow:hidden;">${p.name}</div>
+                <div><span class="p-price">₹${p.price}</span><span class="p-mrp">₹${p.mrp}</span></div>
             </div>`;
         }).join('');
+    }
+
+    function filter() {
+        const q = document.querySelector('.search-bar').value.toLowerCase();
+        const m = document.getElementById('p-range').value;
+        document.getElementById('p-val').innerText = m;
+        const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) && p.price <= m);
+        renderHome(filtered);
     }
 
     function viewDetail(id) {
         const p = PRODUCTS.find(x => x.id === id);
         document.getElementById('det-content').innerHTML = `
-            <button onclick="showPage('home')" style="border:none; background:none; font-weight:bold; color:var(--navy); margin-bottom:15px;">← Back</button>
-            <div style="background:white; padding:20px; border-radius:20px; text-align:center;">
-                <img src="${p.img}" style="width:100%; max-height:250px; object-fit:contain;">
-                <h2 style="text-align:left;">${p.name}</h2>
-                <div style="text-align:left; margin-bottom:20px;">
-                    <span style="font-size:28px; font-weight:800;">₹${p.price}</span>
-                    <span class="p-mrp" style="font-size:16px;">₹${p.mrp}</span>
+            <button onclick="showPage('home')" style="border:none; background:none; font-weight:800; color:var(--navy); margin-bottom:15px; cursor:pointer;">← Back to Explore</button>
+            <div style="background:white; padding:25px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+                <center><img src="${p.img}" style="width:100%; max-height:280px; object-fit:contain;"></center>
+                <h1 style="font-weight:800; margin:15px 0 5px;">${p.name}</h1>
+                <div style="margin-bottom:20px;">
+                    <span style="font-size:32px; font-weight:900;">₹${p.price}</span>
+                    <span class="p-mrp" style="font-size:18px;">₹${p.mrp}</span>
                 </div>
-                <button class="btn-action" onclick="addToCart(${p.id})">Add to Bag</button>
+                <button class="btn-action" onclick="addToCart(${p.id})">Add to Shopping Bag</button>
             </div>
         `;
         showPage('details-page');
     }
 
     function addToCart(id) {
-        const existing = cart.find(x => x.id === id);
-        if(existing) {
-            existing.qty++;
-        } else {
-            const p = PRODUCTS.find(x => x.id === id);
-            cart.push({...p, qty: 1});
-        }
+        const item = cart.find(x => x.id === id);
+        if(item) item.qty++;
+        else cart.push({...PRODUCTS.find(x => x.id === id), qty: 1});
         updateCartUI();
-        alert("Bag updated!");
+        alert("Added to Bag!");
     }
 
     function changeQty(id, delta) {
         const item = cart.find(x => x.id === id);
         if(item) {
             item.qty += delta;
-            if(item.qty <= 0) {
-                cart = cart.filter(x => x.id !== id);
-            }
+            if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
             updateCartUI();
         }
     }
@@ -190,18 +213,17 @@
 
         let tMrp = 0, tPrice = 0;
         document.getElementById('cart-list').innerHTML = cart.map(i => {
-            tMrp += (i.mrp * i.qty);
-            tPrice += (i.price * i.qty);
+            tMrp += (i.mrp * i.qty); tPrice += (i.price * i.qty);
             return `
             <div class="cart-item">
-                <img src="${i.img}" style="width:50px;">
+                <img src="${i.img}" style="width:60px; height:60px; object-fit:contain;">
                 <div style="flex:1;">
-                    <div style="font-weight:600; font-size:14px;">${i.name}</div>
-                    <div style="font-weight:800;">₹${i.price}</div>
+                    <div style="font-weight:700; font-size:14px;">${i.name}</div>
+                    <div style="font-weight:900; color:var(--navy);">₹${i.price}</div>
                 </div>
                 <div class="qty-controls">
                     <button class="qty-btn" onclick="changeQty(${i.id}, -1)">-</button>
-                    <span style="font-weight:bold;">${i.qty}</span>
+                    <span style="font-weight:800;">${i.qty}</span>
                     <button class="qty-btn" onclick="changeQty(${i.id}, 1)">+</button>
                 </div>
             </div>`;
@@ -215,44 +237,45 @@
     async function trackOrder() {
         const id = document.getElementById('track-id').value.trim();
         const resDiv = document.getElementById('track-res');
-        if(!id) return alert("Enter ID!");
+        if(!id) return alert("Please enter Order ID");
 
         resDiv.innerHTML = '<center><div class="loader"></div></center>';
         try {
             const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`);
             const data = await r.json();
             if(data.error) {
-                resDiv.innerHTML = `<div style="color:red; background:#fee; padding:15px; border-radius:10px;">Order not found yet!</div>`;
+                resDiv.innerHTML = `<div style="background:#fee; color:red; padding:15px; border-radius:15px;">Order ID not found! Check again.</div>`;
             } else {
-                resDiv.innerHTML = `<div style="background:white; padding:15px; border-radius:10px; border-left:5px solid var(--primary);">
-                    <small>Status for #${id}</small>
-                    <h3 style="margin:5px 0;">● ${data.status.toUpperCase()}</h3>
-                    <p style="font-size:12px; color:#666;">Items: ${data.items}</p>
+                resDiv.innerHTML = `<div style="background:white; padding:20px; border-radius:20px; border-left:6px solid var(--primary);">
+                    <small style="color:#999;">#${id}</small>
+                    <h3 style="margin:5px 0; text-transform:uppercase;">● ${data.status}</h3>
+                    <p style="font-size:13px; color:#666;">Items: ${data.items}</p>
                 </div>`;
             }
-        } catch(e) { resDiv.innerHTML = "Error fetching data."; }
+        } catch(e) { resDiv.innerHTML = "Connection Error."; }
     }
 
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        
+        // Active Nav Styling
         if(id === 'home') document.getElementById('n-home').classList.add('active');
+        if(id === 'orders-page') document.getElementById('n-orders').classList.add('active');
         if(id === 'track-page') document.getElementById('n-track').classList.add('active');
+        
         window.scrollTo(0,0);
         if(id === 'cart-page') updateCartUI();
     }
 
-    function filter(q) {
-        renderHome(PRODUCTS.filter(p => p.name.toLowerCase().includes(q.toLowerCase())));
-    }
-
     async function placeOrder() {
         const name = document.getElementById('u-name').value;
-        if(!name || cart.length === 0) return alert("Fill details!");
-        const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
+        if(!name || cart.length === 0) return alert("Details bharo bhai!");
         
-        alert("Order Placed! ID: " + oid);
+        const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
+        alert("🎉 Order Placed!\nOrder ID: " + oid);
+        
         const payload = {
             name: name,
             phone: document.getElementById('u-phone').value,
