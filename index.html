@@ -321,31 +321,37 @@
         if(id === 'my-orders-page') { document.getElementById('n-orders').classList.add('active'); renderOrders(); }
         if(id === 'track-page') document.getElementById('n-track').classList.add('active');
         if(id === 'cart-page') renderCart();
-        window.scrollTo(0,0);
+        window.scrfunctionollTo(0,0);
     }
 
-    function goToPayment() {
-    // Basic validation: Name aur Phone check karna
+     function goToPayment() {
+    // 1. Validation check
     if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) {
         return alert("Pura Detail Bharo Bhai!");
     }
 
-    // 1. Amount nikalna (Currency symbol hata kar)
-    const amountStr = document.getElementById('pay-amt').innerText;
-    const amount = amountStr.replace(/[^\d.-]/g, ''); // Sirf number rakhega
+    // 2. Amount ko clean karna (Sirf number nikalna)
+    let amountRaw = document.getElementById('pay-amt').innerText;
+    let amount = amountRaw.replace(/[^0-9]/g, ''); // Ye ₹ symbol aur space sab hata dega
 
-    // 2. UPI Details (Aapki details)
+    // 3. UPI Details
     const upiId = "varungoyal7910@pnb";
     const name = "Varun Goyal";
     
-    // 3. QR URL banana (Google Chart API ya QRServer use karke)
-    // Hum amount ke saath QR generate kar rahe hain taaki scan karte hi paise aa jayein
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=${encodeURIComponent(name)}%26am=${amount}%26cu=INR`;
+    // 4. UPI String banana (Isme symbols ko handle karna zaroori hai)
+    const upiString = `upi://pay?pa=${upiId}&pn=${name}&am=${amount}&cu=INR`;
     
-    // 4. Image update karna aur page badalna
-    document.getElementById('upi-qr').src = qrUrl;
-    changePage('payment-page');
+    // 5. Final QR URL (Pure upiString ko ek saath encode karna)
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+    
+    // 6. Image set karna aur page badalna
+    const qrImg = document.getElementById('upi-qr');
+    if(qrImg) {
+        qrImg.src = qrUrl;
     }
+    
+    changePage('payment-page');
+     }
 
     function placeOrder() {
         const utr = document.getElementById('c-utr').value;
