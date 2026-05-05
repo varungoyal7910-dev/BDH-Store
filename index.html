@@ -174,10 +174,10 @@
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
 
-        function renderHome(list = PRODUCTS) {
-    const grid = document.getElementById('main-grid'); // ID sahi check karein
-    if(!grid) return;
-    
+       function renderHome(list = PRODUCTS) {
+    const grid = document.getElementById('main-grid');
+    if (!grid) return;
+
     grid.innerHTML = list.map(p => {
         const off = Math.round(((p.mrp - p.price) / p.mrp) * 100);
         return `
@@ -194,7 +194,7 @@
             </div>`;
     }).join("");
 }
-
+        
         function viewDetail(id) {
             const p = PRODUCTS.find(x => x.id === id);
             document.getElementById('det-content').innerHTML = `
@@ -320,6 +320,58 @@
             <div style="font-weight:700; margin-top:5px;">Total: ${o.total}</div>
         </div>
     `).join('');
+}
+        
+        async function verifyAndSubmit() {
+    const utr = document.getElementById('u-utr').value;
+    if(!utr) return alert("Bhai, UTR number dalo!");
+
+    showPage('status-page');
+    
+    const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
+    const payload = {
+        orderId: oid,
+        name: document.getElementById('u-name').value,
+        phone: document.getElementById('u-phone').value,
+        address: document.getElementById('u-addr').value,
+        total: document.getElementById('sum-total').innerText,
+        utr: utr,
+        date: new Date().toLocaleDateString(),
+        status: 'pending'
+    };
+
+    // 1. Google Sheet Link (CORS error fix)
+    fetch(SCRIPT_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: JSON.stringify(payload) 
+    });
+
+    // 2. My Orders Tab Fix (Save to local memory)
+    myOrders.unshift(payload);
+    localStorage.setItem('myOrders', JSON.stringify(myOrders));
+    
+    setTimeout(() => {
+        document.getElementById('processing-box').style.display = 'none';
+        document.getElementById('success-box').style.display = 'block';
+        document.getElementById('final-oid').innerText = "Order ID: " + oid;
+        cart = []; 
+        saveCart();
+        renderHistory(); // Naya order turant list mein dikhega
+    }, 2000);
+}
+
+async function trackOrder() {
+    const id = document.getElementById('track-id').value.trim();
+    const res = document.getElementById('track-res');
+    if(!id) return alert("Enter ID!");
+    res.innerHTML = '<div class="loader"></div>';
+    try {
+        const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`); // 'farch' ko 'fetch' kar diya
+        const d = await r.json();
+        if(d.error) res.innerHTML = `<div style="background:#fee; padding:20px; border-radius:15px; color:red;">Order Not Found</div>`;
+        else res.innerHTML = `<div style="background:white; padding:20px; border-radius:15px; border-left:5px solid var(--green);">Status: ${d.status}</div>`;
+    } catch(e) { res.innerHTML = "Network Error!"; }
 }
 
         async function trackOrder() {
