@@ -6,7 +6,7 @@
     <title>GOCART | Premium Store</title>
     <style>
         :root { --g-orange: #FFB400; --g-navy: #131921; --g-white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 80px; color: #111; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 80px; color: #111; overflow-x: hidden; }
         
         header { background: var(--g-navy); padding: 12px 15px; color: white; position: sticky; top: 0; z-index: 1000; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -16,9 +16,6 @@
 
         .search-container { background: white; border-radius: 4px; display: flex; overflow: hidden; margin-bottom: 8px; }
         .search-container input { border: none; padding: 10px; width: 100%; outline: none; }
-
-        .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-        .chip { background: #37475a; border: 1px solid #555; padding: 6px 15px; border-radius: 4px; font-size: 12px; color: white; white-space: nowrap; }
 
         .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 10px; font-size: 11px; font-weight: bold; border-bottom: 1px solid #ddd; }
 
@@ -30,16 +27,17 @@
         .p-card { background: white; border-radius: 8px; padding: 12px; position: relative; border: 1px solid #ddd; }
         .discount-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 2px; }
         .p-card img { width: 100%; height: 120px; object-fit: contain; }
-        .rating-stars { color: #ffa41c; font-size: 18px; margin: 5px 0; }
 
         .item-row { background: white; padding: 15px; border-radius: 8px; display: flex; gap: 12px; margin-bottom: 10px; border: 1px solid #ddd; }
         .item-row img { width: 70px; height: 70px; object-fit: contain; }
-        .qty-box { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        .qty-btn { background: #e7e9ec; border: 1px solid #adb1b8; width: 30px; height: 30px; border-radius: 4px; font-weight: bold; }
-
-        .btn-main { background: #FFD814; border: 1px solid #FCD200; color: #0f1111; width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         
+        .btn-main { background: #FFD814; border: 1px solid #FCD200; color: #0f1111; width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        
+        /* PROCESSING SPINNER */
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--g-orange); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 12px 0; z-index: 1000; }
         .nav-item { flex: 1; text-align: center; font-size: 11px; color: #555; cursor: pointer; }
     </style>
@@ -52,12 +50,7 @@
         <div class="cart-btn" onclick="showPage('cart-page')">🛒 Cart (<span id="cart-count">0</span>)</div>
     </div>
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search products..." onkeyup="searchFun()">
-    </div>
-    <div class="filters">
-        <div class="chip" onclick="filterPrice('All')">All Items</div>
-        <div class="chip" onclick="filterPrice(199)">Under ₹199</div>
-        <div class="chip" onclick="filterPrice(499)">Under ₹499</div>
+        <input type="text" placeholder="Search products..." onkeyup="searchFun()">
     </div>
 </header>
 
@@ -67,103 +60,75 @@
     <span>🔄 7 Day Replace</span>
 </div>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div id="home-page" class="page active-page">
-    <div class="p-grid" id="p-container">
-        <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 599, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', 'Noise cancellation, 3.5mm jack, wire for professional vlogging.')">
-            <span class="discount-tag"></span>
+    <div class="p-grid">
+        <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 599, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg')">
+            <span class="discount-tag">-83% OFF</span>
             <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg">
-            <div class="rating-stars">★★★★☆</div>
             <h4 style="margin:5px 0; font-size:14px;">Pro Vlog Microphone</h4>
             <b>₹99</b> <span style="text-decoration:line-through; color:gray; font-size:12px;">₹599</span>
         </div>
-        <div class="p-card" data-price="299" onclick="openDetails('Gaming Mouse', 299, 999, 'https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg', 'RGB lighting, ergonomic design for long gaming sessions.')">
-            <span class="discount-tag"></span>
-            <img src="https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg">
-            <div class="rating-stars">★★★★★</div>
-            <h4 style="margin:5px 0; font-size:14px;">Wireless Gaming Mouse</h4>
-            <b>₹299</b> <span style="text-decoration:line-through; color:gray; font-size:12px;">₹999</span>
-        </div>
     </div>
 </div>
 
-<!-- PRODUCT DETAILS -->
-<div id="details-page" class="page" style="background:white;">
-    <center><img id="det-img" src="" style="width:80%; max-height:250px; object-fit:contain;"></center>
-    <h2 id="det-title" style="margin:15px 0 5px 0;"></h2>
-    <div class="rating-stars" style="font-size:24px;">★★★★☆</div>
-    <div style="margin-bottom:15px;">
-        <span style="font-size:28px; color:#B12704; font-weight:bold;" id="det-price"></span>
-        <span id="det-old" style="text-decoration:line-through; color:gray; margin-left:10px;"></span>
-        <span id="det-perc" style="color:#cc0c39; font-weight:bold; margin-left:10px;"></span>
-    </div>
-    <h4>Description:</h4>
-    <p id="det-desc" style="color:#444; line-height:1.5; font-size:14px;"></p>
-    <button class="btn-main" onclick="addToCart()">Add to Cart 🛒</button>
-</div>
-
-<!-- CART PAGE -->
+<!-- CART -->
 <div id="cart-page" class="page">
-    <h3 style="border-bottom:2px solid #ddd; padding-bottom:10px;">Your Cart</h3>
+    <h3>Your Cart</h3>
     <div id="cart-items"></div>
-    <div id="cart-summary" style="display:none; background:white; padding:15px; border-radius:8px; margin-top:20px; border:1px solid #ddd;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: #555;">
-            <span>Total MRP:</span><span id="total-mrp">₹0</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: green; font-weight: bold;">
-            <span>Discount:</span><span id="total-discount">-₹0</span>
+    <div id="cart-summary" style="display:none; background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Total MRP:</span><span id="total-mrp">₹0</span></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: green; font-weight:bold;">
+            <span>Discount (<span id="perc-val">0</span>%):</span><span id="total-discount">-₹0</span>
         </div>
         <hr>
-        <div style="display:flex; justify-content:space-between; margin-top:10px; font-size: 18px; font-weight: bold;">
-            <span>Final Rate:</span><span id="final-total">₹0</span>
-        </div>
+        <div style="display:flex; justify-content:space-between; font-size: 18px; font-weight: bold;"><span>Final Rate:</span><span id="final-total">₹0</span></div>
         <button class="btn-main" onclick="showPage('checkout-page')">Proceed to Checkout</button>
     </div>
-    <div id="empty-cart" style="text-align:center; padding:50px 0; color:#888;">Cart is empty!</div>
 </div>
 
-<!-- CHECKOUT PAGE -->
+<!-- CHECKOUT -->
 <div id="checkout-page" class="page">
     <h3>Delivery Details</h3>
     <input type="text" id="u-name" class="form-input" placeholder="Full Name">
-    <input type="tel" id="u-phone" class="form-input" placeholder="Phone Number">
+    <input type="number" id="u-phone" class="form-input" placeholder="Phone Number (10 Digits)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10">
+    <input type="number" id="u-pin" class="form-input" placeholder="Pincode (6 Digits)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="6">
     <textarea id="u-addr" class="form-input" placeholder="Full Address" style="height:80px;"></textarea>
-    <button class="btn-main" onclick="showPage('payment-page')">Select Payment Method</button>
+    <button class="btn-main" onclick="validateCheckout()">Select Payment Method</button>
 </div>
 
-<!-- PAYMENT PAGE -->
+<!-- PAYMENT -->
 <div id="payment-page" class="page">
-    <h3>Choose Payment</h3>
+    <h3>Payment</h3>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">
-        <input type="radio" name="pay" id="p-upi" checked onclick="toggleUPI(true)"> <b>Online Payment (UPI QR)</b><br>
-        <div id="upi-box" style="text-align:center; margin-top:15px;">
-            <!-- Added error handling for QR image -->
-            <img id="upi-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=varungoyal7910@pnb" 
-                 style="width:180px; border: 1px solid #ddd; padding: 5px; background: white;"
-                 onerror="this.src='https://quickchart.io/qr?text=upi://pay?pa=varungoyal7910@pnb&size=180'">
-            <p style="font-weight: bold; margin: 5px 0;">varungoyal7910@pnb</p>
-            <p style="font-size: 11px; color: gray;">If QR doesn't load, use ID above</p>
-            <input type="text" id="u-utr" class="form-input" placeholder="Enter Transaction UTR">
+        <input type="radio" name="pay" id="p-upi" checked> <b>Online (UPI QR)</b><br>
+        <div id="upi-box" style="text-align:center; margin-top:10px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=varungoyal7910@pnb" style="width:150px;">
+            <input type="text" id="u-utr" class="form-input" style="margin-top:10px;" placeholder="Enter UTR Number">
         </div>
     </div>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
-        <input type="radio" name="pay" id="p-cod" onclick="toggleUPI(false)"> <b>Cash on Delivery (COD)</b>
+        <input type="radio" name="pay" id="p-cod"> <b>Cash on Delivery</b>
     </div>
-    <button class="btn-main" style="margin-top:20px;" onclick="confirmOrder()">Confirm Order</button>
+    <button class="btn-main" onclick="startProcessing()">Confirm Order</button>
 </div>
 
-<!-- ORDERS PAGE -->
-<div id="orders-page" class="page">
-    <h3>My Orders 📦</h3>
-    <div id="orders-list"></div>
+<!-- PROCESSING PAGE -->
+<div id="proc-page" class="page" style="text-align:center; padding-top:100px;">
+    <div class="loader"></div>
+    <h3>Processing Your Order...</h3>
+    <p>Please do not refresh or go back.</p>
 </div>
 
-<!-- TRACK PAGE -->
-<div id="track-page" class="page">
-    <h3>Track Order 📍</h3>
-    <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID">
-    <button class="btn-main" onclick="runTrack()">Track Status</button>
-    <div id="track-result" style="margin-top:20px;"></div>
+<!-- SUCCESS PAGE -->
+<div id="success-page" class="page" style="text-align:center; padding-top:50px;">
+    <div style="font-size: 60px;">✅</div>
+    <h2 style="color: green;">Order Confirmed!</h2>
+    <div style="background:white; padding:20px; border-radius:10px; border:1px solid #ddd; margin:20px 0;">
+        <p>Order ID: <b id="ord-id-display" style="color:var(--g-orange);"></b></p>
+        <p>Thank you for shopping with GOCART.</p>
+    </div>
+    <button class="btn-main" onclick="location.reload()">Back to Home</button>
 </div>
 
 <nav>
@@ -174,22 +139,7 @@
 
 <script>
     let cart = [];
-    let currentProd = {};
     let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
-
-    window.onload = () => {
-        document.querySelectorAll('.p-card').forEach(card => {
-            let price = parseInt(card.getAttribute('data-price'));
-            let mrpText = card.querySelector('span[style*="line-through"]').innerText;
-            let mrp = parseInt(mrpText.replace('₹',''));
-            let off = Math.round(((mrp - price) / mrp) * 100);
-            card.querySelector('.discount-tag').innerText = `-${off}% OFF`;
-        });
-    };
-
-    function toggleUPI(show) {
-        document.getElementById('upi-box').style.display = show ? 'block' : 'none';
-    }
 
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
@@ -197,114 +147,70 @@
         window.scrollTo(0,0);
     }
 
-    function openDetails(t, p, o, i, d) {
-        let off = Math.round(((o - p) / o) * 100);
-        currentProd = {title: t, price: p, mrp: o, img: i, qty: 1};
-        document.getElementById('det-title').innerText = t;
-        document.getElementById('det-price').innerText = "₹" + p;
-        document.getElementById('det-old').innerText = "₹" + o;
-        document.getElementById('det-perc').innerText = `-${off}% OFF`;
-        document.getElementById('det-img').src = i;
-        document.getElementById('det-desc').innerText = d;
-        showPage('details-page');
-    }
-
-    function addToCart() {
-        let found = cart.find(item => item.title === currentProd.title);
-        if(found) found.qty++;
-        else cart.push({...currentProd});
+    function openDetails(t, p, o, i) {
+        // Simple logic to add item directly for this demo
+        cart = [{title: t, price: p, mrp: o, img: i, qty: 1}];
         updateCart();
-        alert("Added to Cart!");
-        showPage('home-page');
+        showPage('cart-page');
     }
 
     function updateCart() {
         document.getElementById('cart-count').innerText = cart.length;
         const list = document.getElementById('cart-items');
         if(cart.length === 0) {
-            document.getElementById('empty-cart').style.display = 'block';
+            list.innerHTML = "Cart is empty";
             document.getElementById('cart-summary').style.display = 'none';
-            list.innerHTML = "";
             return;
         }
-        document.getElementById('empty-cart').style.display = 'none';
         document.getElementById('cart-summary').style.display = 'block';
-        
-        let totalMrp = 0;
-        let finalPrice = 0;
-
-        list.innerHTML = cart.map((item, index) => {
-            totalMrp += (item.mrp * item.qty);
-            finalPrice += (item.price * item.qty);
-            return `<div class="item-row">
-                <img src="${item.img}">
-                <div style="flex:1;">
-                    <b>${item.title}</b><br>
-                    <span style="color:#B12704; font-weight:bold;">₹${item.price}</span> <small style="text-decoration:line-through; color:gray;">₹${item.mrp}</small>
-                    <div class="qty-box">
-                        <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
-                        <span>${item.qty}</span>
-                        <button class="qty-btn" onclick="changeQty(${index},1)">+</button>
-                    </div>
-                </div>
-            </div>`;
+        let mrp = 0, final = 0;
+        list.innerHTML = cart.map(item => {
+            mrp += item.mrp; final += item.price;
+            return `<div class="item-row"><img src="${item.img}"><div><b>${item.title}</b><br>₹${item.price}</div></div>`;
         }).join('');
-
-        document.getElementById('total-mrp').innerText = "₹" + totalMrp;
-        document.getElementById('total-discount').innerText = "-₹" + (totalMrp - finalPrice);
-        document.getElementById('final-total').innerText = "₹" + finalPrice;
+        
+        let disc = mrp - final;
+        let perc = Math.round((disc / mrp) * 100);
+        document.getElementById('total-mrp').innerText = "₹" + mrp;
+        document.getElementById('total-discount').innerText = "-₹" + disc;
+        document.getElementById('perc-val').innerText = perc;
+        document.getElementById('final-total').innerText = "₹" + final;
     }
 
-    function changeQty(index, delta) {
-        cart[index].qty += delta;
-        if(cart[index].qty < 1) cart.splice(index, 1);
-        updateCart();
+    function validateCheckout() {
+        let phone = document.getElementById('u-phone').value;
+        let pin = document.getElementById('u-pin').value;
+        let name = document.getElementById('u-name').value;
+        
+        if(name.length < 3) return alert("Enter Full Name");
+        if(phone.length !== 10) return alert("Phone Number must be 10 digits");
+        if(pin.length !== 6) return alert("Pincode must be 6 digits");
+        
+        showPage('payment-page');
     }
 
-    function confirmOrder() {
-        const method = document.getElementById('p-cod').checked ? "COD" : "Online";
-        if(method === "Online" && !document.getElementById('u-utr').value) return alert("Please enter UTR!");
-        const orderId = "GC" + Math.floor(1000 + Math.random() * 9000);
-        myOrders.push({ orderId, status: "Order Placed", date: new Date().toLocaleDateString(), method: method });
-        localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
-        alert("Order Success! Order ID: " + orderId);
-        cart = []; updateCart();
-        showPage('home-page');
+    function startProcessing() {
+        if(document.getElementById('p-upi').checked && !document.getElementById('u-utr').value) return alert("Enter UTR Number");
+        
+        showPage('proc-page');
+        
+        setTimeout(() => {
+            // Play Success Sound
+            let audio = new Audio('https://www.myinstants.com/media/sounds/success_jingle.mp3');
+            audio.play();
+
+            const orderId = "VAR" + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('ord-id-display').innerText = orderId;
+            
+            myOrders.push({ orderId, status: "Order Placed", date: new Date().toLocaleDateString() });
+            localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
+            
+            showPage('success-page');
+        }, 3000); // 3 Seconds processing
     }
 
     function loadOrders() {
-        const list = document.getElementById('orders-list');
-        list.innerHTML = myOrders.length ? myOrders.map(o => `
-            <div class="item-row" style="border-left: 5px solid green;">
-                <div><b>ID: ${o.orderId}</b><br><small>${o.date}</small><br>
-                Status: <span style="color:orange;">${o.status}</span><br>Method: ${o.method}</div>
-            </div>
-        `).reverse().join('') : "No orders yet.";
-        showPage('orders-page');
-    }
-
-    function runTrack() {
-        const id = document.getElementById('track-input').value.toUpperCase();
-        const found = myOrders.find(o => o.orderId === id);
-        document.getElementById('track-result').innerHTML = found ? 
-            `<div class="item-row">Status: <b>${found.status}</b><br>Estimated Delivery: 3-4 Days</div>` : "ID not found!";
-    }
-
-    function searchFun() {
-        let input = document.getElementById('search-input').value.toLowerCase();
-        let cards = document.getElementsByClassName('p-card');
-        for (let card of cards) {
-            let title = card.getElementsByTagName('h4')[0].innerText.toLowerCase();
-            card.style.display = title.includes(input) ? "block" : "none";
-        }
-    }
-
-    function filterPrice(limit) {
-        let cards = document.getElementsByClassName('p-card');
-        for (let card of cards) {
-            let p = parseInt(card.getAttribute('data-price'));
-            card.style.display = (limit === 'All' || p <= limit) ? "block" : "none";
-        }
+        alert("Check Success Page for your latest ID: " + (myOrders.length ? myOrders[myOrders.length-1].orderId : "No Orders"));
     }
 </script>
 </body>
