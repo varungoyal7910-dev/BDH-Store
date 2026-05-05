@@ -23,10 +23,12 @@
         .active-page { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from {opacity:0} to {opacity:1} }
 
+        /* PRODUCT GRID STYLE - PHOTO TOP, DETAILS BELOW */
         .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .p-card { background: white; border-radius: 8px; padding: 12px; position: relative; border: 1px solid #ddd; }
-        .discount-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 2px; }
-        .p-card img { width: 100%; height: 120px; object-fit: contain; }
+        .p-card { background: white; border-radius: 8px; padding: 12px; position: relative; border: 1px solid #ddd; display: flex; flex-direction: column; }
+        .discount-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 2px; z-index: 10; }
+        .p-card img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
+        .p-info { text-align: left; }
 
         .item-row { background: white; padding: 15px; border-radius: 8px; display: flex; gap: 12px; margin-bottom: 10px; border: 1px solid #ddd; }
         .item-row img { width: 70px; height: 70px; object-fit: contain; }
@@ -34,7 +36,6 @@
         .btn-main { background: #FFD814; border: 1px solid #FCD200; color: #0f1111; width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         
-        /* PROCESSING SPINNER */
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--g-orange); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -50,7 +51,7 @@
         <div class="cart-btn" onclick="showPage('cart-page')">🛒 Cart (<span id="cart-count">0</span>)</div>
     </div>
     <div class="search-container">
-        <input type="text" placeholder="Search products..." onkeyup="searchFun()">
+        <input type="text" id="search-box" placeholder="Search products..." onkeyup="searchFun()">
     </div>
 </header>
 
@@ -60,51 +61,61 @@
     <span>🔄 7 Day Replace</span>
 </div>
 
-<!-- HOME -->
+<!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
     <div class="p-grid">
         <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 599, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg')">
             <span class="discount-tag">-83% OFF</span>
             <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg">
-            <h4 style="margin:5px 0; font-size:14px;">Pro Vlog Microphone</h4>
-            <b>₹99</b> <span style="text-decoration:line-through; color:gray; font-size:12px;">₹599</span>
+            <div class="p-info">
+                <h4 style="margin:0; font-size:14px;">Pro Vlog Microphone</h4>
+                <div style="margin-top:5px;">
+                    <b style="font-size:16px;">₹99</b> 
+                    <span style="text-decoration:line-through; color:gray; font-size:12px; margin-left:5px;">₹599</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- CART -->
+<!-- CART PAGE -->
 <div id="cart-page" class="page">
     <h3>Your Cart</h3>
     <div id="cart-items"></div>
     <div id="cart-summary" style="display:none; background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Total MRP:</span><span id="total-mrp">₹0</span></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span>Total MRP:</span><span id="total-mrp">₹0</span>
+        </div>
+        <!-- DISCOUNT ONLY IN PERCENTAGE -->
         <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: green; font-weight:bold;">
-            <span>Discount (<span id="perc-val">0</span>%):</span><span id="total-discount">-₹0</span>
+            <span>Discount:</span><span id="perc-val">0</span>%
         </div>
         <hr>
-        <div style="display:flex; justify-content:space-between; font-size: 18px; font-weight: bold;"><span>Final Rate:</span><span id="final-total">₹0</span></div>
+        <div style="display:flex; justify-content:space-between; font-size: 18px; font-weight: bold;">
+            <span>Final Rate:</span><span id="final-total">₹0</span>
+        </div>
         <button class="btn-main" onclick="showPage('checkout-page')">Proceed to Checkout</button>
     </div>
 </div>
 
-<!-- CHECKOUT -->
+<!-- CHECKOUT PAGE -->
 <div id="checkout-page" class="page">
     <h3>Delivery Details</h3>
     <input type="text" id="u-name" class="form-input" placeholder="Full Name">
-    <input type="number" id="u-phone" class="form-input" placeholder="Phone Number (10 Digits)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10">
-    <input type="number" id="u-pin" class="form-input" placeholder="Pincode (6 Digits)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="6">
+    <input type="number" id="u-phone" class="form-input" placeholder="Phone Number (10 Digits)" oninput="this.value=this.value.slice(0,10)">
+    <input type="number" id="u-pin" class="form-input" placeholder="Pincode (6 Digits)" oninput="this.value=this.value.slice(0,6)">
     <textarea id="u-addr" class="form-input" placeholder="Full Address" style="height:80px;"></textarea>
     <button class="btn-main" onclick="validateCheckout()">Select Payment Method</button>
 </div>
 
-<!-- PAYMENT -->
+<!-- PAYMENT PAGE -->
 <div id="payment-page" class="page">
     <h3>Payment</h3>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">
         <input type="radio" name="pay" id="p-upi" checked> <b>Online (UPI QR)</b><br>
         <div id="upi-box" style="text-align:center; margin-top:10px;">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=varungoyal7910@pnb" style="width:150px;">
-            <input type="text" id="u-utr" class="form-input" style="margin-top:10px;" placeholder="Enter UTR Number">
+            <input type="text" id="u-utr" class="form-input" style="margin-top:10px;" placeholder="Enter Transaction UTR">
         </div>
     </div>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
@@ -117,7 +128,6 @@
 <div id="proc-page" class="page" style="text-align:center; padding-top:100px;">
     <div class="loader"></div>
     <h3>Processing Your Order...</h3>
-    <p>Please do not refresh or go back.</p>
 </div>
 
 <!-- SUCCESS PAGE -->
@@ -126,14 +136,27 @@
     <h2 style="color: green;">Order Confirmed!</h2>
     <div style="background:white; padding:20px; border-radius:10px; border:1px solid #ddd; margin:20px 0;">
         <p>Order ID: <b id="ord-id-display" style="color:var(--g-orange);"></b></p>
-        <p>Thank you for shopping with GOCART.</p>
     </div>
     <button class="btn-main" onclick="location.reload()">Back to Home</button>
 </div>
 
+<!-- ORDERS PAGE -->
+<div id="orders-page" class="page">
+    <h3>My Orders 📦</h3>
+    <div id="orders-list"></div>
+</div>
+
+<!-- TRACK PAGE -->
+<div id="track-page" class="page">
+    <h3>Track Your Order 📍</h3>
+    <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID (e.g. VAR123456)">
+    <button class="btn-main" onclick="runTrack()">Track Status</button>
+    <div id="track-result" style="margin-top:20px;"></div>
+</div>
+
 <nav>
     <div class="nav-item" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" onclick="loadOrders()">📦<br>Orders</div>
+    <div class="nav-item" onclick="showOrdersPage()">📦<br>Orders</div>
     <div class="nav-item" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
 
@@ -148,7 +171,6 @@
     }
 
     function openDetails(t, p, o, i) {
-        // Simple logic to add item directly for this demo
         cart = [{title: t, price: p, mrp: o, img: i, qty: 1}];
         updateCart();
         showPage('cart-page');
@@ -158,7 +180,7 @@
         document.getElementById('cart-count').innerText = cart.length;
         const list = document.getElementById('cart-items');
         if(cart.length === 0) {
-            list.innerHTML = "Cart is empty";
+            list.innerHTML = "<center>Cart is empty</center>";
             document.getElementById('cart-summary').style.display = 'none';
             return;
         }
@@ -169,48 +191,55 @@
             return `<div class="item-row"><img src="${item.img}"><div><b>${item.title}</b><br>₹${item.price}</div></div>`;
         }).join('');
         
-        let disc = mrp - final;
-        let perc = Math.round((disc / mrp) * 100);
+        let perc = Math.round(((mrp - final) / mrp) * 100);
         document.getElementById('total-mrp').innerText = "₹" + mrp;
-        document.getElementById('total-discount').innerText = "-₹" + disc;
-        document.getElementById('perc-val').innerText = perc;
+        document.getElementById('perc-val').innerText = perc; // ONLY PERCENTAGE
         document.getElementById('final-total').innerText = "₹" + final;
     }
 
     function validateCheckout() {
-        let phone = document.getElementById('u-phone').value;
-        let pin = document.getElementById('u-pin').value;
-        let name = document.getElementById('u-name').value;
-        
-        if(name.length < 3) return alert("Enter Full Name");
-        if(phone.length !== 10) return alert("Phone Number must be 10 digits");
-        if(pin.length !== 6) return alert("Pincode must be 6 digits");
-        
+        if(document.getElementById('u-phone').value.length !== 10) return alert("Phone must be 10 digits");
+        if(document.getElementById('u-pin').value.length !== 6) return alert("Pincode must be 6 digits");
         showPage('payment-page');
     }
 
     function startProcessing() {
-        if(document.getElementById('p-upi').checked && !document.getElementById('u-utr').value) return alert("Enter UTR Number");
-        
         showPage('proc-page');
-        
         setTimeout(() => {
-            // Play Success Sound
             let audio = new Audio('https://www.myinstants.com/media/sounds/success_jingle.mp3');
-            audio.play();
+            audio.play().catch(()=>console.log("Sound error"));
 
             const orderId = "VAR" + Math.floor(100000 + Math.random() * 900000);
-            document.getElementById('ord-id-display').innerText = orderId;
-            
-            myOrders.push({ orderId, status: "Order Placed", date: new Date().toLocaleDateString() });
+            myOrders.push({ orderId, status: "Shipped", date: new Date().toLocaleDateString(), item: cart[0].title });
             localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
             
+            document.getElementById('ord-id-display').innerText = orderId;
             showPage('success-page');
-        }, 3000); // 3 Seconds processing
+            cart = []; updateCart();
+        }, 3000);
     }
 
-    function loadOrders() {
-        alert("Check Success Page for your latest ID: " + (myOrders.length ? myOrders[myOrders.length-1].orderId : "No Orders"));
+    function showOrdersPage() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = myOrders.length ? myOrders.map(o => `
+            <div class="item-row"><div><b>ID: ${o.orderId}</b><br>${o.item}<br>Status: ${o.status}</div></div>
+        `).reverse().join('') : "<center>No orders yet</center>";
+        showPage('orders-page');
+    }
+
+    function runTrack() {
+        const id = document.getElementById('track-input').value.toUpperCase();
+        const found = myOrders.find(o => o.orderId === id);
+        document.getElementById('track-result').innerHTML = found ? `<div class="item-row">Status: <b>${found.status}</b></div>` : "Not found!";
+    }
+
+    function searchFun() {
+        let input = document.getElementById('search-box').value.toLowerCase();
+        let cards = document.getElementsByClassName('p-card');
+        for (let card of cards) {
+            let title = card.querySelector('h4').innerText.toLowerCase();
+            card.style.display = title.includes(input) ? "flex" : "none";
+        }
     }
 </script>
 </body>
