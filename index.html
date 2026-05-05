@@ -1,90 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GOCART | Official Store</title>
+    <style>
+        :root { --g-orange: #FF6600; --g-navy: #131921; --g-white: #ffffff; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 70px; overflow-x: hidden; }
+        
+        /* HEADER & SEARCH */
+        header { background: var(--g-navy); padding: 15px; color: white; position: sticky; top: 0; z-index: 1000; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logo { font-size: 22px; font-weight: 900; color: var(--g-orange); }
+        .search-box { background: white; border-radius: 8px; display: flex; overflow: hidden; margin-bottom: 10px; }
+        .search-box input { border: none; padding: 10px; width: 100%; outline: none; }
+        .search-box button { background: var(--g-orange); border: none; padding: 10px 15px; color: white; }
+
+        /* FILTERS */
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
+        .chip { background: rgba(255,255,255,0.1); border: 1px solid #444; padding: 5px 12px; border-radius: 20px; font-size: 11px; white-space: nowrap; }
+
+        /* PRODUCT UI */
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .p-card { background: white; border-radius: 12px; padding: 12px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .p-card img { width: 100%; height: 130px; object-fit: contain; cursor: pointer; }
+        .p-price { color: #B12704; font-weight: 800; font-size: 18px; margin: 5px 0; }
+        
+        /* CART & QTY */
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .q-btn { background: #eee; border: none; width: 25px; height: 25px; border-radius: 4px; font-weight: bold; }
+
+        /* PAGES */
+        .page { display: none; padding: 15px; min-height: 80vh; }
+        .active-page { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+
+        /* BOTTOM NAV */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 10px 0; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; font-size: 11px; color: #666; cursor: pointer; }
+        .nav-item.active { color: var(--g-orange); font-weight: bold; }
+
+        /* LOADER */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--g-orange); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .btn-main { background: var(--g-orange); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header id="main-header">
+    <div class="header-top">
+        <div class="logo">GOCART</div>
+        <div onclick="showPage('cart-page')" style="position:relative; cursor:pointer;">🛒<span id="cart-count" style="position:absolute; top:-8px; right:-10px; background:var(--g-orange); font-size:10px; padding:2px 5px; border-radius:50%;">0</span></div>
+    </div>
+    <div class="search-box">
+        <input type="text" placeholder="Search products...">
+        <button>🔍</button>
+    </div>
+    <div class="filters">
+        <div class="chip">Under ₹199</div>
+        <div class="chip">Top Rated</div>
+        <div class="chip">Price: Low to High</div>
+    </div>
+</header>
+
+<!-- PAGES -->
+<div id="home-page" class="page active-page">
+    <div class="p-grid" id="product-list">
+        <!-- Add your products here -->
+        <div class="p-card">
+            <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg" onclick="openDetails('Premium Vlogging Mic', 199, 'High quality noise cancelling mic.')">
+            <div style="font-size:13px; font-weight:600; margin-top:5px;">Vlogging Mic</div>
+            <div class="p-price">₹199</div>
+            <button class="btn-main" style="padding:8px; font-size:12px;" onclick="addToCart('Vlogging Mic', 199, 'Black')">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+<div id="cart-page" class="page">
+    <h3>My Cart 🛒</h3>
+    <div id="cart-items"></div>
+    <div style="font-size:20px; font-weight:bold; margin:20px 0;">Total: ₹<span id="total-price">0</span></div>
+    <button class="btn-main" onclick="showPage('address-page')">Buy Now</button>
+</div>
+
+<div id="address-page" class="page">
+    <h3>Delivery Details</h3>
+    <input type="text" id="u-name" class="form-input" placeholder="Name">
+    <input type="tel" id="u-phone" class="form-input" placeholder="10 Digit Phone" maxlength="10">
+    <input type="text" id="u-addr" class="form-input" placeholder="Full Address">
+    <input type="number" id="u-pin" class="form-input" placeholder="6 Digit Pincode" maxlength="6">
+    <button class="btn-main" onclick="goToPayment()">Continue to Payment</button>
+</div>
+
+<div id="payment-page" class="page">
+    <div style="text-align:center;">
+        <h3>Payment QR</h3>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=varungoyal7910@pnb" style="width:200px; margin-bottom:15px;">
+        <p>UPI: <b>varungoyal7910@pnb</b></p>
+        <input type="text" id="u-utr" class="form-input" placeholder="Enter Reference/UTR Number">
+        <button class="btn-main" onclick="processOrder()">Confirm Order</button>
+    </div>
+</div>
+
+<div id="processing-page" class="page" style="text-align:center; padding-top:100px;">
+    <center><div class="loader"></div></center>
+    <h2 style="color:var(--g-orange);">Processing Please Wait...</h2>
+    <p>Do not refresh or close the page.</p>
+</div>
+
+<div id="orders-page" class="page">
+    <h3>My Orders 📦</h3>
+    <div id="orders-list"></div>
+</div>
+
+<nav>
+    <div class="nav-item active" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" onclick="loadMyOrders()">📦<br>My Orders</div>
+    <div class="nav-item" onclick="alert('Track Order coming soon')">📍<br>Track</div>
+</nav>
+
 <script>
     let cart = [];
-    let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
+    let orders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec';
 
-    // 1. Order ID Generator
-    function generateOrderID() {
-        return 'GC' + Math.floor(100000 + Math.random() * 900000);
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.getElementById('main-header').style.display = (id === 'processing-page') ? 'none' : 'block';
     }
 
-    // 2. Confirm Order with Processing Screen
-    async function confirmOrder() {
-        const ref = document.getElementById('pay-ref').value;
-        if(!ref) return alert("Please enter payment reference!");
+    function addToCart(name, price, color) {
+        let existing = cart.find(i => i.name === name && i.color === color);
+        if(existing) { existing.qty++; } else { cart.push({name, price, color, qty: 1}); }
+        updateCartUI();
+    }
 
-        const orderId = generateOrderID();
-        const now = new Date();
+    function updateCartUI() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const list = document.getElementById('cart-items');
+        let total = 0;
+        list.innerHTML = cart.map((item, index) => {
+            total += (item.price * item.qty);
+            return `
+                <div style="background:white; padding:10px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b>${item.name}</b><br><small>Color: ${item.color}</small><br>₹${item.price}</div>
+                    <div class="qty-controls">
+                        <button class="q-btn" onclick="changeQty(${index}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="q-btn" onclick="changeQty(${index}, 1)">+</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        document.getElementById('total-price').innerText = total;
+    }
+
+    function changeQty(index, d) {
+        cart[index].qty += d;
+        if(cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function goToPayment() {
+        if(document.getElementById('u-phone').value.length !== 10) return alert("Invalid Phone!");
+        showPage('payment-page');
+    }
+
+    async function processOrder() {
+        const utr = document.getElementById('u-utr').value;
+        if(!utr) return alert("Enter UTR!");
+
+        showPage('processing-page');
         
-        // Processing Screen Show
-        document.body.innerHTML = `
-            <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:#fff;">
-                <div class="loader"></div> <!-- Add CSS for loader -->
-                <h2 style="color:#FF6600;">Processing Please Wait...</h2>
-                <p>Generating Order ID: ${orderId}</p>
-            </div>
-        `;
-
+        const orderId = 'GC' + Math.floor(Math.random() * 900000 + 100000);
         const orderData = {
             name: document.getElementById('u-name').value,
             phone: document.getElementById('u-phone').value,
-            address: document.getElementById('u-address').value,
+            address: document.getElementById('u-addr').value,
             pincode: document.getElementById('u-pin').value,
-            utr: ref,
-            price: document.getElementById('cart-total').innerText,
-            dateTime: now.toLocaleString(),
+            utr: utr,
+            price: document.getElementById('total-price').innerText,
+            date: new Date().toLocaleString(),
             orderId: orderId,
-            status: "Pending", // Default Status
-            items: cart.map(i => `${i.name} (${i.color || 'No Color'})`).join(', ')
+            status: "Pending",
+            products: cart.map(i => `${i.name} (${i.color}) x${i.qty}`).join(', ')
         };
 
         try {
-            // Google Sheets Connection
             await fetch(scriptURL, { method: 'POST', body: JSON.stringify(orderData) });
+            orders.push(orderData);
+            localStorage.setItem('gocart_orders', JSON.stringify(orders));
             
-            // Save to My Orders (Local Storage)
-            myOrders.push(orderData);
-            localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
-
-            // Success Screen
             setTimeout(() => {
-                location.reload(); // App reload to Home
-                alert("Order Placed! ID: " + orderId);
+                alert("Order Confirmed! ID: " + orderId);
+                cart = [];
+                updateCartUI();
+                showPage('home-page');
             }, 2000);
-
-        } catch (err) {
-            alert("Connection Error! Sheet check karein.");
-            location.reload();
+        } catch (e) {
+            alert("Error connecting to server!");
+            showPage('payment-page');
         }
     }
 
-    // 3. My Orders Section (Working)
-    function showMyOrders() {
-        const list = document.getElementById('orders-display-area'); // Add this div in your My Orders page
-        if(myOrders.length === 0) {
-            list.innerHTML = "<p>Koi order nahi mila.</p>";
-        } else {
-            list.innerHTML = myOrders.map(o => `
-                <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border-left:5px solid #FF6600;">
-                    <div style="display:flex; justify-content:space-between;">
-                        <b>ID: ${o.orderId}</b>
-                        <span style="color:orange;">${o.status}</span>
-                    </div>
-                    <small>${o.dateTime}</small><br>
-                    <span>${o.items}</span><br>
-                    <b>Total: ₹${o.price}</b>
-                    <div id="replace-section-${o.orderId}" style="display:none; margin-top:10px;">
-                         <button class="action-btn" style="background:#444; padding:5px;">Replacement Request</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        showPage('my-orders-page');
-    }
-
-    // 4. Replacement Button Control (Jab aap command doge)
-    function enableReplacement(orderId) {
-        const btn = document.getElementById(`replace-section-${orderId}`);
-        if(btn) btn.style.display = 'block';
+    function loadMyOrders() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = orders.reverse().map(o => `
+            <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border-left:5px solid var(--g-orange);">
+                <div style="display:flex; justify-content:space-between;"><b>#${o.orderId}</b> <span>${o.status}</span></div>
+                <div style="font-size:12px; color:#666;">${o.date}</div>
+                <div style="margin:10px 0;">${o.products}</div>
+                <b>Total: ₹${o.price}</b>
+                <button class="btn-main" style="margin-top:10px; background:#444; padding:8px; font-size:12px; display:none;" id="repl-${o.orderId}">Request Replacement</button>
+            </div>
+        `).join('');
+        showPage('orders-page');
     }
 </script>
+
+</body>
+</html>
