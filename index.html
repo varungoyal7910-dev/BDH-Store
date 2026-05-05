@@ -293,6 +293,7 @@
                     document.getElementById('success-box').style.display = 'block';
                     document.getElementById('final-oid').innerText = "Order ID: " + oid;
                     cart = []; saveCart();
+                    renderHistory(); // Naya order turant list mein jodne ke liye
                 }, 2000);
             } catch(e) {
                 alert("Server error! Check Internet.");
