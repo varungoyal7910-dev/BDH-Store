@@ -1,75 +1,79 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART | Official Store</title>
+    <title>GOCART | Premium Store</title>
     <style>
         :root { --g-orange: #FFB400; --g-navy: #131921; --g-white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 70px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 80px; }
         
-        /* HEADER & SEARCH */
+        /* 1. HEADER (Web Name + Cart) */
         header { background: var(--g-navy); padding: 15px; color: white; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 24px; font-weight: 900; color: white; letter-spacing: 1px; margin-bottom: 10px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logo { font-size: 24px; font-weight: 900; }
         .logo span { color: var(--g-orange); }
-        .search-container { background: white; border-radius: 5px; display: flex; overflow: hidden; }
+        .cart-icon { font-size: 22px; cursor: pointer; position: relative; }
+        #cart-count { position: absolute; top: -5px; right: -10px; background: var(--g-orange); color: var(--g-navy); font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; }
+
+        /* 2. SEARCH BAR */
+        .search-container { background: white; border-radius: 5px; display: flex; overflow: hidden; margin-bottom: 10px; }
         .search-container input { border: none; padding: 12px; width: 100%; outline: none; }
-        .search-container button { background: var(--g-orange); border: none; padding: 0 15px; font-size: 18px; }
+        .search-container button { background: var(--g-orange); border: none; padding: 0 15px; }
 
-        /* TRUST BAR */
-        .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 10px; font-size: 11px; color: #555; border-bottom: 1px solid #eee; }
+        /* 3. FILTERS */
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
+        .chip { background: rgba(255,255,255,0.1); border: 1px solid #444; padding: 6px 15px; border-radius: 20px; font-size: 11px; white-space: nowrap; color: white; }
 
-        /* PRODUCT GRID (Home) */
+        /* 4. TRUST ICONS */
+        .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 10px; font-size: 11px; color: #555; border-bottom: 1px solid #eee; margin-bottom: 10px; }
+
+        /* 5. PRODUCTS */
         .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .p-card { background: white; border-radius: 8px; padding: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .p-card img { width: 100%; height: 120px; object-fit: contain; }
-        .p-card h4 { font-size: 13px; margin: 8px 0; height: 32px; overflow: hidden; }
+        .p-card { background: white; border-radius: 10px; padding: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .p-card img { width: 100%; height: 110px; object-fit: contain; }
 
-        /* PRODUCT DETAILS PAGE (Full Screen) */
-        #details-content { background: white; padding: 20px; }
-        .price-tag { color: #B12704; font-size: 28px; font-weight: bold; }
-        .old-price { text-decoration: line-through; color: #888; font-size: 16px; margin-left: 10px; }
-        .color-dot { width: 40px; height: 40px; border-radius: 50%; display: inline-block; margin-right: 15px; border: 3px solid #eee; cursor: pointer; }
-        .color-dot.active { border-color: var(--g-orange); }
-        .trust-box { background: #FFF9F0; border-radius: 15px; padding: 15px; border: 1px solid #FFE0B2; margin: 20px 0; }
+        /* BOTTOM NAV BUTTONS */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 12px 0; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; font-size: 11px; color: #666; font-weight: bold; cursor: pointer; }
 
-        /* NAV BAR */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 10px 0; z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; font-size: 12px; color: #666; font-weight: bold; }
-
-        /* GLOBAL BUTTON */
-        .btn-main { background: var(--g-orange); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .page { display: none; }
+        /* PAGES & UI */
+        .page { display: none; padding: 15px; }
         .active-page { display: block; }
-        
-        /* PROCESSING SCREEN */
-        #processing-page { text-align: center; padding-top: 150px; background: white; height: 100vh; }
-        .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--g-orange); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-main { background: var(--g-orange); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; }
+        .form-input { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<header id="main-header">
-    <div class="logo">GO<span>CART</span></div>
+<header>
+    <div class="header-top">
+        <div class="logo">GO<span>CART</span></div>
+        <div class="cart-icon" onclick="showPage('cart-page')">🛒<span id="cart-count">0</span></div>
+    </div>
     <div class="search-container">
         <input type="text" placeholder="Search Premium Products...">
         <button>🔍</button>
     </div>
+    <div class="filters">
+        <div class="chip">Under ₹199</div>
+        <div class="chip">New Arrival</div>
+        <div class="chip">Top Rated</div>
+    </div>
 </header>
 
-<div class="trust-bar" id="trust-bar">
-    <span>🛡️ Secure Payment</span>
+<div class="trust-bar">
+    <span>🛡️ Secure Pay</span>
     <span>🚚 Fast Delivery</span>
-    <span>⭐ Top Rated</span>
+    <span>⭐ Quality</span>
 </div>
 
 <!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
     <div class="p-grid">
-        <div class="p-card" onclick="openDetails('Premium Vlogging Mic', 99, 499, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg')">
+        <div class="p-card" onclick="openDetails('Vlogging Mic', 99, 499, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg')">
             <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg">
-            <h4>Premium Vlogging Mic - Noise Cancellation</h4>
+            <h4 style="font-size:12px; margin:8px 0;">Premium Vlogging Mic</h4>
             <div style="color:#B12704; font-weight:bold;">₹99</div>
         </div>
     </div>
@@ -77,152 +81,147 @@
 
 <!-- PRODUCT DETAILS PAGE -->
 <div id="details-page" class="page">
-    <div id="details-content">
-        <center><img id="det-img" src="" style="width:80%; max-height:250px; object-fit:contain;"></center>
-        <h2 id="det-title" style="margin:15px 0 5px 0;"></h2>
-        <div style="margin-bottom:15px;">
-            <span class="price-tag" id="det-price"></span>
-            <span class="old-price" id="det-old"></span>
-        </div>
-        <p style="color:#666; font-size:14px;">Professional grade microphone for clear audio.</p>
-        
-        <p><b>Select Color:</b></p>
-        <div id="color-options">
-            <div class="color-dot" style="background:black;" onclick="selCol(this, 'Black')"></div>
-            <div class="color-dot" style="background:red;" onclick="selCol(this, 'Red')"></div>
-        </div>
-
-        <div class="trust-box">
-            <div style="margin-bottom:10px;">🔄 7 Days Easy Replacement</div>
-            <div style="margin-bottom:10px;">🚫 No COD - Prepaid Only</div>
-            <div>🛡️ 100% Quality Guaranteed</div>
-        </div>
-
-        <button class="btn-main" onclick="addToCart()">Add to Cart</button>
+    <center><img id="det-img" src="" style="width:70%;"></center>
+    <h2 id="det-title"></h2>
+    <h3 id="det-price" style="color:#B12704;"></h3>
+    <p>Professional grade audio quality for creators.</p>
+    <b>Select Color:</b>
+    <div style="margin:15px 0;">
+        <button onclick="selCol('Black')" id="col-black" style="background:black; width:30px; height:30px; border-radius:50%; border:2px solid #ccc;"></button>
+        <button onclick="selCol('Red')" id="col-red" style="background:red; width:30px; height:30px; border-radius:50%; border:2px solid #ccc; margin-left:10px;"></button>
     </div>
+    <button class="btn-main" onclick="addToCart()">Add to Cart</button>
 </div>
 
-<!-- CART & ADDRESS PAGE -->
-<div id="cart-page" class="page" style="padding:20px;">
-    <h3>Checkout 🛒</h3>
-    <div id="cart-summary" style="background:#eee; padding:15px; border-radius:10px; margin-bottom:20px;"></div>
-    <input type="text" id="u-name" class="btn-main" style="background:white; color:black; border:1px solid #ccc; margin-bottom:10px;" placeholder="Full Name">
-    <input type="tel" id="u-phone" class="btn-main" style="background:white; color:black; border:1px solid #ccc; margin-bottom:10px;" placeholder="10 Digit Phone" maxlength="10">
-    <input type="text" id="u-addr" class="btn-main" style="background:white; color:black; border:1px solid #ccc; margin-bottom:10px;" placeholder="Full Address">
-    <input type="number" id="u-pin" class="btn-main" style="background:white; color:black; border:1px solid #ccc; margin-bottom:20px;" placeholder="6 Digit Pincode" maxlength="6">
-    <button class="btn-main" onclick="showPage('payment-page')">Proceed to Payment</button>
+<!-- CART PAGE -->
+<div id="cart-page" class="page">
+    <h3>Your Cart 🛒</h3>
+    <div id="cart-items" style="background:white; padding:15px; border-radius:10px; margin-bottom:20px;">
+        <p style="color:#888;">Cart Khali Hai!</p>
+    </div>
+    <div id="cart-total" style="text-align:right; margin-bottom:20px; font-weight:bold;"></div>
+    <button id="checkout-btn" class="btn-main" onclick="showPage('checkout-page')" style="display:none;">Checkout Now</button>
 </div>
 
-<!-- PAYMENT PAGE -->
-<div id="payment-page" class="page" style="padding:20px; text-align:center;">
-    <h3>Scan & Pay</h3>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=varungoyal7910@pnb" style="width:200px; margin-bottom:15px;">
-    <p>UPI: <b>varungoyal7910@pnb</b></p>
-    <input type="text" id="u-utr" class="btn-main" style="background:white; color:black; border:1px solid #ccc; margin-bottom:20px;" placeholder="Enter Payment Reference/UTR">
+<!-- CHECKOUT & PAYMENT PAGES (Simplified) -->
+<div id="checkout-page" class="page">
+    <h3>Delivery Details</h3>
+    <input type="text" id="u-name" class="form-input" placeholder="Full Name">
+    <input type="text" id="u-phone" class="form-input" placeholder="Phone">
+    <input type="text" id="u-addr" class="form-input" placeholder="Address">
+    <button class="btn-main" onclick="showPage('payment-page')">Next</button>
+</div>
+
+<div id="payment-page" class="page" style="text-align:center;">
+    <h3>Scan to Pay</h3>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=varungoyal7910@pnb" style="margin-bottom:20px;">
+    <input type="text" id="u-utr" class="form-input" placeholder="Enter UTR Number">
     <button class="btn-main" onclick="confirmOrder()">Confirm Order</button>
 </div>
 
-<!-- PROCESSING PAGE -->
-<div id="processing-page" class="page">
-    <div class="loader"></div>
-    <h2 style="color:var(--g-orange);">Processing Please Wait...</h2>
-    <p>Generating your Order ID...</p>
+<!-- MY ORDERS PAGE -->
+<div id="orders-page" class="page">
+    <h3>My Orders 📦</h3>
+    <div id="orders-list"></div>
 </div>
 
-<!-- NAV -->
-<nav id="bottom-nav">
-    <div class="nav-item" onclick="location.reload()">🏠<br>Home</div>
-    <div class="nav-item" onclick="showMyOrders()">📦<br>Orders</div>
-    <div class="nav-item" onclick="trackOrder()">📍<br>Track</div>
+<!-- TRACK PAGE -->
+<div id="track-page" class="page">
+    <h3>Track Order 📍</h3>
+    <input type="text" id="track-id" class="form-input" placeholder="Enter Order ID (VARxxxx)">
+    <button class="btn-main" onclick="runTrack()">Track Now</button>
+    <div id="track-res" style="margin-top:20px;"></div>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+    <div class="nav-item" onclick="showPage('home-page')">🏠<br>Home</div>
+    <div class="nav-item" onclick="loadMyOrders()">📦<br>My Orders</div>
+    <div class="nav-item" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
 
 <script>
-    let currentOrder = {};
+    let cart = [];
     let selectedColor = "Black";
+    let currentProd = {};
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxpq0xom4H-qEydf6-vI6x_oZGXhvMikC6u2rcPI-TA2qbdym0UKsiItv5geb-2aR9R/exec';
 
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
-        document.getElementById('main-header').style.display = (id === 'processing-page' || id === 'details-page') ? 'none' : 'block';
         window.scrollTo(0,0);
     }
 
-    function openDetails(title, price, old, img) {
-        document.getElementById('det-title').innerText = title;
-        document.getElementById('det-price').innerText = "₹" + price;
-        document.getElementById('det-old').innerText = "₹" + old;
-        document.getElementById('det-img').src = img;
-        currentOrder = {title, price};
+    function openDetails(t, p, o, i) {
+        currentProd = {title: t, price: p, img: i};
+        document.getElementById('det-title').innerText = t;
+        document.getElementById('det-price').innerText = "₹" + p;
+        document.getElementById('det-img').src = i;
         showPage('details-page');
     }
 
-    function selCol(el, color) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-        el.classList.add('active');
-        selectedColor = color;
-    }
+    function selCol(c) { selectedColor = c; alert("Color Selected: " + c); }
 
     function addToCart() {
-        document.getElementById('cart-summary').innerHTML = `<b>Item:</b> ${currentOrder.title}<br><b>Color:</b> ${selectedColor}<br><b>Price:</b> ₹${currentOrder.price}`;
-        showPage('cart-page');
+        cart.push({...currentProd, color: selectedColor});
+        updateCartUI();
+        alert("Bhai, item cart mein add ho gaya!");
+        showPage('home-page');
+    }
+
+    function updateCartUI() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const list = document.getElementById('cart-items');
+        if(cart.length == 0) {
+            list.innerHTML = "<p>Cart Khali Hai!</p>";
+            document.getElementById('checkout-btn').style.display = 'none';
+            return;
+        }
+        let total = 0;
+        list.innerHTML = cart.map((item, index) => {
+            total += item.price;
+            return `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                <span>${item.title} (${item.color})</span>
+                <b>₹${item.price}</b>
+            </div>`;
+        }).join('');
+        document.getElementById('cart-total').innerText = "Total: ₹" + total;
+        document.getElementById('checkout-btn').style.display = 'block';
     }
 
     async function confirmOrder() {
-        const utr = document.getElementById('u-utr').value;
-        if(!utr) return alert("UTR number zaroori hai!");
-
-        showPage('processing-page');
         const orderId = "VAR" + Math.floor(1000 + Math.random() * 9000);
-        
         const data = {
-            name: document.getElementById('u-name').value,
-            phone: document.getElementById('u-phone').value,
-            address: document.getElementById('u-addr').value,
-            pincode: document.getElementById('u-pin').value,
-            utr: utr,
-            price: currentOrder.price,
-            date: new Date().toLocaleString(),
             orderId: orderId,
-            status: "Pending",
-            product: `${currentOrder.title} (${selectedColor})`
+            name: document.getElementById('u-name').value,
+            product: cart.map(i => i.title).join(', '),
+            status: "Pending"
         };
-
-        try {
-            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(data) });
-            let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
-            myOrders.push(data);
-            localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
-            
-            // Play Sound & Show Success
-            new Audio('https://www.soundjay.com/buttons/sounds/button-37a.mp3').play();
-            showSuccess(orderId);
-        } catch (e) {
-            alert("Connection Error!");
-            showPage('payment-page');
-        }
+        // Sound & Success (Logic similar to previous)
+        new Audio('https://www.soundjay.com/buttons/sounds/button-37a.mp3').play();
+        alert("Order Placed! ID: " + orderId);
+        let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
+        myOrders.push(data);
+        localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
+        cart = []; updateCartUI();
+        location.reload();
     }
 
-    function showSuccess(id) {
-        document.body.innerHTML = `
-            <div style="text-align:center; padding:100px 20px; background:white; height:100vh;">
-                <div style="font-size:80px; color:#4BB543;">✔</div>
-                <h2 style="margin:20px 0;">ORDER CONFIRMED!</h2>
-                <div style="border:2px dashed #FFB400; padding:20px; border-radius:15px; background:#FFF9F0;">
-                    <p style="margin:0; color:#666;">Order ID</p>
-                    <h1 style="margin:5px 0; color:#FFB400;">${id}</h1>
-                </div>
-                <button class="btn-main" onclick="location.reload()" style="margin-top:40px;">Continue Shopping</button>
+    function loadMyOrders() {
+        const orders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
+        document.getElementById('orders-list').innerHTML = orders.map(o => `
+            <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px;">
+                <b>ID: ${o.orderId}</b> - <span style="color:orange;">${o.status}</span><br>${o.product}
             </div>
-        `;
+        `).join('');
+        showPage('orders-page');
     }
 
-    function trackOrder() {
-        const id = prompt("Enter Order ID (VARxxxx):");
+    function runTrack() {
+        const id = document.getElementById('track-id').value;
         const orders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
         const found = orders.find(o => o.orderId === id);
-        if(found) alert("Status: " + found.status + "\nItem: " + found.product);
-        else alert("Order not found!");
+        document.getElementById('track-res').innerHTML = found ? `Status: ${found.status}` : "ID Not Found!";
     }
 </script>
 
