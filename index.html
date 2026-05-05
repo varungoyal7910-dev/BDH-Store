@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GOCART PRO | Premium Edition</title>
     <style>
+
+        .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
+        .badge-item { background: #f0f2f5; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #555; }
+        .desc-text { font-size: 14px; color: #666; line-height: 1.6; margin: 15px 0; border-top: 1px solid #eee; padding-top: 15px; }
+        .rating-system { margin: 10px 0; color: #ffb400; font-size: 20px; cursor: pointer; }
+        .color-opt { display: flex; gap: 10px; margin: 10px 0; }
+        .dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; }
+        .dot.selected { border-color: var(--navy); transform: scale(1.1); }
+        
         :root { --primary: #FFB400; --navy: #131921; --amazon-red: #CC0C39; --bg: #f7f8fa; --card: #ffffff; --text: #1a1a1a; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background: var(--bg); padding-bottom: 90px; color: var(--text); }
@@ -134,161 +143,170 @@
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZiAtCiSXknefI9Qnnd01Ce_FtItvXyJ3hMpjV92MbKpb3rg4aAH9E9xy1b_Quz5tk/exec';
     
-    const PRODUCTS = [
-        { id: 1, name: 'Vlog Mic Pro Ultra', mrp: 1499, price: 599, img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg' },
-        { id: 2, name: 'Premium Ring Light 18"', mrp: 2999, price: 1299, img: 'https://m.media-amazon.com/images/I/61NfT-jV9OL._SL1500_.jpg' },
-        { id: 3, name: 'Professional Tripod 5ft', mrp: 899, price: 349, img: 'https://m.media-amazon.com/images/I/41-pW8P72sL.jpg' }
-    ];
-
-    let cart = [];
-
-    function renderHome(list = PRODUCTS) {
-        document.getElementById('main-grid').innerHTML = list.map(p => {
-            const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
-            return `
-            <div class="card" onclick="viewDetail(${p.id})">
-                <div class="p-off-pill">-${off}% OFF</div>
-                <img src="${p.img}">
-                <div style="font-weight:700; font-size:14px; margin:10px 0 5px; height:35px; overflow:hidden;">${p.name}</div>
-                <div><span class="p-price">₹${p.price}</span><span class="p-mrp">₹${p.mrp}</span></div>
-            </div>`;
-        }).join('');
+    // 1. Aapka Updated Product Data (Description aur Colors ke saath)
+const PRODUCTS = [
+    { 
+        id: 1, name: 'Vlog Mic Pro Ultra', mrp: 1499, price: 599, 
+        img: 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg',
+        desc: 'Professional grade wireless microphone for crystal clear vlogging and interviews. Noise cancellation technology included.',
+        colors: ['Black', 'Silver']
+    },
+    { 
+        id: 2, name: 'Premium Ring Light 18"', mrp: 2999, price: 1299, 
+        img: 'https://m.media-amazon.com/images/I/61NfT-jV9OL._SL1500_.jpg',
+        desc: 'Big 18 inch ring light with tripod stand. Perfect for makeup, YouTube videos, and professional photography.',
+        colors: ['White', 'Warm']
+    },
+    { 
+        id: 3, name: 'Professional Tripod 5ft', mrp: 899, price: 349, 
+        img: 'https://m.media-amazon.com/images/I/41-pW8P72sL.jpg',
+        desc: 'Adjustable 5 feet tripod with universal phone holder and carry bag. Lightweight and durable aluminum build.',
+        colors: ['Black']
     }
+];
 
-    function filter() {
-        const q = document.querySelector('.search-bar').value.toLowerCase();
-        const m = document.getElementById('p-range').value;
-        document.getElementById('p-val').innerText = m;
-        const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) && p.price <= m);
-        renderHome(filtered);
-    }
+let cart = [];
 
-    function viewDetail(id) {
-        const p = PRODUCTS.find(x => x.id === id);
-        document.getElementById('det-content').innerHTML = `
-            <button onclick="showPage('home')" style="border:none; background:none; font-weight:800; color:var(--navy); margin-bottom:15px; cursor:pointer;">← Back to Explore</button>
-            <div style="background:white; padding:25px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
-                <center><img src="${p.img}" style="width:100%; max-height:280px; object-fit:contain;"></center>
-                <h1 style="font-weight:800; margin:15px 0 5px;">${p.name}</h1>
-                <div style="margin-bottom:20px;">
-                    <span style="font-size:32px; font-weight:900;">₹${p.price}</span>
-                    <span class="p-mrp" style="font-size:18px;">₹${p.mrp}</span>
-                </div>
-                <button class="btn-action" onclick="addToCart(${p.id})">Add to Shopping Bag</button>
+// 2. Explore Page Filter Logic
+function renderHome(list = PRODUCTS) {
+    document.getElementById('main-grid').innerHTML = list.map(p => {
+        const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
+        return `
+        <div class="card" onclick="viewDetail(${p.id})">
+            <div class="p-off-pill">-${off}% OFF</div>
+            <img src="${p.img}">
+            <div style="font-weight:700; font-size:14px; margin:10px 0 5px; height:35px; overflow:hidden;">${p.name}</div>
+            <div><span class="p-price">₹${p.price}</span><span class="p-mrp">₹${p.mrp}</span></div>
+        </div>`;
+    }).join('');
+}
+
+function filter() {
+    const q = document.querySelector('.search-bar').value.toLowerCase();
+    const m = document.getElementById('p-range').value;
+    document.getElementById('p-val').innerText = m;
+    const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) && p.price <= m);
+    renderHome(filtered);
+}
+
+// 3. Updated Details Page (As per your request)
+function viewDetail(id) {
+    const p = PRODUCTS.find(x => x.id === id);
+    const disc = Math.round(((p.mrp - p.price)/p.mrp)*100);
+    
+    document.getElementById('det-content').innerHTML = `
+        <button onclick="showPage('home')" style="border:none; background:none; font-weight:800; color:var(--navy); margin-bottom:15px; cursor:pointer;">← Back to Explore</button>
+        <div style="background:white; padding:25px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+            <center><img src="${p.img}" style="width:100%; max-height:280px; object-fit:contain;"></center>
+            
+            <h1 style="font-weight:800; margin:15px 0 5px;">${p.name}</h1>
+            
+            <div class="rating-system" id="stars">
+                <span onclick="setRate(1)">☆</span><span onclick="setRate(2)">☆</span><span onclick="setRate(3)">☆</span><span onclick="setRate(4)">☆</span><span onclick="setRate(5)">☆</span>
+                <small style="color:#999; font-size:12px; margin-left:10px;">(Add rating)</small>
             </div>
-        `;
-        showPage('details-page');
-    }
 
-    function addToCart(id) {
-        const item = cart.find(x => x.id === id);
-        if(item) item.qty++;
-        else cart.push({...PRODUCTS.find(x => x.id === id), qty: 1});
+            <div style="margin-bottom:10px;">
+                <span style="color:var(--amazon-red); font-size:24px; font-weight:700;">-${disc}%</span>
+                <span style="font-size:32px; font-weight:900; margin-left:10px;">₹${p.price}</span>
+                <div class="p-mrp" style="font-size:16px; margin:0;">M.R.P: ₹${p.mrp}</div>
+            </div>
+
+            <div class="badge-list">
+                <div class="badge-item">✅ Granted Product</div>
+                <div class="badge-item">🚫 Cash on Delivery Not Available</div>
+                <div class="badge-item">💳 Prepaid Only</div>
+                <div class="badge-item">🔄 7 Days Return</div>
+            </div>
+
+            <p style="font-weight:700; margin-bottom:5px;">Select Color:</p>
+            <div class="color-opt">
+                ${p.colors.map(c => `<div class="dot" style="background:${c.toLowerCase()};" title="${c}" onclick="selectColor(this)"></div>`).join('')}
+            </div>
+
+            <div class="desc-text">
+                <p style="font-weight:700; color:#333; margin-bottom:5px;">Description:</p>
+                ${p.desc}
+            </div>
+
+            <button class="btn-action" onclick="addToCart(${p.id})">Add to Shopping Bag</button>
+        </div>
+    `;
+    showPage('details-page');
+}
+
+// 4. Interactive Rating & Color Functions
+function setRate(n) {
+    const stars = document.getElementById('stars').querySelectorAll('span');
+    stars.forEach((s, i) => { s.innerHTML = i < n ? '★' : '☆'; });
+    alert("Rating recorded! Thank you.");
+}
+
+function selectColor(el) {
+    document.querySelectorAll('.dot').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+// 5. Cart Logic (+/-)
+function addToCart(id) {
+    const item = cart.find(x => x.id === id);
+    if(item) item.qty++;
+    else cart.push({...PRODUCTS.find(x => x.id === id), qty: 1});
+    updateCartUI();
+    alert("Added to Bag!");
+}
+
+function changeQty(id, delta) {
+    const item = cart.find(x => x.id === id);
+    if(item) {
+        item.qty += delta;
+        if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
         updateCartUI();
-        alert("Added to Bag!");
     }
+}
 
-    function changeQty(id, delta) {
-        const item = cart.find(x => x.id === id);
-        if(item) {
-            item.qty += delta;
-            if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
-            updateCartUI();
-        }
+function updateCartUI() {
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('bag-badge').innerText = count;
+    if(cart.length === 0) {
+        document.getElementById('cart-list').innerHTML = "";
+        document.getElementById('cart-summary').style.display = 'none';
+        document.getElementById('cart-empty').style.display = 'block';
+        return;
     }
+    document.getElementById('cart-empty').style.display = 'none';
+    document.getElementById('cart-summary').style.display = 'block';
+    let tMrp = 0, tPrice = 0;
+    document.getElementById('cart-list').innerHTML = cart.map(i => {
+        tMrp += (i.mrp * i.qty); tPrice += (i.price * i.qty);
+        return `<div class="cart-item">
+            <img src="${i.img}" style="width:60px; height:60px; object-fit:contain;">
+            <div style="flex:1;"><div style="font-weight:700; font-size:14px;">${i.name}</div><div>₹${i.price}</div></div>
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="changeQty(${i.id}, -1)">-</button>
+                <span>${i.qty}</span>
+                <button class="qty-btn" onclick="changeQty(${i.id}, 1)">+</button>
+            </div>
+        </div>`;
+    }).join('');
+    document.getElementById('sum-mrp').innerText = "₹" + tMrp;
+    document.getElementById('sum-disc').innerText = "-₹" + (tMrp - tPrice);
+    document.getElementById('sum-total').innerText = "₹" + tPrice;
+}
 
-    function updateCartUI() {
-        const count = cart.reduce((s, i) => s + i.qty, 0);
-        document.getElementById('bag-badge').innerText = count;
+// 6. Navigation & Global Functions
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'home') document.getElementById('n-home').classList.add('active');
+    if(id === 'orders-page') document.getElementById('n-orders').classList.add('active');
+    if(id === 'track-page') document.getElementById('n-track').classList.add('active');
+    window.scrollTo(0,0);
+}
 
-        if(cart.length === 0) {
-            document.getElementById('cart-list').innerHTML = "";
-            document.getElementById('cart-summary').style.display = 'none';
-            document.getElementById('cart-empty').style.display = 'block';
-            return;
-        }
-
-        document.getElementById('cart-empty').style.display = 'none';
-        document.getElementById('cart-summary').style.display = 'block';
-
-        let tMrp = 0, tPrice = 0;
-        document.getElementById('cart-list').innerHTML = cart.map(i => {
-            tMrp += (i.mrp * i.qty); tPrice += (i.price * i.qty);
-            return `
-            <div class="cart-item">
-                <img src="${i.img}" style="width:60px; height:60px; object-fit:contain;">
-                <div style="flex:1;">
-                    <div style="font-weight:700; font-size:14px;">${i.name}</div>
-                    <div style="font-weight:900; color:var(--navy);">₹${i.price}</div>
-                </div>
-                <div class="qty-controls">
-                    <button class="qty-btn" onclick="changeQty(${i.id}, -1)">-</button>
-                    <span style="font-weight:800;">${i.qty}</span>
-                    <button class="qty-btn" onclick="changeQty(${i.id}, 1)">+</button>
-                </div>
-            </div>`;
-        }).join('');
-
-        document.getElementById('sum-mrp').innerText = "₹" + tMrp;
-        document.getElementById('sum-disc').innerText = "-₹" + (tMrp - tPrice);
-        document.getElementById('sum-total').innerText = "₹" + tPrice;
-    }
-
-    async function trackOrder() {
-        const id = document.getElementById('track-id').value.trim();
-        const resDiv = document.getElementById('track-res');
-        if(!id) return alert("Please enter Order ID");
-
-        resDiv.innerHTML = '<center><div class="loader"></div></center>';
-        try {
-            const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`);
-            const data = await r.json();
-            if(data.error) {
-                resDiv.innerHTML = `<div style="background:#fee; color:red; padding:15px; border-radius:15px;">Order ID not found! Check again.</div>`;
-            } else {
-                resDiv.innerHTML = `<div style="background:white; padding:20px; border-radius:20px; border-left:6px solid var(--primary);">
-                    <small style="color:#999;">#${id}</small>
-                    <h3 style="margin:5px 0; text-transform:uppercase;">● ${data.status}</h3>
-                    <p style="font-size:13px; color:#666;">Items: ${data.items}</p>
-                </div>`;
-            }
-        } catch(e) { resDiv.innerHTML = "Connection Error."; }
-    }
-
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        
-        // Active Nav Styling
-        if(id === 'home') document.getElementById('n-home').classList.add('active');
-        if(id === 'orders-page') document.getElementById('n-orders').classList.add('active');
-        if(id === 'track-page') document.getElementById('n-track').classList.add('active');
-        
-        window.scrollTo(0,0);
-        if(id === 'cart-page') updateCartUI();
-    }
-
-    async function placeOrder() {
-        const name = document.getElementById('u-name').value;
-        if(!name || cart.length === 0) return alert("Details bharo bhai!");
-        
-        const oid = "GCP-" + Math.floor(100000 + Math.random()*900000);
-        alert("🎉 Order Placed!\nOrder ID: " + oid);
-        
-        const payload = {
-            name: name,
-            phone: document.getElementById('u-phone').value,
-            address: document.getElementById('u-addr').value,
-            orderId: oid,
-            price: document.getElementById('sum-total').innerText,
-            product: cart.map(i => `${i.name} (x${i.qty})`).join(", ")
-        };
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        cart = []; updateCartUI(); showPage('home');
-    }
-
-    renderHome();
+// Global Initialization
+renderHome();
 </script>
 </body>
 </html>
