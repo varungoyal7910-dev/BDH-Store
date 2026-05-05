@@ -354,54 +354,67 @@
      }
 
    // 1. Order Bhejne Wala Function
-    
-function placeOrder() {
-    // APNA NAYA URL YAHAN DALEIN
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtOOhWe8LyGHgQwh35RHrDkjFVKE9lEyLFwGGhrjFzl4I8o0GNNUtpXcKRZaSS2a0L/exec";
 
+    function placeOrder() {
+    // 1. Processing screen dikhao (Aapke code mein jo bhi ID ho, check kar lena)
+    document.getElementById('processing-screen').style.display = 'block'; 
+    document.getElementById('form-screen').style.display = 'none';
+
+    const SCRIPT_URL = "function placeOrder() {
+    // 1. Processing screen dikhao (Aapke code mein jo bhi ID ho, check kar lena)
+    document.getElementById('processing-screen').style.display = 'block'; 
+    document.getElementById('form-screen').style.display = 'none';
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVLUxfcobEC_AQKaHtdmLg3jw1yr2Ke7TZInC8i4HrxSfYVRVubZFDyDwK9iY-aje0/exec";
     const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
     
-    // Color select karne ka logic
-    const colorBtn = document.querySelector('.color-dot.active');
-    const selectedColor = colorBtn ? colorBtn.style.background : "Standard";
-    
-    // Product + Color string banana
-    const itemsWithColor = cart.map(i => `${i.name}(x${i.qty}) [Color: ${selectedColor}]`).join(', ');
+    // ... baaki data gathering waala code ...
 
-    // SHET KE 11 COLUMNS KE HISAB SE DATA
-    const orderData = {
-        action: "placeOrder",
-        name: document.getElementById('c-name').value,        // Column A
-        phone: document.getElementById('c-phone').value,      // Column B
-        address: document.getElementById('c-address').value,  // Column C
-        pincode: document.getElementById('c-pincode').value,  // Column D
-        utr: document.getElementById('c-utr').value,          // Column E (Payment Ref)
-        amount: document.getElementById('pay-amt').innerText, // Column F (Price)
-        orderId: orderId,                                     // Column H
-        items: itemsWithColor                                 // Column K
-    };
-
-    // Google Sheet ko data bhej rahe hain
     fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify(orderData)
     }).then(() => {
-        // LocalStorage mein bhi save karo taaki 'My Orders' mein dikhe
-        let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
-        myOrders.push({
-            orderId: orderId,
-            items: itemsWithColor,
-            status: "Pending",
-            date: new Date().toLocaleString()
-        });
-        localStorage.setItem('varunOrders', JSON.stringify(myOrders));
+        // 2. Processing band karo aur Confirmation dikhao
+        document.getElementById('processing-screen').style.display = 'none';
+        document.getElementById('confirmation-screen').style.display = 'block';
         
-        alert("Order Successful! Order ID: " + orderId);
-        window.location.href = "success.html"; 
-    }).catch(err => alert("Error: " + err));
+        // Order ID show karne ke liye (agar wahan koi span hai)
+        document.getElementById('display-order-id').innerText = orderId;
+
+        // Local Storage save logic...
+    });
 }
+
+// 3. Ye function tab chalega jab banda Confirmation page par "OK" dabayega
+function closeConfirmation() {
+    window.location.href = "index.html"; 
+}";
+    const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
+    
+    // ... baaki data gathering waala code ...
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(orderData)
+    }).then(() => {
+        // 2. Processing band karo aur Confirmation dikhao
+        document.getElementById('processing-screen').style.display = 'none';
+        document.getElementById('confirmation-screen').style.display = 'block';
+        
+        // Order ID show karne ke liye (agar wahan koi span hai)
+        document.getElementById('display-order-id').innerText = orderId;
+
+        // Local Storage save logic...
+    });
+}
+
+// 3. Ye function tab chalega jab banda Confirmation page par "OK" dabayega
+function closeConfirmation() {
+    window.location.href = "index.html"; 
+}
+    
 
 // 2. Return/Replace Button Logic (My Orders Page Ke Liye)
 function renderOrders() {
