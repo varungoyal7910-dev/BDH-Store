@@ -3,49 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART | Premium</title>
+    <title>GOCART | Premium Store</title>
     <style>
         :root { --g-orange: #FFB400; --g-navy: #131921; --g-white: #ffffff; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; color: #111; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 80px; color: #111; }
         
-        /* HEADER - Matches your laptop screen */
+        /* HEADER */
         header { background: var(--g-navy); padding: 12px 15px; color: white; position: sticky; top: 0; z-index: 1000; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .logo { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+        .logo { font-size: 22px; font-weight: 900; }
         .logo span { color: var(--g-orange); }
-        .cart-btn { background: var(--g-orange); color: var(--g-navy); padding: 6px 15px; border-radius: 4px; font-weight: bold; font-size: 13px; cursor: pointer; }
+        .cart-btn { background: var(--g-orange); color: var(--g-navy); padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
         .search-container { background: white; border-radius: 4px; display: flex; overflow: hidden; margin-bottom: 8px; }
-        .search-container input { border: none; padding: 10px; width: 100%; outline: none; font-size: 14px; }
-        
-        .filters { display: flex; gap: 8px; padding-bottom: 5px; }
-        .chip { background: #37475a; border: 1px solid #555; padding: 5px 12px; border-radius: 4px; font-size: 12px; color: white; cursor: pointer; }
+        .search-container input { border: none; padding: 10px; width: 100%; outline: none; }
 
-        .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 8px; font-size: 10px; color: #555; border-bottom: 1px solid #ddd; }
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+        .chip { background: #37475a; border: 1px solid #555; padding: 6px 15px; border-radius: 4px; font-size: 12px; color: white; white-space: nowrap; }
+
+        .trust-bar { display: flex; justify-content: space-around; background: #fff; padding: 10px; font-size: 11px; font-weight: bold; border-bottom: 1px solid #ddd; }
 
         /* PAGES */
-        .page { display: none; padding: 12px; min-height: 80vh; }
-        .active-page { display: block; animation: fadeIn 0.2s; }
+        .page { display: none; padding: 15px; min-height: 80vh; }
+        .active-page { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from {opacity:0} to {opacity:1} }
 
         /* PRODUCT CARDS */
         .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .p-card { background: white; border-radius: 8px; padding: 10px; position: relative; border: 1px solid #ddd; }
-        .discount-badge { position: absolute; top: 5px; left: 5px; background: #cc0c39; color: white; padding: 2px 6px; font-size: 10px; font-weight: bold; border-radius: 2px; }
-        .p-card img { width: 100%; height: 110px; object-fit: contain; margin-bottom: 8px; }
-        .rating { color: #ffa41c; font-size: 12px; margin: 4px 0; }
+        .p-card { background: white; border-radius: 8px; padding: 12px; position: relative; border: 1px solid #ddd; }
+        .discount-tag { position: absolute; top: 8px; left: 8px; background: #cc0c39; color: white; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 2px; }
+        .p-card img { width: 100%; height: 120px; object-fit: contain; }
+        .rating-stars { color: #ffa41c; font-size: 18px; margin: 5px 0; }
 
-        /* CART UI */
-        .cart-item { background: white; padding: 12px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 10px; border: 1px solid #ddd; }
-        .cart-item img { width: 60px; height: 60px; object-fit: contain; margin-right: 12px; }
-        .qty-controls { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
-        .qty-btn { background: #e7e9ec; border: 1px solid #adb1b8; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .total-box { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ddd; font-weight: bold; }
+        /* CART & ORDERS */
+        .item-row { background: white; padding: 15px; border-radius: 8px; display: flex; gap: 12px; margin-bottom: 10px; border: 1px solid #ddd; }
+        .item-row img { width: 70px; height: 70px; object-fit: contain; }
+        .qty-box { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
+        .qty-btn { background: #e7e9ec; border: 1px solid #adb1b8; width: 30px; height: 30px; border-radius: 4px; font-weight: bold; }
 
         /* BUTTONS */
-        .btn-main { background: #FFD814; border: 1px solid #FCD200; color: #0f1111; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(213,217,217,.5); }
-        .nav-item { flex: 1; text-align: center; font-size: 10px; color: #555; cursor: pointer; }
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 10px 0; }
+        .btn-main { background: #FFD814; border: 1px solid #FCD200; color: #0f1111; width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #ddd; padding: 12px 0; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; font-size: 11px; color: #555; cursor: pointer; }
+        .nav-item.active { color: var(--g-orange); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -53,10 +55,10 @@
 <header>
     <div class="header-top">
         <div class="logo">GO<span>CART</span></div>
-        <div class="cart-btn" onclick="showPage('cart-page')">Cart (<span id="cart-count">0</span>)</div>
+        <div class="cart-btn" onclick="showPage('cart-page')">🛒 Cart (<span id="cart-count">0</span>)</div>
     </div>
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search products..." onkeyup="searchFun()">
+        <input type="text" id="search-input" placeholder="Search premium products..." onkeyup="searchFun()">
     </div>
     <div class="filters">
         <div class="chip" onclick="filterPrice('All')">All Items</div>
@@ -71,90 +73,112 @@
     <span>🔄 7 Day Return</span>
 </div>
 
+<!-- HOME PAGE -->
 <div id="home-page" class="page active-page">
     <div class="p-grid" id="p-container">
-        <!-- Product 1 -->
-        <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 499, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg')">
-            <span class="discount-badge">-10% OFF</span>
+        <!-- Mic -->
+        <div class="p-card" data-price="99" onclick="openDetails('Pro Vlog Mic', 99, 599, 'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg', 'Noise cancellation, 3.5mm jack, 2-meter long wire for professional vlogging and interviews.')">
+            <span class="discount-tag"></span>
             <img src="https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg">
-            <div class="rating">★★★★☆ (124)</div>
-            <h4 style="font-size:13px; margin:4px 0;">Pro Vlog Microphone</h4>
-            <div style="font-weight:bold;">₹99 <span style="font-size:10px; color:grey; text-decoration:line-through;">₹499</span></div>
+            <div class="rating-stars">★★★★☆</div>
+            <h4 style="margin:5px 0; font-size:14px;">Pro Vlog Microphone</h4>
+            <b>₹99</b> <span style="text-decoration:line-through; color:gray; font-size:12px;">₹599</span>
         </div>
-        <!-- Product 2 -->
-        <div class="p-card" data-price="299" onclick="openDetails('Wireless Mouse', 299, 899, 'https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg')">
-            <span class="discount-badge">-10% OFF</span>
+        <!-- Mouse -->
+        <div class="p-card" data-price="299" onclick="openDetails('Gaming Mouse', 299, 999, 'https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg', 'RGB lighting, 3200 DPI, ergonomic design for long gaming sessions and smooth office work.')">
+            <span class="discount-tag"></span>
             <img src="https://m.media-amazon.com/images/I/61UxfXTzKaL._SL1500_.jpg">
-            <div class="rating">★★★★★ (89)</div>
-            <h4 style="font-size:13px; margin:4px 0;">Wireless Gaming Mouse</h4>
-            <div style="font-weight:bold;">₹299 <span style="font-size:10px; color:grey; text-decoration:line-through;">₹899</span></div>
+            <div class="rating-stars">★★★★★</div>
+            <h4 style="margin:5px 0; font-size:14px;">Wireless Gaming Mouse</h4>
+            <b>₹299</b> <span style="text-decoration:line-through; color:gray; font-size:12px;">₹999</span>
         </div>
     </div>
 </div>
 
-<div id="details-page" class="page" style="background:white; padding:15px;">
-    <center><img id="det-img" src="" style="width:70%; max-height:200px; object-fit:contain;"></center>
-    <h2 id="det-title" style="font-size:18px;"></h2>
-    <div class="rating">★★★★☆ Guaranteed Quality</div>
-    <div style="margin:10px 0;">
-        <span style="font-size:22px; color:#B12704; font-weight:bold;" id="det-price"></span>
-        <span style="color:#565959; font-size:12px; margin-left:8px;">M.R.P: <span id="det-old" style="text-decoration:line-through;"></span></span>
+<!-- PRODUCT DETAILS -->
+<div id="details-page" class="page" style="background:white;">
+    <center><img id="det-img" src="" style="width:80%; max-height:250px; object-fit:contain;"></center>
+    <h2 id="det-title" style="margin:15px 0 5px 0;"></h2>
+    <div class="rating-stars" style="font-size:24px;">★★★★☆</div>
+    <div style="margin-bottom:15px;">
+        <span style="font-size:28px; color:#B12704; font-weight:bold;" id="det-price"></span>
+        <span id="det-old" style="text-decoration:line-through; color:gray; margin-left:10px;"></span>
+        <span id="det-perc" style="color:#cc0c39; font-weight:bold; margin-left:10px;"></span>
     </div>
     
-    <p style="font-size:13px; color:#555;"><b>Color:</b> <span style="color:var(--g-orange)">Standard Black</span></p>
-    <div style="display:flex; gap:10px; margin-bottom:20px;">
-        <div style="width:25px; height:25px; border-radius:50%; background:black; border:2px solid gold;"></div>
-        <div style="width:25px; height:25px; border-radius:50%; background:red; border:1px solid #ccc;"></div>
+    <h4>Description:</h4>
+    <p id="det-desc" style="color:#444; line-height:1.5; font-size:14px;"></p>
+    
+    <div style="margin:20px 0;">
+        <b>Select Color:</b><br>
+        <div style="display:flex; gap:15px; margin-top:10px;">
+            <div style="width:30px; height:30px; border-radius:50%; background:black; border:3px solid var(--g-orange);"></div>
+            <div style="width:30px; height:30px; border-radius:50%; background:silver; border:1px solid #ccc;"></div>
+        </div>
     </div>
 
-    <button class="btn-main" onclick="addToCart()">Add to Cart</button>
+    <button class="btn-main" onclick="addToCart()">Add to Cart 🛒</button>
 </div>
 
+<!-- CART PAGE -->
 <div id="cart-page" class="page">
-    <h3 style="margin-top:0;">Shopping Cart</h3>
+    <h3 style="border-bottom:2px solid #ddd; padding-bottom:10px;">Your Cart</h3>
     <div id="cart-items"></div>
-    <div id="cart-empty-msg" style="text-align:center; padding:40px 0; color:#666;">Your cart is empty</div>
-    
-    <div id="total-section" style="display:none;">
-        <div class="total-box">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span>Subtotal:</span><span id="sub-total">₹0</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; color:green; font-size:13px;">
-                <span>Discount (10%):</span><span id="dist-amt">-₹0</span>
-            </div>
-            <hr>
-            <div style="display:flex; justify-content:space-between; font-size:18px;">
-                <span>Order Total:</span><span id="final-total">₹0</span>
-            </div>
+    <div id="cart-summary" style="display:none; background:white; padding:15px; border-radius:8px; margin-top:20px; border:1px solid #ddd;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span>Total Amount:</span><b id="final-total">₹0</b>
         </div>
-        <button class="btn-main" style="margin-top:15px; background:#FFD814;" onclick="showPage('checkout-page')">Proceed to Checkout</button>
+        <button class="btn-main" onclick="showPage('checkout-page')">Proceed to Checkout</button>
     </div>
+    <div id="empty-cart" style="text-align:center; padding:50px 0; color:#888;">Cart is empty!</div>
 </div>
 
+<!-- CHECKOUT PAGE -->
 <div id="checkout-page" class="page">
-    <h3>Delivery Address</h3>
-    <input type="text" id="u-name" class="form-input" placeholder="Full Name" style="width:100%; padding:12px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-    <input type="tel" id="u-phone" class="form-input" placeholder="Mobile Number" style="width:100%; padding:12px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-    <textarea id="u-addr" placeholder="Full Address" style="width:100%; padding:12px; height:80px; margin-bottom:20px; border-radius:5px; border:1px solid #ccc;"></textarea>
-    <button class="btn-main" onclick="showPage('payment-page')">Continue to Payment</button>
+    <h3>Delivery Details</h3>
+    <input type="text" id="u-name" class="form-input" placeholder="Full Name">
+    <input type="tel" id="u-phone" class="form-input" placeholder="Phone Number">
+    <textarea id="u-addr" class="form-input" placeholder="Full Address" style="height:80px;"></textarea>
+    <button class="btn-main" onclick="showPage('payment-page')">Select Payment Method</button>
 </div>
 
-<div id="payment-page" class="page" style="text-align:center;">
-    <h3>Final Step: Payment</h3>
-    <div style="background:white; padding:20px; border-radius:10px; border:1px solid #ddd;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=varungoyal7910@pnb" style="width:180px;">
-        <p style="font-weight:bold; margin:10px 0;">varungoyal7910@pnb</p>
-        <p style="font-size:12px; color:#666;">Scan QR and enter UTR to confirm</p>
-        <input type="text" id="u-utr" placeholder="Enter Transaction UTR" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px;">
-        <button class="btn-main" onclick="confirmOrder()">Place Your Order</button>
+<!-- PAYMENT PAGE -->
+<div id="payment-page" class="page">
+    <h3>Choose Payment</h3>
+    <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">
+        <input type="radio" name="pay" id="p-upi" checked> <b>Online Payment (UPI QR)</b><br>
+        <div id="upi-box" style="text-align:center; margin-top:15px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=varungoyal7910@pnb" style="width:150px;">
+            <p>varungoyal7910@pnb</p>
+            <input type="text" id="u-utr" class="form-input" placeholder="Enter Transaction UTR">
+        </div>
     </div>
+    <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
+        <input type="radio" name="pay" id="p-cod"> <b>Cash on Delivery (COD)</b>
+        <p style="font-size:12px; color:gray;">Extra ₹40 delivery charges for COD</p>
+    </div>
+    <button class="btn-main" style="margin-top:20px;" onclick="confirmOrder()">Confirm Order</button>
+</div>
+
+<!-- ORDERS PAGE -->
+<div id="orders-page" class="page">
+    <h3>My Orders 📦</h3>
+    <div id="orders-list"></div>
+</div>
+
+<!-- TRACK PAGE -->
+<div id="track-page" class="page">
+    <h3>Track Order 📍</h3>
+    <input type="text" id="track-input" class="form-input" placeholder="Enter Order ID (e.g. GC1234)">
+    <button class="btn-main" onclick="runTrack()">Track Status</button>
+    <div id="track-result" style="margin-top:20px;"></div>
 </div>
 
 <nav>
     <div class="nav-item" onclick="showPage('home-page')">🏠<br>Home</div>
-    <div class="nav-item" onclick="loadOrders()">📦<br>Orders</div>
     <div class="nav-item" onclick="showPage('cart-page')">🛒<br>Cart</div>
+    <div class="nav-item" onclick="loadOrders()">📦<br>Orders</div>
+    <div class="nav-item" onclick="showPage('track-page')">📍<br>Track</div>
 </nav>
 
 <script>
@@ -162,85 +186,108 @@
     let currentProd = {};
     let myOrders = JSON.parse(localStorage.getItem('gocart_orders')) || [];
 
+    // Auto-Calculate Discount % on load
+    window.onload = () => {
+        document.querySelectorAll('.p-card').forEach(card => {
+            let price = parseInt(card.getAttribute('data-price'));
+            let mrp = parseInt(card.querySelector('span[style*="line-through"]').innerText.replace('₹',''));
+            let off = Math.round(((mrp - price) / mrp) * 100);
+            card.querySelector('.discount-tag').innerText = `-${off}% OFF`;
+        });
+    };
+
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
         window.scrollTo(0,0);
     }
 
-    function openDetails(t, p, o, i) {
+    function openDetails(t, p, o, i, d) {
+        let off = Math.round(((o - p) / o) * 100);
         currentProd = {title: t, price: p, img: i, qty: 1};
         document.getElementById('det-title').innerText = t;
         document.getElementById('det-price').innerText = "₹" + p;
         document.getElementById('det-old').innerText = "₹" + o;
+        document.getElementById('det-perc').innerText = `-${off}% OFF`;
         document.getElementById('det-img').src = i;
+        document.getElementById('det-desc').innerText = d;
         showPage('details-page');
     }
 
     function addToCart() {
-        const index = cart.findIndex(item => item.title === currentProd.title);
-        if (index > -1) {
-            cart[index].qty++;
-        } else {
-            cart.push({...currentProd});
-        }
+        let found = cart.find(item => item.title === currentProd.title);
+        if(found) found.qty++;
+        else cart.push({...currentProd});
         updateCart();
-        showPage('cart-page');
-    }
-
-    function changeQty(index, delta) {
-        cart[index].qty += delta;
-        if (cart[index].qty < 1) cart.splice(index, 1);
-        updateCart();
+        alert("Added to Cart!");
+        showPage('home-page');
     }
 
     function updateCart() {
         document.getElementById('cart-count').innerText = cart.length;
-        const container = document.getElementById('cart-items');
-        const emptyMsg = document.getElementById('cart-empty-msg');
-        const totalSec = document.getElementById('total-section');
-        
-        if (cart.length === 0) {
-            container.innerHTML = "";
-            emptyMsg.style.display = "block";
-            totalSec.style.display = "none";
+        const list = document.getElementById('cart-items');
+        if(cart.length === 0) {
+            document.getElementById('empty-cart').style.display = 'block';
+            document.getElementById('cart-summary').style.display = 'none';
+            list.innerHTML = "";
             return;
         }
-
-        emptyMsg.style.display = "none";
-        totalSec.style.display = "block";
+        document.getElementById('empty-cart').style.display = 'none';
+        document.getElementById('cart-summary').style.display = 'block';
         
-        let subtotal = 0;
-        container.innerHTML = cart.map((item, index) => {
-            subtotal += item.price * item.qty;
-            return `
-                <div class="cart-item">
-                    <img src="${item.img}">
-                    <div style="flex:1;">
-                        <div style="font-weight:bold; font-size:14px;">${item.title}</div>
-                        <div style="color:#B12704; font-weight:bold;">₹${item.price}</div>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                            <span>${item.qty}</span>
-                            <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
-                        </div>
+        let total = 0;
+        list.innerHTML = cart.map((item, index) => {
+            total += (item.price * item.qty);
+            return `<div class="item-row">
+                <img src="${item.img}">
+                <div style="flex:1;">
+                    <b>${item.title}</b><br>
+                    <span style="color:#B12704; font-weight:bold;">₹${item.price}</span>
+                    <div class="qty-box">
+                        <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${index},1)">+</button>
                     </div>
                 </div>
-            `;
+            </div>`;
         }).join('');
-
-        let discount = Math.round(subtotal * 0.10);
-        document.getElementById('sub-total').innerText = "₹" + subtotal;
-        document.getElementById('dist-amt').innerText = "-₹" + discount;
-        document.getElementById('final-total').innerText = "₹" + (subtotal - discount);
+        document.getElementById('final-total').innerText = "₹" + total;
     }
 
-    function filterPrice(limit) {
-        let cards = document.getElementsByClassName('p-card');
-        for (let card of cards) {
-            let p = parseInt(card.getAttribute('data-price'));
-            card.style.display = (limit === 'All' || p <= limit) ? "block" : "none";
-        }
+    function changeQty(index, delta) {
+        cart[index].qty += delta;
+        if(cart[index].qty < 1) cart.splice(index, 1);
+        updateCart();
+    }
+
+    function confirmOrder() {
+        const method = document.getElementById('p-cod').checked ? "COD" : "Online";
+        if(method === "Online" && !document.getElementById('u-utr').value) return alert("Please enter UTR!");
+        
+        const orderId = "GC" + Math.floor(1000 + Math.random() * 9000);
+        myOrders.push({ orderId, status: "Order Placed", date: new Date().toLocaleDateString(), method: method });
+        localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
+        alert("Order Success! Order ID: " + orderId);
+        cart = []; updateCart();
+        showPage('home-page');
+    }
+
+    function loadOrders() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = myOrders.length ? myOrders.map(o => `
+            <div class="item-row" style="border-left: 5px solid green;">
+                <div><b>ID: ${o.orderId}</b><br><small>${o.date}</small><br>
+                Status: <span style="color:orange;">${o.status}</span><br>Method: ${o.method}</div>
+            </div>
+        `).reverse().join('') : "No orders yet.";
+        showPage('orders-page');
+    }
+
+    function runTrack() {
+        const id = document.getElementById('track-input').value.toUpperCase();
+        const found = myOrders.find(o => o.orderId === id);
+        document.getElementById('track-result').innerHTML = found ? 
+            `<div class="item-row">Status: <b>${found.status}</b><br>Estimated Delivery: 3-4 Days</div>` : "ID not found!";
     }
 
     function searchFun() {
@@ -252,26 +299,12 @@
         }
     }
 
-    function confirmOrder() {
-        if(!document.getElementById('u-utr').value) return alert("Please enter Transaction ID!");
-        const orderId = "GC" + Math.floor(100000 + Math.random() * 900000);
-        myOrders.push({ orderId, status: "Pending", date: new Date().toLocaleDateString() });
-        localStorage.setItem('gocart_orders', JSON.stringify(myOrders));
-        alert("Order Placed Successfully! ID: " + orderId);
-        cart = [];
-        updateCart();
-        showPage('home-page');
-    }
-
-    function loadOrders() {
-        showPage('cart-page'); // Reuse layout or add logic for order list
-        const container = document.getElementById('cart-items');
-        document.getElementById('total-section').style.display = "none";
-        container.innerHTML = "<h3>My Orders</h3>" + myOrders.map(o => `
-            <div style="background:white; padding:10px; margin-bottom:10px; border-left:4px solid var(--g-orange);">
-                <b>ID: ${o.orderId}</b><br>Status: <span style="color:orange">${o.status}</span><br><small>${o.date}</small>
-            </div>
-        `).reverse().join('');
+    function filterPrice(limit) {
+        let cards = document.getElementsByClassName('p-card');
+        for (let card of cards) {
+            let p = parseInt(card.getAttribute('data-price'));
+            card.style.display = (limit === 'All' || p <= limit) ? "block" : "none";
+        }
     }
 </script>
 </body>
