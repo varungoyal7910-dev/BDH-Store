@@ -135,15 +135,19 @@
 <div id="payment-page" class="page">
     <h3>Choose Payment</h3>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">
-        <input type="radio" name="pay" id="p-upi" checked> <b>Online Payment (UPI QR)</b><br>
+        <input type="radio" name="pay" id="p-upi" checked onclick="toggleUPI(true)"> <b>Online Payment (UPI QR)</b><br>
         <div id="upi-box" style="text-align:center; margin-top:15px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=varungoyal7910@pnb" style="width:150px;">
-            <p>varungoyal7910@pnb</p>
+            <!-- Added error handling for QR image -->
+            <img id="upi-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=varungoyal7910@pnb" 
+                 style="width:180px; border: 1px solid #ddd; padding: 5px; background: white;"
+                 onerror="this.src='https://quickchart.io/qr?text=upi://pay?pa=varungoyal7910@pnb&size=180'">
+            <p style="font-weight: bold; margin: 5px 0;">varungoyal7910@pnb</p>
+            <p style="font-size: 11px; color: gray;">If QR doesn't load, use ID above</p>
             <input type="text" id="u-utr" class="form-input" placeholder="Enter Transaction UTR">
         </div>
     </div>
     <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
-        <input type="radio" name="pay" id="p-cod"> <b>Cash on Delivery (COD)</b>
+        <input type="radio" name="pay" id="p-cod" onclick="toggleUPI(false)"> <b>Cash on Delivery (COD)</b>
     </div>
     <button class="btn-main" style="margin-top:20px;" onclick="confirmOrder()">Confirm Order</button>
 </div>
@@ -176,15 +180,21 @@
     window.onload = () => {
         document.querySelectorAll('.p-card').forEach(card => {
             let price = parseInt(card.getAttribute('data-price'));
-            let mrp = parseInt(card.querySelector('span[style*="line-through"]').innerText.replace('₹',''));
+            let mrpText = card.querySelector('span[style*="line-through"]').innerText;
+            let mrp = parseInt(mrpText.replace('₹',''));
             let off = Math.round(((mrp - price) / mrp) * 100);
             card.querySelector('.discount-tag').innerText = `-${off}% OFF`;
         });
     };
 
+    function toggleUPI(show) {
+        document.getElementById('upi-box').style.display = show ? 'block' : 'none';
+    }
+
     function showPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(id).classList.add('active-page');
+        window.scrollTo(0,0);
     }
 
     function openDetails(t, p, o, i, d) {
