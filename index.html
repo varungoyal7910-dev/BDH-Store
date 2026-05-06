@@ -377,22 +377,32 @@
         return;
     }
 
-    list.innerHTML = savedOrders.map(o => `
-        <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <span style="font-weight:bold; color:#1a237e; font-size:16px;">ID: ${o.orderId || o}</span>
-                <span style="font-size:12px; color:#d32f2f; font-weight:bold;">Ordered</span>
+    list.innerHTML = savedOrders.map(o => {
+        // --- FIX: Sirf Order ID nikalne ke liye ---
+        let displayId = "";
+        
+        if (typeof o === 'object' && o !== null) {
+            displayId = o.orderId || o.id || "VAR-ID"; 
+        } else {
+            displayId = o; // Agar pehle se string hai
+        }
+
+        return `
+            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span style="font-weight:bold; color:#1a237e; font-size:16px;">ID: ${displayId}</span>
+                    <span style="font-size:12px; color:#d32f2f; font-weight:bold;">Ordered</span>
+                </div>
+                
+                <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
+                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
+                        ⚠️ <b>Note:</b> For <b>Replace</b> and any information, please check the <b>Track Section</b> with your Order ID.
+                    </p>
+                </div>
             </div>
-            
-            <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
-                <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
-                    ⚠️ <b>Note:</b> For <b>Replace</b> and any information, please check the <b>Track Section</b> with your Order ID.
-                </p>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
        }
-       
     
     
     async function trackNow() {
