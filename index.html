@@ -126,13 +126,19 @@
     
     <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
 
-    <div class="color-select">
-        <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">Select Colour:</p>
-        <div class="color-dot active" style="background:black;" onclick="selColor(this)"></div>
-        <div class="color-dot" style="background:silver;" onclick="selColor(this)"></div>
-        <div class="color-dot" style="background:white;" onclick="selColor(this)"></div>
+   <div class="color-select">
+    <!-- Yahan span tag add kiya hai jo colour ka naam dikhayega -->
+    <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">
+        Select Colour: <span id="selected-color-name" style="color: #ff9900;">Black</span>
+    </p>
+    
+    <div style="display: flex; gap: 10px;">
+        <!-- Har dot mein 'data-color' zaroori hai taaki computer naam padh sake -->
+        <div class="color-dot active" data-color="Black" style="background:black;" onclick="selColor(this)"></div>
+        <div class="color-dot" data-color="Silver" style="background:silver;" onclick="selColor(this)"></div>
+        <div class="color-dot" data-color="White" style="background:white;" onclick="selColor(this)"></div>
     </div>
-
+</div>
     <div class="policy-box">
         <p><i class="fas fa-undo" style="color: var(--navy); margin-right: 5px;"></i> 7 Days Return Policy</p>
         <p><i class="fas fa-wallet" style="color: var(--navy); margin-right: 5px;"></i> No Cash on Delivery (Prepaid Only)</p>
