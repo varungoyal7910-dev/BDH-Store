@@ -161,18 +161,26 @@
     <button class="btn-buy" onclick="goToPayment()">Proceed to Payment</button>
 </div>
 
-<!-- Payment Page -->
+<!-- Updated Payment Page with QR Code -->
 <div id="payment-page" class="page" style="text-align:center;">
-    <h3>Final Payment</h3>
+    <h3 style="color: var(--navy);">Final Payment</h3>
     <p style="margin:10px 0; color:#666;">Amount to pay: <b id="pay-amt" style="color:var(--red); font-size: 20px;"></b></p>
-    <div style="background:#fff9c4; padding:20px; border-radius:10px; font-weight:bold; margin-bottom:20px; border:2px dashed var(--navy); font-size: 18px;">
+    
+    <!-- Dynamic QR Code Container -->
+    <div style="margin: 20px auto; padding: 15px; background: white; border: 2px solid var(--navy); border-radius: 15px; width: fit-content;">
+        <img id="upi-qr" src="" alt="Scan to Pay" style="width: 200px; height: 200px; display: block;">
+        <p style="font-size: 10px; color: #666; margin-top: 10px;">Scan QR with Any UPI App</p>
+    </div>
+
+    <div style="background:#fff9c4; padding:15px; border-radius:10px; font-weight:bold; margin-bottom:20px; border:2px dashed var(--navy); font-size: 16px;">
         UPI ID: varungoyal7910@pnb
     </div>
+
     <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Enter the Transaction ID after paying</p>
     <input type="text" id="c-utr" class="input-field" placeholder="12-digit UTR / Ref Number" style="text-align:center; font-weight: bold;">
     <button class="btn-buy" style="background:var(--green);" onclick="placeOrder()">Place Order Now</button>
 </div>
-
+    
 <!-- Status Page -->
 <div id="status-page" class="page" style="text-align:center; padding-top:60px;">
     <div id="loader">
@@ -316,10 +324,28 @@
         window.scrollTo(0,0);
     }
 
-    function goToPayment() {
-        if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) return alert("Pura Detail Bharo Bhai!");
-        changePage('payment-page');
+   function goToPayment() {
+    // Basic validation: Name aur Phone check karna
+    if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) {
+        return alert("Pura Detail Bharo Bhai!");
     }
+
+    // 1. Amount nikalna (Currency symbol hata kar)
+    const amountStr = document.getElementById('pay-amt').innerText;
+    const amount = amountStr.replace(/[^\d.-]/g, ''); // Sirf number rakhega
+
+    // 2. UPI Details (Aapki details)
+    const upiId = "varungoyal7910@pnb";
+    const name = "Varun Goyal";
+    
+    // 3. QR URL banana (Google Chart API ya QRServer use karke)
+    // Hum amount ke saath QR generate kar rahe hain taaki scan karte hi paise aa jayein
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=${encodeURIComponent(name)}%26am=${amount}%26cu=INR`;
+    
+    // 4. Image update karna aur page badalna
+    document.getElementById('upi-qr').src = qrUrl;
+    changePage('payment-page');
+}
 
     function placeOrder() {
         const utr = document.getElementById('c-utr').value;
