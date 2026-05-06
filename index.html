@@ -369,7 +369,7 @@
        function renderOrders() {
     const list = document.getElementById('orders-list');
     
-    // LocalStorage se data load karein
+    // LocalStorage se saved orders uthao
     const savedOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
     
     if (savedOrders.length === 0) {
@@ -378,25 +378,28 @@
     }
 
     list.innerHTML = savedOrders.map(o => {
-        // --- FIX: Sirf Order ID nikalne ke liye ---
-        let displayId = "";
-        
+        // --- TRACKING ID LOGIC ---
+        // Hum check kar rahe hain ki ID kahan chhupi hai
+        let trackingID = "";
+
         if (typeof o === 'object' && o !== null) {
-            displayId = o.orderId || o.id || "VAR-ID"; 
+            // Agar object hai toh ye keys check karo (jo tracking ke liye use hoti hain)
+            trackingID = o.orderId || o.id || o.trackingId || "VAR-PENDING";
         } else {
-            displayId = o; // Agar pehle se string hai
+            // Agar pehle sirf string save ho rahi thi
+            trackingID = o;
         }
 
         return `
             <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span style="font-weight:bold; color:#1a237e; font-size:16px;">ID: ${displayId}</span>
-                    <span style="font-size:12px; color:#d32f2f; font-weight:bold;">Ordered</span>
+                    <span style="font-weight:bold; color:#1a237e; font-size:17px; letter-spacing:0.5px;">ID: ${trackingID}</span>
+                    <span style="font-size:12px; color:#d32f2f; font-weight:bold; text-transform:uppercase;">Ordered</span>
                 </div>
                 
-                <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
-                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
-                        ⚠️ <b>Note:</b> For <b>Replace</b> and any information, please check the <b>Track Section</b> with your Order ID.
+                <div style="background:#fff9e6; padding:12px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
+                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.5;">
+                        ⚠️ <b>Note:</b> For <b>Replace</b> and any information, please check the <b>Track Section</b> with this Order ID: <b>${trackingID}</b>.
                     </p>
                 </div>
             </div>
