@@ -420,54 +420,50 @@
 function renderOrders() {
     const list = document.getElementById('orders-list');
     
-    // Agar koi order nahi hai toh message dikhayega
-    if (myOrders.length === 0) {
+    if (!myOrders || myOrders.length === 0) {
         return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
     }
     
     list.innerHTML = myOrders.map(o => {
-        // --- Replace Button Logic Shuru ---
+        // Data safety check: Agar properties missing hain toh default text dikhao
+        const orderId = o.orderId || o.id || "VAR-ERROR";
+        const currentStatus = o.status || "Processing";
+        const orderItems = o.items || "Product details not found";
+        const orderAmount = o.amount || o.price || "Check Sheet";
+
         let replaceBtnHTML = "";
         
-        // Aapki Google Script 'replaceDate' bhej rahi hai
+        // Replace logic (Aapki script ke 'replaceDate' key ke saath)
         if (o.replaceDate && o.replaceDate !== "") {
             const rDate = new Date(o.replaceDate);
             const today = new Date();
-            
-            // 7 din ka difference nikalne ke liye
-            const diffTime = today - rDate;
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            const diffDays = (today - rDate) / (1000 * 60 * 60 * 24);
 
-            // Agar 7 din ke andar hai aur status pehle se "Replace Req" nahi hai
-            if (diffDays >= 0 && diffDays <= 7 && o.status !== "Replace Req") {
+            if (diffDays >= 0 && diffDays <= 7 && currentStatus !== "Replace Req") {
                 replaceBtnHTML = `
-                    <button onclick="submitReplace('${o.orderId}')" 
+                    <button onclick="submitReplace('${orderId}')" 
                         style="margin-top:10px; background:var(--yellow); color:var(--navy); border:none; 
-                        padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; width:100%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; width:100%;">
                         Replace Product
                     </button>`;
             }
         }
-        // --- Replace Button Logic Khatam ---
 
         return `
             <div style="background:white; padding:15px; border-radius:10px; margin-bottom:12px; border-left:5px solid var(--navy); box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
                 <div style="display:flex; justify-content:space-between;">
-                    <b>${o.orderId}</b>
-                    <span id="status-${o.orderId}" style="color:var(--yellow); font-size:12px; font-weight:bold; background:var(--navy); padding:2px 8px; border-radius:10px;">
-                        ${o.status}
+                    <b>${orderId}</b>
+                    <span id="status-${orderId}" style="color:var(--yellow); font-size:12px; font-weight:bold; background:var(--navy); padding:2px 8px; border-radius:10px;">
+                        ${currentStatus}
                     </span>
                 </div>
-                <div style="font-size:12px; color:#666; margin: 8px 0;">${o.items}</div>
-                <b style="color:var(--red)">${o.amount}</b>
-                
-                <!-- Replace Button yahan aayega -->
+                <div style="font-size:12px; color:#666; margin: 8px 0;">${orderItems}</div>
+                <b style="color:var(--red)">${orderAmount}</b>
                 ${replaceBtnHTML}
             </div>
         `;
     }).join('');
 }
-
     async function submitReplace(orderId) {
     if(!confirm("Kya aap replacement request bhejna chahte hain?")) return;
 
