@@ -355,22 +355,21 @@
         const orderId = "VAR" + Math.floor(1000 + Math.random() * 9000);
     
         
-       // 1. Data aur Product logic (Order ID wahi rahega jo pehle se bana hai)
+     // 1. Data aur Product logic
 const cartData = JSON.parse(localStorage.getItem('varunCart')) || [];
-const itemsDetail = cartData.map(i => `${i.name} [${i.color || 'No Color'}](x${i.qty})').join(',');
-
+const itemsDetail = cartData.map(i => `${i.name} [${i.color || 'No Color'}](x${i.qty})`).join(', ');
 
 const data = {
-    name: document.getElementById('c-name').value,        // Column A
-    phone: document.getElementById('c-phone').value,      // Column B
-    address: document.getElementById('c-address').value,  // Column C
-    pincode: document.getElementById('c-pincode').value,  // Column D
-    utr: document.getElementById('c-utr').value,          // Column E (UTR/Ref)
-    amount: document.getElementById('pay-amt').innerText, // Column F
-    orderId: OrderId,                               // Column H (Combined)
-    items: itemsDetail                                   // Column K (Product Info)
+    name: document.getElementById('c-name').value,
+    phone: document.getElementById('c-phone').value,
+    address: document.getElementById('c-address').value,
+    pincode: document.getElementById('c-pincode').value,
+    utr: document.getElementById('c-utr').value,
+    amount: document.getElementById('pay-amt').innerText,
+    orderId: orderId,
+    items: itemsDetail
 };
-
+        
 // 2. Processing Screen dikhao
 document.getElementById('loader').style.display = 'block';
 
