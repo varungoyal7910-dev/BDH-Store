@@ -126,14 +126,7 @@
     
     <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
 
- <!-- Sirf ye rehne do agar pehle aisa tha -->
-<div class="color-select">
-    <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">Select Colour:</p>
-    <div style="display: flex; gap: 10px;">
-        <div class="color-dot active" style="background:black; width:25px; height:25px; border-radius:50%;"></div>
-        <div class="color-dot" style="background:silver; width:25px; height:25px; border-radius:50%;"></div>
-    </div>
-</div>
+
     
     <div class="policy-box">
         <p><i class="fas fa-undo" style="color: var(--navy); margin-right: 5px;"></i> 7 Days Replace Policy</p>
@@ -274,24 +267,7 @@
 
     function closeDetail() { document.getElementById('detail-tab').style.display = 'none'; }
 
-    function selColor(el) {
-    // 1. Saare dots se active hatana
-    document.querySelectorAll('.color-dot').forEach(dot => {
-        dot.classList.remove('active');
-        dot.style.border = "2px solid #ddd";
-    });
-
-    // 2. Chune hue dot ko active karna
-    el.classList.add('active');
-    el.style.border = "3px solid #ff9900";
-
-    // 3. Naam badalna
-    const colorName = el.getAttribute('data-color');
-    const label = document.getElementById('selected-color-name');
-    if (label) {
-        label.innerText = colorName;
-    }
-}
+   
 
     function addToCart() {
     // 1. Check karo kaunsa color dot 'active' hai
