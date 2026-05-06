@@ -417,21 +417,83 @@
     });
 }
 
-
+function renderOrders() {
+    const list = document.getElementById('orders-list');
+    
+    // Agar koi order nahi hai toh message dikhayega
+    if (myOrders.length === 0) {
+        return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
+    }
+    
+    list.innerHTML = myOrders.map(o => {
+        // --- Replace Button Logic Shuru ---
+        let replaceBtnHTML = "";
         
-    function renderOrders() {
-        const list = document.getElementById('orders-list');
-        if(myOrders.length === 0) return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
-        list.innerHTML = myOrders.map(o => `
-            <div style="background:white; padding:15px; border-radius:10px; margin-bottom:12px; border-left:5px solid var(--navy); box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        // Aapki Google Script 'replaceDate' bhej rahi hai
+        if (o.replaceDate && o.replaceDate !== "") {
+            const rDate = new Date(o.replaceDate);
+            const today = new Date();
+            
+            // 7 din ka difference nikalne ke liye
+            const diffTime = today - rDate;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+            // Agar 7 din ke andar hai aur status pehle se "Replace Req" nahi hai
+            if (diffDays >= 0 && diffDays <= 7 && o.status !== "Replace Req") {
+                replaceBtnHTML = `
+                    <button onclick="submitReplace('${o.orderId}')" 
+                        style="margin-top:10px; background:var(--yellow); color:var(--navy); border:none; 
+                        padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; width:100%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        Replace Product
+                    </button>`;
+            }
+        }
+        // --- Replace Button Logic Khatam ---
+
+        return `
+            <div style="background:white; padding:15px; border-radius:10px; margin-bottom:12px; border-left:5px solid var(--navy); box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
                 <div style="display:flex; justify-content:space-between;">
                     <b>${o.orderId}</b>
-                    <span style="color:var(--yellow); font-size:12px; font-weight:bold; background:var(--navy); padding:2px 8px; border-radius:10px;">${o.status}</span>
+                    <span id="status-${o.orderId}" style="color:var(--yellow); font-size:12px; font-weight:bold; background:var(--navy); padding:2px 8px; border-radius:10px;">
+                        ${o.status}
+                    </span>
                 </div>
                 <div style="font-size:12px; color:#666; margin: 8px 0;">${o.items}</div>
                 <b style="color:var(--red)">${o.amount}</b>
-            </div>`).join('');
+                
+                <!-- Replace Button yahan aayega -->
+                ${replaceBtnHTML}
+            </div>
+        `;
+    }).join('');
+}
+
+    async function submitReplace(orderId) {
+    if(!confirm("Kya aap replacement request bhejna chahte hain?")) return;
+
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "updateReplace", // Aapki script yahi action check kar rahi hai
+                orderId: orderId
+            })
+        });
+
+        const result = await response.text();
+
+        if(result === "Success") {
+            alert("Request successfully bhej di gayi hai!");
+            location.reload(); 
+        } else {
+            alert("Error: " + result);
+        }
+    } catch (err) {
+        console.error("Error:", err);
+        alert("Server se connection nahi ho paya.");
     }
+}
+    
 
     async function trackNow() {
         const id = document.getElementById('track-input').value.toUpperCase();
