@@ -369,44 +369,35 @@
        function renderOrders() {
     const list = document.getElementById('orders-list');
     
-    // LocalStorage se saved orders uthao
-    const savedOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
-    
-    if (savedOrders.length === 0) {
-        list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
-        return;
+    // Check karein ki myOrders khali toh nahi hai
+    if (!myOrders || myOrders.length === 0) {
+        return list.innerHTML = `
+            <div style="text-align:center; padding:40px;">
+                <p style="color:#666;">Abhi tak koi order nahi hai.</p>
+                <a href="index.html" style="color:var(--navy); font-weight:bold;">Shopping Karein</a>
+            </div>`;
     }
-
-    list.innerHTML = savedOrders.map(o => {
-        // --- TRACKING ID LOGIC ---
-        // Hum check kar rahe hain ki ID kahan chhupi hai
-        let trackingID = "";
-
-        if (typeof o === 'object' && o !== null) {
-            // Agar object hai toh ye keys check karo (jo tracking ke liye use hoti hain)
-            trackingID = o.orderId || o.id || o.trackingId || "VAR-PENDING";
-        } else {
-            // Agar pehle sirf string save ho rahi thi
-            trackingID = o;
-        }
+    
+    list.innerHTML = myOrders.map(o => {
+        // Tracking ID nikalne ka logic (Object ya String dono handle karega)
+        const displayId = (typeof o === 'object') ? (o.orderId || o.id) : o;
 
         return `
-            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span style="font-weight:bold; color:#1a237e; font-size:17px; letter-spacing:0.5px;">ID: ${trackingID}</span>
-                    <span style="font-size:12px; color:#d32f2f; font-weight:bold; text-transform:uppercase;">Ordered</span>
+                    <span style="font-weight:bold; color:var(--navy); font-size:16px;">ID: ${displayId}</span>
+                    <span style="font-size:12px; color:var(--red); font-weight:bold;">Ordered</span>
                 </div>
                 
-                <div style="background:#fff9e6; padding:12px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
-                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.5;">
-                        ⚠️ <b>Note:</b> For <b>Replace</b> and any information, please check the <b>Track Section</b> with this Order ID: <b>${trackingID}</b>.
+                <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
+                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
+                        ⚠️ <b>Note:</b> For <b>Replace</b>, Return, or any other information, please check the <b>Track Section</b> with your Order ID.
                     </p>
                 </div>
             </div>
         `;
     }).join('');
-       }
-    
+}
     
     async function trackNow() {
         const id = document.getElementById('track-input').value.toUpperCase();
