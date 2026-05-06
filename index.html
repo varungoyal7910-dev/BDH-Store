@@ -419,67 +419,39 @@
 
 function renderOrders() {
     const list = document.getElementById('orders-list');
+    
+    // MyOrders array ko local storage se uthayega (ya jo pehle se define hai)
     if (!myOrders || myOrders.length === 0) {
-        return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
+        return list.innerHTML = `
+            <div style="text-align:center; padding:40px;">
+                <p style="color:#666;">Abhi tak koi order nahi hai.</p>
+                <a href="index.html" style="color:var(--navy); font-weight:bold;">Shopping Karein</a>
+            </div>`;
     }
-
+    
     list.innerHTML = myOrders.map(o => {
-        let replaceBtnHTML = "";
-        
-        // SIMPLE LOGIC: Agar status 'Delivered' hai, toh button dikhao
-        // Isme humein Sheet se date ki zarurat nahi padegi
-        if (o.status === "Delivered") {
-            replaceBtnHTML = `
-                <button onclick="submitReplace('${o.orderId || o.id}')" 
-                    style="margin-top:10px; background:#ff9900; color:white; border:none; 
-                    padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; width:100%;">
-                    Request Replacement
-                </button>`;
-        }
-
         return `
-            <div style="background:white; padding:15px; border-radius:10px; margin-bottom:12px; border-left:5px solid var(--navy); box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
-                <div style="display:flex; justify-content:space-between;">
-                    <b>${o.orderId || o.id}</b>
-                    <span id="status-${o.orderId || o.id}" style="color:var(--yellow); font-size:12px; font-weight:bold; background:var(--navy); padding:2px 8px; border-radius:10px;">
-                        ${o.status || "Pending"}
-                    </span>
+            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f5f5f5; padding-bottom:8px; margin-bottom:10px;">
+                    <span style="font-weight:bold; color:var(--navy);">ID: ${o.orderId || o.id}</span>
+                    <span style="font-size:12px; color:var(--red); font-weight:bold;">Ordered</span>
                 </div>
-                <div style="font-size:12px; color:#666; margin: 8px 0;">${o.items || "Items Loading..."}</div>
-                <b style="color:var(--red)">${o.amount || "0.00"}</b>
-                ${replaceBtnHTML}
+                
+                <div style="margin-bottom:10px;">
+                    <p style="margin:0; font-weight:500; color:#333;">${o.items || "Product Name"}</p>
+                    <b style="font-size:18px; color:#222;">${o.amount || o.price}</b>
+                </div>
+
+                <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966;">
+                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
+                        ⚠️ <b>Note:</b> For <b>Replace</b>, Return, or any other information, please check the <b>Track Section</b> with your Order ID.
+                    </p>
+                </div>
             </div>
         `;
     }).join('');
 }
     
-   async function submitReplace(id) {
-    if(!confirm("Kya aap is product ko replace karna chahte hain?")) return;
-    
-    // UI par turant badlav dikhane ke liye
-    const statusSpan = document.getElementById(`status-${id}`);
-    statusSpan.innerText = "Processing...";
-
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: "updateReplace", // Aapki script mein ye action pehle se hai
-                orderId: id
-            })
-        });
-        
-        const result = await response.text();
-        if (result === "Success") {
-            alert("Replacement Request Sent! Hum aapse jald contact karenge.");
-            location.reload(); // Page refresh takki status 'Replace Req' dikhne lage
-        } else {
-            alert("Error: " + result);
-        }
-    } catch (err) {
-        alert("Server connection failed!");
-    }
-}
     async function trackNow() {
         const id = document.getElementById('track-input').value.toUpperCase();
         const res = document.getElementById('track-res');
