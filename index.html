@@ -126,17 +126,19 @@
     
     <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
 
-   <div class="color-select">
-    <!-- Ye line colour ka naam dikhayegi -->
+   <!-- Line 130 ke aas-paas ye dalo -->
+<div class="color-select">
     <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">
         Select Colour: <span id="selected-color-name" style="color: #ff9900;">Black</span>
     </p>
     
     <div style="display: flex; gap: 10px;">
-        <!-- In dots mein 'data-color' hona bahut zaroori hai -->
-        <div class="color-dot active" data-color="Black" style="background:black;" onclick="selColor(this)"></div>
-        <div class="color-dot" data-color="Silver" style="background:silver;" onclick="selColor(this)"></div>
-        <div class="color-dot" data-color="White" style="background:white; border:1px solid #ddd;" onclick="selColor(this)"></div>
+        <!-- In teeno lines mein data-color aur onclick check karo -->
+        <div class="color-dot active" data-color="Black" style="background:black; width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #ff9900;" onclick="selColor(this)"></div>
+        
+        <div class="color-dot" data-color="Silver" style="background:silver; width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #ddd;" onclick="selColor(this)"></div>
+        
+        <div class="color-dot" data-color="White" style="background:white; width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #ddd;" onclick="selColor(this)"></div>
     </div>
 </div>
     
