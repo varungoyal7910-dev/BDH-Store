@@ -277,20 +277,25 @@
     }
 
     function addToCart() {
-    // 1. Pehle check karo ki konsa color 'active' hai
+    // Kaunsa color dot active hai, uska data nikalna
     const activeColorEl = document.querySelector('.color-dot.active');
-    const selectedColor = activeColorEl ? activeColorEl.getAttribute('data-color') : "Default";
+    
+    // Agar active dot mil gaya, toh uska 'data-color' utha lo, warna Default
+    let selectedColor = "Default";
+    if (activeColorEl) {
+        selectedColor = activeColorEl.getAttribute('data-color') || "No Color";
+    }
 
-    // 2. Ab check karo ki kya same product aur same color pehle se cart mein hai
+    // Check karna ki product aur uska color pehle se cart mein hai ya nahi
     const exist = cart.find(i => i.id === curProduct.id && i.color === selectedColor);
 
     if(exist) {
         exist.qty++;
     } else {
-        // 3. Product ke saath color ko bhi push karo
+        // Yahan curProduct ke sath 'color' bhi save ho raha hai
         cart.push({...curProduct, color: selectedColor, qty: 1});
     }
-
+    
     saveCart();
     alert("Added to 🛒 Success!");
     closeDetail();
