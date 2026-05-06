@@ -256,10 +256,10 @@
         }).join('') : '<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>';
     }
     
-    function selColor(el) {
-    // 1. Saare dots se active style hatao
+   function selColor(el) {
+    // 1. Saare dots se active style aur border hatao
     document.querySelectorAll('.color-dot').forEach(dot => {
-        dot.style.border = "2px solid #ddd";
+        dot.style.border = "2px solid #ddd"; 
         dot.classList.remove('active');
     });
 
@@ -267,11 +267,15 @@
     el.classList.add('active');
     el.style.border = "3px solid #ff9900"; 
 
-    // 3. HTML mein naam update karo (YAHAN DOT ZAROORI HAI)
+    // 3. Sabse zaruri: Dot lagakar naam badlo
     const colorName = el.getAttribute('data-color');
-    document.getElementById('selected-color-name').innerText = colorName;
+    const label = document.getElementById('selected-color-name');
+    
+    if (label) {
+        label.innerText = colorName; // Yahan dhyan dena, label aur innerText ke beech DOT (.) hai
+    }
 }
-
+    
     function applyFilters() {
         const q = document.getElementById('search-input').value.toLowerCase();
         const pL = document.getElementById('price-sort').value;
