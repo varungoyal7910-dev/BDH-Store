@@ -357,7 +357,7 @@
         
        // 1. Data aur Product logic (Order ID wahi rahega jo pehle se bana hai)
 const cartData = JSON.parse(localStorage.getItem('varunCart')) || [];
-const itemsDetail = cartData.map(i => `${i.name} [${i.color || 'No Color'}](x${i.qty}')).join(',');
+const itemsDetail = cartData.map(i => `${i.name} [${i.color || 'No Color'}](x${i.qty})').join(',');
 
 
 const data = {
