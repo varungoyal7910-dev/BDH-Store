@@ -354,56 +354,55 @@
         changePage('status-page');
         const orderId = "VAR" + Math.floor(1000 + Math.random() * 9000);
         
-        // Naya Order ID logic
-const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
+       // 1. Data aur Product logic (Order ID wahi rahega jo pehle se bana hai)
 const cartData = JSON.parse(localStorage.getItem('varunCart')) || [];
-
-// Product with Color details taiyaar karna (Column K ke liye)
 const itemsDetail = cartData.map(i => `${i.name}(x${i.qty})`).join(', ');
 
-// Order ID ke sath product link karna (Column H ke liye)
+// Order ID ke sath product aur colour link karna (Column H ke liye)
 const finalOrderId = `${orderId} [${itemsDetail}]`;
 
 const data = {
-    name: document.getElementById('c-name').value,
-    phone: document.getElementById('c-phone').value,
-    address: document.getElementById('c-address').value, // Sirf Address
-    pincode: document.getElementById('c-pincode').value, // Alag Pincode
-    utr: document.getElementById('c-utr').value,
-    amount: document.getElementById('pay-amt').innerText,
-    orderId: finalOrderId, 
-    items: itemsDetail
+    name: document.getElementById('c-name').value,        // Column A
+    phone: document.getElementById('c-phone').value,      // Column B
+    address: document.getElementById('c-address').value,  // Column C
+    pincode: document.getElementById('c-pincode').value,  // Column D
+    utr: document.getElementById('c-utr').value,          // Column E (UTR/Ref)
+    amount: document.getElementById('pay-amt').innerText, // Column F
+    orderId: finalOrderId,                               // Column H (Combined)
+    items: itemsDetail                                   // Column K (Product Info)
 };
 
-// Order hote hi loader (Processing) dikhao
+// 2. Processing Screen dikhao
 document.getElementById('loader').style.display = 'block';
 
+// 3. Google Sheet ko data bhejna
 fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
     body: JSON.stringify(data)
 }).then(() => {
-    // My Orders mein save karna
+    // Local Storage mein save karna taaki My Orders mein dikhe
     let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
     myOrders.unshift({
-        orderId: orderId, // Tracking ke liye base ID
+        orderId: orderId, // Original ID tracking ke liye
         fullId: finalOrderId,
         date: new Date().toLocaleString()
     });
     localStorage.setItem('varunOrders', JSON.stringify(myOrders));
     
-    // Cart khaali karna
-    localStorage.removeItem('varunCart');
-    if(typeof saveCart === "function") saveCart();
-
-    // 2.5 seconds baad Processing band aur Success screen chalu
+    // Success Screen dikhana (2.5 seconds baad)
     setTimeout(() => {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('success').style.display = 'block';
         document.getElementById('order-id-txt').innerText = "ID: " + orderId;
+        
+        // Cart saaf karna
+        localStorage.removeItem('varunCart');
+        if(typeof updateBadge === "function") updateBadge();
     }, 2500);
 });
 
+        
     function renderOrders() {
         const list = document.getElementById('orders-list');
         if(myOrders.length === 0) return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
