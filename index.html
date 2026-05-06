@@ -359,8 +359,6 @@
 const cartData = JSON.parse(localStorage.getItem('varunCart')) || [];
 const itemsDetail = cartData.map(i => `${i.name}(x${i.qty})`).join(', ');
 
-// Order ID ke sath product aur colour link karna (Column H ke liye)
-const finalOrderId = `${orderId} [${itemsDetail}]`;
 
 const data = {
     name: document.getElementById('c-name').value,        // Column A
@@ -369,7 +367,7 @@ const data = {
     pincode: document.getElementById('c-pincode').value,  // Column D
     utr: document.getElementById('c-utr').value,          // Column E (UTR/Ref)
     amount: document.getElementById('pay-amt').innerText, // Column F
-    orderId: finalOrderId,                               // Column H (Combined)
+    orderId: OrderId,                               // Column H (Combined)
     items: itemsDetail                                   // Column K (Product Info)
 };
 
