@@ -252,30 +252,6 @@
         }).join('') : '<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>';
     }
     
-function selColor(el) {
-    // Ye line test karne ke liye hai, agar click ho raha hai toh message aayega
-    console.log("Color selected: " + el.getAttribute('data-color'));
-
-    // 1. Saare dots ka border aur active class reset karo
-    document.querySelectorAll('.color-dot').forEach(dot => {
-        dot.style.borderColor = "#ddd";
-        dot.classList.remove('active');
-    });
-
-    // 2. Click kiye gaye dot ko active karo
-    el.classList.add('active');
-    el.style.borderColor = "#ff9900"; 
-
-    // 3. Sabse zaruri: ID dhund kar naam badlo
-    const colorName = el.getAttribute('data-color');
-    const displaySpan = document.getElementById('selected-color-name');
-    
-    if (displaySpan) {
-        displaySpan.innerText = colorName;
-    } else {
-        console.error("ID 'selected-color-name' nahi mili!");
-    }
-}
     
     function applyFilters() {
         const q = document.getElementById('search-input').value.toLowerCase();
