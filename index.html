@@ -127,25 +127,26 @@
     <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
 
    <div class="color-select">
-    <!-- Yahan span tag add kiya hai jo colour ka naam dikhayega -->
+    <!-- Ye line colour ka naam dikhayegi -->
     <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">
         Select Colour: <span id="selected-color-name" style="color: #ff9900;">Black</span>
     </p>
     
     <div style="display: flex; gap: 10px;">
-        <!-- Har dot mein 'data-color' zaroori hai taaki computer naam padh sake -->
+        <!-- In dots mein 'data-color' hona bahut zaroori hai -->
         <div class="color-dot active" data-color="Black" style="background:black;" onclick="selColor(this)"></div>
         <div class="color-dot" data-color="Silver" style="background:silver;" onclick="selColor(this)"></div>
-        <div class="color-dot" data-color="White" style="background:white;" onclick="selColor(this)"></div>
+        <div class="color-dot" data-color="White" style="background:white; border:1px solid #ddd;" onclick="selColor(this)"></div>
     </div>
 </div>
+    
     <div class="policy-box">
-        <p><i class="fas fa-undo" style="color: var(--navy); margin-right: 5px;"></i> 7 Days Return Policy</p>
+        <p><i class="fas fa-undo" style="color: var(--navy); margin-right: 5px;"></i> 7 Days Replace Policy</p>
         <p><i class="fas fa-wallet" style="color: var(--navy); margin-right: 5px;"></i> No Cash on Delivery (Prepaid Only)</p>
         <p><i class="fas fa-shield-alt" style="color: var(--navy); margin-right: 5px;"></i> 100% Guaranteed Product</p>
     </div>
 
-    <button class="btn-buy" onclick="addToCart()"><i class="fas fa-cart-plus"></i> Add To 🛒</button>
+    <button class="btn-buy" onclick="addToCart()"><i class="fas fa-cart-plus"></i> Add To Cart </button>
 </div>
 
 <!-- Cart Page -->
@@ -256,23 +257,23 @@
         }).join('') : '<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>';
     }
     
-   function selColor(el) {
-    // 1. Saare dots se active style aur border hatao
+function selColor(el) {
+    // 1. Saare dots se active style hatao
     document.querySelectorAll('.color-dot').forEach(dot => {
         dot.style.border = "2px solid #ddd"; 
         dot.classList.remove('active');
     });
 
-    // 2. Click kiye gaye dot ko active karo
+    // 2. Click kiye gaye dot ko chamkao (Active karo)
     el.classList.add('active');
     el.style.border = "3px solid #ff9900"; 
 
-    // 3. Sabse zaruri: Dot lagakar naam badlo
+    // 3. Naam badalne ka logic (Yahan DOT zaroori hai)
     const colorName = el.getAttribute('data-color');
     const label = document.getElementById('selected-color-name');
     
     if (label) {
-        label.innerText = colorName; // Yahan dhyan dena, label aur innerText ke beech DOT (.) hai
+        label.innerText = colorName;
     }
 }
     
