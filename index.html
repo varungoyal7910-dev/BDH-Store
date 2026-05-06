@@ -249,6 +249,22 @@
             </div>`;
         }).join('') : '<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>';
     }
+    
+    function selColor(el) {
+    // 1. Saare dots se active style hatao
+    document.querySelectorAll('.color-dot').forEach(dot => {
+        dot.style.border = "2px solid #ddd";
+        dot.classList.remove('active');
+    });
+
+    // 2. Click kiye gaye dot ko active karo
+    el.classList.add('active');
+    el.style.border = "3px solid #ff9900"; // Orange border selection ke liye
+
+    // 3. HTML mein naam update karo
+    const colorName = el.getAttribute('data-color');
+    document.getElementById('selected-color-name').innerText = colorName;
+}
 
     function applyFilters() {
         const q = document.getElementById('search-input').value.toLowerCase();
