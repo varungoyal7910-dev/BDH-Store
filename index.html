@@ -126,19 +126,12 @@
     
     <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
 
-   <!-- Line 130 ke aas-paas ye dalo -->
+ <!-- Sirf ye rehne do agar pehle aisa tha -->
 <div class="color-select">
-    <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">
-        Select Colour: <span id="selected-color-name" style="color: #ff9900;">Black</span>
-    </p>
-    
+    <p style="font-weight:bold; font-size:14px; margin-bottom:8px;">Select Colour:</p>
     <div style="display: flex; gap: 10px;">
-        <!-- In teeno lines mein data-color aur onclick check karo -->
-        <div class="color-dot active" data-color="Black" style="background:black; width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #ff9900;" onclick="selColor(this)"></div>
-        
-        <div class="color-dot" data-color="Silver" style="background:silver; width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #ddd;" onclick="selColor(this)"></div>
-        
-        <div class="color-dot" data-color="White" style="background:white; width:25px; height:25px; border-radius:50%; cursor:pointer; border:2px solid #ddd;" onclick="selColor(this)"></div>
+        <div class="color-dot active" style="background:black; width:25px; height:25px; border-radius:50%;"></div>
+        <div class="color-dot" style="background:silver; width:25px; height:25px; border-radius:50%;"></div>
     </div>
 </div>
     
@@ -311,28 +304,31 @@ function selColor(el) {
     }
 
     function addToCart() {
-    // Kaunsa color dot active hai, uska data nikalna
+    // 1. Check karo kaunsa color dot 'active' hai
     const activeColorEl = document.querySelector('.color-dot.active');
     
-    // Agar active dot mil gaya, toh uska 'data-color' utha lo, warna Default
-    let selectedColor = "Default";
+    // 2. Default color set karo (agar kuch na mile toh Black)
+    let selectedColor = "Black"; 
+    
+    // 3. Agar active dot mil gaya, toh uska data-color uthao
     if (activeColorEl) {
-        selectedColor = activeColorEl.getAttribute('data-color') || "No Color";
+        selectedColor = activeColorEl.getAttribute('data-color') || "Black";
     }
 
-    // Check karna ki product aur uska color pehle se cart mein hai ya nahi
+    // 4. Check karo ki product aur color pehle se cart mein hai ya nahi
     const exist = cart.find(i => i.id === curProduct.id && i.color === selectedColor);
 
-    if(exist) {
+    if (exist) {
         exist.qty++;
     } else {
-        // Yahan curProduct ke sath 'color' bhi save ho raha hai
+        // 5. Naya product color ke saath save karo
         cart.push({...curProduct, color: selectedColor, qty: 1});
     }
-    
+
     saveCart();
-    alert("Added to 🛒 Success!");
+    alert("Added to Cart Success!");
     closeDetail();
+    updateBadge(); // Cart icon update karne ke liye
 }
 
     function saveCart() {
