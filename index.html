@@ -277,12 +277,24 @@
     }
 
     function addToCart() {
-        const exist = cart.find(i => i.id === curProduct.id);
-        if(exist) exist.qty++; else cart.push({...curProduct, qty:1});
-        saveCart();
-        alert("Added to 🛒 Success!");
-        closeDetail();
+    // 1. Pehle check karo ki konsa color 'active' hai
+    const activeColorEl = document.querySelector('.color-dot.active');
+    const selectedColor = activeColorEl ? activeColorEl.getAttribute('data-color') : "Default";
+
+    // 2. Ab check karo ki kya same product aur same color pehle se cart mein hai
+    const exist = cart.find(i => i.id === curProduct.id && i.color === selectedColor);
+
+    if(exist) {
+        exist.qty++;
+    } else {
+        // 3. Product ke saath color ko bhi push karo
+        cart.push({...curProduct, color: selectedColor, qty: 1});
     }
+
+    saveCart();
+    alert("Added to 🛒 Success!");
+    closeDetail();
+}
 
     function saveCart() {
         localStorage.setItem('varunCart', JSON.stringify(cart));
@@ -383,7 +395,7 @@ fetch(SCRIPT_URL, {
     let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
     myOrders.unshift({
         orderId: orderId, // Original ID tracking ke liye
-        fullId: finalOrderId,
+        fullId: OrderId,
         date: new Date().toLocaleString()
     });
     localStorage.setItem('varunOrders', JSON.stringify(myOrders));
