@@ -416,50 +416,58 @@
         console.error("Error: ", err);
     });
 }
-
-function renderOrders() {
+     function renderOrders() {
     const list = document.getElementById('orders-list');
     
-    if (!myOrders || myOrders.length === 0) {
-        return list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
-    }
+    // LocalStorage se data load karein
+    const savedOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
     
-    list.innerHTML = myOrders.map(o => {
-        // --- Sabhi possible names check karein ---
-        
-        // 1. Product Name ke liye (items ya name)
-        const productName = o.items || o.name || o.productName || "Product Details N/A";
-        
-        // 2. Price ke liye (amount ya price)
-        const productPrice = o.amount || o.price || o.total || "0.00";
-        
-        // 3. Order ID ke liye
-        const orderId = o.orderId || o.id || "VAR-0000";
+    if (savedOrders.length === 0) {
+        list.innerHTML = "<p style='text-align:center; padding:30px;'>No orders yet.</p>";
+        return;
+    }
 
-        return `
-            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f5f5f5; padding-bottom:8px; margin-bottom:10px;">
-                    <span style="font-weight:bold; color:var(--navy);">ID: ${orderId}</span>
-                    <span style="font-size:12px; color:var(--red); font-weight:bold;">Ordered</span>
-                </div>
-                
-                <div style="margin-bottom:10px;">
-                    <p style="margin:0; font-size:14px; color:#666;">Product Name</p>
-                    <p style="margin:0; font-weight:bold; color:#333; font-size:16px;">${productName}</p>
-                    
-                    <p style="margin:10px 0 0 0; font-size:14px; color:#666;">Price</p>
-                    <b style="font-size:20px; color:#222;">${productPrice}</b>
-                </div>
-
-                <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966;">
-                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
-                        ⚠️ <b>Note:</b> For <b>Replace</b>, Return, or any other information, please check the <b>Track Section</b> with your Order ID.
-                    </p>
-                </div>
+    list.innerHTML = savedOrders.map(o => `
+        <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f5f5f5; padding-bottom:8px; margin-bottom:10px;">
+                <span style="font-weight:bold; color:#1a237e;">ID: ${o.orderId}</span>
+                <span style="font-size:12px; color:#d32f2f; font-weight:bold;">Ordered</span>
             </div>
-        `;
-    }).join('');
+            
+            <div style="margin-bottom:10px;">
+                <p style="margin:0; font-size:13px; color:#666;">Product Name</p>
+                <p style="margin:2px 0 10px 0; font-weight:bold; color:#333; font-size:16px;">${o.items || "GOCART Item"}</p>
+                
+                <p style="margin:10px 0 0 0; font-size:13px; color:#666;">Price</p>
+                <b style="font-size:20px; color:#000;">${o.amount || "0.00"}</b>
+            </div>
+
+            <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966; margin-top:10px;">
+                <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
+                    ⚠️ <b>Note:</b> For <b>Replace</b>, Return, or any other information, please check the <b>Track Section</b> with your Order ID.
+                </p>
+            </div>
+        </div>
+    `).join('');
 }
+
+    
+    function saveOrderToHistory(id, name, price) {
+    let newOrder = {
+        orderId: id,
+        items: name,
+        amount: price,
+        status: "Ordered"
+    };
+
+    let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
+    myOrders.unshift(newOrder); // Naya order sabse upar dikhega
+    localStorage.setItem('myOrders', JSON.stringify(myOrders));
+    
+    if(typeof renderOrders === "function") renderOrders();
+}
+
+    
     
     async function trackNow() {
         const id = document.getElementById('track-input').value.toUpperCase();
