@@ -275,9 +275,23 @@
     function closeDetail() { document.getElementById('detail-tab').style.display = 'none'; }
 
     function selColor(el) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-        el.classList.add('active');
+    // 1. Saare dots se active hatana
+    document.querySelectorAll('.color-dot').forEach(dot => {
+        dot.classList.remove('active');
+        dot.style.border = "2px solid #ddd";
+    });
+
+    // 2. Chune hue dot ko active karna
+    el.classList.add('active');
+    el.style.border = "3px solid #ff9900";
+
+    // 3. Naam badalna
+    const colorName = el.getAttribute('data-color');
+    const label = document.getElementById('selected-color-name');
+    if (label) {
+        label.innerText = colorName;
     }
+}
 
     function addToCart() {
     // 1. Check karo kaunsa color dot 'active' hai
