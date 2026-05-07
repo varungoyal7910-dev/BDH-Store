@@ -264,21 +264,28 @@
 
     window.onload = () => { renderHome(PRODUCTS); updateBadge(); };
 
-    function renderHome(items) {
-        const grid = document.getElementById('main-grid');
-        grid.innerHTML = items.length ? items.map(p => {
-            const off = Math.round(((p.mrp - p.price)/p.mrp)*100);
-            return `
-            <div class="card" onclick="openDetail(${p.id})">
-                <img src="${p.images[0]}">
-                <div class="card-info">
-                    <div class="card-title">${p.name}</div>
-                    <div><span class="p-price">₹${p.price}</span><span class="p-mrp">₹${p.mrp}</span></div>
-                    <div class="rating">${p.rating} (Verified)</div>
-                </div>
-            </div>`;
-        }).join('') : '<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>';
+   function renderHome(items) {
+    const grid = document.getElementById('main-grid');
+    if (items.length === 0) {
+        grid.innerHTML = `<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>`;
+        return;
     }
+
+    grid.innerHTML = items.map(p => {
+        return `
+        <div class="card" onclick="openDetail(${p.id})">
+            <img src="${p.images[0]}" alt="${p.name}">
+            <div class="card-info">
+                <div class="card-title">${p.name}</div>
+                <div>
+                    <span class="p-price">₹${p.price}</span>
+                    <span class="p-mrp">₹${p.mrp}</span>
+                </div>
+                <div class="rating">${p.rating} (Verified)</div>
+            </div>
+        </div>`;
+    }).join('');
+}
     
     
     function applyFilters() {
@@ -288,52 +295,27 @@
         renderHome(filtered);
     }
 
-   function openDetail(id) {
-    // 1. Product ko dhundo
+  function openDetail(id) {
+    // 1. Product dhundo
     curProduct = PRODUCTS.find(p => p.id === id);
-    
-    // Agar product nahi mila toh function yahi rok do
     if (!curProduct) return;
 
-    // 2. Discount calculate karo
+    // 2. Discount nikalo
     const off = Math.round(((curProduct.mrp - curProduct.price) / curProduct.mrp) * 100);
-    
-    // 3. Slider Setup
+
+    // 3. Photo load karo (Sirf Pehli Photo)
     const slider = document.getElementById('d-slider');
-    
-    // Purana timer clear karo aur slider reset karo
-    clearInterval(slideInterval);
-    slideIndex = 0;
-    slider.style.transition = 'none'; // Instant reset ke liye
-    slider.style.transform = `translateX(0%)`;
+    slider.innerHTML = `<img src="${curProduct.images[0]}" style="width: 100%; height: 300px; object-fit: contain;">`;
 
-    // Slider mein photos load karo (p.images array se)
-    // Agar aapke array ka naam 'img' hai toh ise 'curProduct.img' kar lena
-    slider.innerHTML = curProduct.images.map(img => `
-        <img src="${img}" style="min-width: 100%; height: 300px; object-fit: contain; background: #fff;">
-    `).join('');
-
-    // 4. Auto-Slide shuru karo (sirf agar 1 se zyada photos ho)
-    if (curProduct.images.length > 1) {
-        setTimeout(() => { slider.style.transition = 'transform 0.5s ease-in-out'; }, 50);
-        slideInterval = setInterval(() => {
-            slideIndex = (slideIndex + 1) % curProduct.images.length;
-            slider.style.transform = `translateX(-${slideIndex * 100}%)`;
-        }, 3000);
-    }
-
-    // 5. Baaki details fill karo
+    // 4. Baaki Details bharo
     document.getElementById('d-title').innerText = curProduct.name;
     document.getElementById('d-price').innerText = "₹" + curProduct.price;
     document.getElementById('d-mrp').innerText = "₹" + curProduct.mrp;
     document.getElementById('d-off').innerText = off + "% OFF";
     document.getElementById('d-desc').innerText = curProduct.desc;
 
-    // 6. Tab ko show karo
+    // 5. Window show karo
     document.getElementById('detail-tab').style.display = 'block';
-    
-    // Page scroll lock karne ke liye (Optional)
-    document.body.style.overflow = 'hidden';
 }
     function closeDetail() {
     clearInterval(slideInterval); // Ye zaroori hai!
