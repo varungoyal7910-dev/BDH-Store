@@ -264,13 +264,16 @@
 
     window.onload = () => { renderHome(PRODUCTS); updateBadge(); };
 
-   function renderHome(items) {
+  function renderHome(items) {
     const grid = document.getElementById('main-grid');
+    
+    // Agar search mein kuch na mile
     if (items.length === 0) {
         grid.innerHTML = `<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>`;
         return;
     }
 
+    // Grid ke andar products load ho rahe hain
     grid.innerHTML = items.map(p => {
         return `
         <div class="card" onclick="openDetail(${p.id})">
