@@ -1,473 +1,1126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOCART By FLUXA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --navy: #001f3f; --yellow: #f1c40f; --light: #f4f7f6; --red: #e74c3c; --green: #2ecc71; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--light); padding-bottom: 70px; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Updated Header with your Colors */
-        .top-bar { 
-            background: var(--navy); 
-            color: white; 
-            padding: 15px 15px 5px 15px; 
-            text-align: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-        }
-        .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        
-        .brand { font-size: 26px; font-weight: 900; letter-spacing: 1px; }
-        .brand .go { color: var(--yellow); }
-        .brand .cart-text { color: white; }
-        
-        .tagline { 
-            font-size: 10px; 
-            color: white; 
-            font-weight: bold; 
-            letter-spacing: 1.2px; 
-            margin-top: 5px; 
-            display: block;
-            padding-bottom: 10px;
-        }
-        .tagline span { color: var(--yellow); }
+<title>GOCART | Professional Store</title>
 
-        .cart-icon { position: relative; cursor: pointer; font-size: 22px; color: white; }
-        .badge { position: absolute; top: -8px; right: -10px; background: var(--yellow); color: black; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--navy); }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        /* Filter Section */
-        .filters { background: var(--navy); padding: 0 15px 15px 15px; display: flex; gap: 10px; }
-        .search-box { flex: 2; background: white; border-radius: 8px; display: flex; align-items: center; padding: 8px 12px; }
-        .search-box input { border: none; outline: none; width: 100%; margin-left: 8px; font-size: 14px; }
-        .price-select { flex: 1; border-radius: 8px; border: none; padding: 8px; font-weight: bold; font-size: 13px; background: white; color: var(--navy); }
+<style>
 
-        /* Product Grid */
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: 0.3s; }
-        .card img { width: 100%; height: 160px; object-fit: cover; }
-        .card-info { padding: 10px; text-align: center; }
-        .card-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 4px; height: 32px; overflow: hidden; }
-        .p-price { font-size: 16px; font-weight: 800; color: var(--navy); }
-        .p-mrp { text-decoration: line-through; color: #999; font-size: 11px; margin-left: 5px; }
-        .rating { color: #ff9800; font-size: 11px; margin-top: 4px; }
+:root{
+--navy:#071739;
+--yellow:#ffd447;
+--red:#ff4d4f;
+--green:#22c55e;
+--light:#f4f7fb;
+}
 
-        /* Product Detail Tab */
-        #detail-tab { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; overflow-y: auto; padding: 20px; animation: slideUp 0.3s; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .close-tab { font-size: 30px; position: sticky; top: 0; float: right; cursor: pointer; color: var(--navy); }
-        .detail-img { width: 100%; border-radius: 15px; max-height: 300px; object-fit: contain; }
-        .policy-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 13px; border-left: 4px solid var(--navy); }
-        .color-select { margin: 15px 0; }
-        .color-dot { display: inline-block; width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; border: 2px solid #ddd; cursor: pointer; }
-        .color-dot.active { border-color: var(--navy); transform: scale(1.1); }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+-webkit-tap-highlight-color:transparent;
+}
 
-        /* Footer Nav */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-        .nav-item { border: none; background: none; color: #888; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .nav-item i { font-size: 20px; margin-bottom: 3px; }
-        .nav-item.active { color: var(--navy); font-weight: bold; }
+body{
+background:var(--light);
+padding-bottom:90px;
+overflow-x:hidden;
+}
 
-        /* Pages */
-        .page { display: none; padding: 15px; }
-        .page.active { display: block; }
-        .btn-buy { width: 100%; background: var(--navy); color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .input-field { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
-        .cart-item { display: flex; align-items: center; margin-bottom: 15px; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .cart-item img { width: 60px; height: 60px; border-radius: 8px; margin-right: 12px; }
-    </style>
+/* HEADER */
+
+.top-bar{
+background:linear-gradient(135deg,#001f3f,#0a2d62);
+padding:15px;
+position:sticky;
+top:0;
+z-index:1000;
+border-bottom-left-radius:24px;
+border-bottom-right-radius:24px;
+box-shadow:0 5px 18px rgba(0,0,0,.15);
+}
+
+.header-content{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.brand{
+font-size:30px;
+font-weight:900;
+color:white;
+}
+
+.brand span{
+color:var(--yellow);
+}
+
+.cart-icon{
+width:45px;
+height:45px;
+background:rgba(255,255,255,.15);
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:20px;
+position:relative;
+cursor:pointer;
+}
+
+.badge{
+position:absolute;
+top:-5px;
+right:-5px;
+width:18px;
+height:18px;
+background:var(--yellow);
+color:black;
+font-size:10px;
+font-weight:bold;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.tagline{
+text-align:center;
+margin-top:8px;
+font-size:11px;
+color:white;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+/* FILTER */
+
+.filters{
+display:flex;
+gap:10px;
+padding:15px;
+}
+
+.search-box{
+flex:2;
+background:white;
+border-radius:16px;
+display:flex;
+align-items:center;
+padding:12px;
+box-shadow:0 5px 14px rgba(0,0,0,.08);
+}
+
+.search-box input{
+border:none;
+outline:none;
+margin-left:8px;
+width:100%;
+font-size:14px;
+}
+
+.price-select{
+flex:1;
+border:none;
+border-radius:16px;
+padding:10px;
+background:white;
+font-weight:bold;
+box-shadow:0 5px 14px rgba(0,0,0,.08);
+}
+
+/* PRODUCTS */
+
+.main-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+padding:15px;
+}
+
+.card{
+background:white;
+border-radius:22px;
+overflow:hidden;
+box-shadow:0 8px 22px rgba(0,0,0,.08);
+transition:.25s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.img-wrap{
+position:relative;
+height:190px;
+background:white;
+overflow:hidden;
+}
+
+.card img{
+width:100%;
+height:190px;
+object-fit:contain;
+padding:10px;
+}
+
+.loader{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:34px;
+height:34px;
+border:4px solid #ddd;
+border-top:4px solid var(--navy);
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{
+transform:translate(-50%,-50%) rotate(360deg);
+}
+}
+
+.card-info{
+padding:14px;
+text-align:center;
+}
+
+.card-title{
+font-size:14px;
+font-weight:700;
+height:38px;
+overflow:hidden;
+}
+
+.p-price{
+font-size:20px;
+font-weight:900;
+color:var(--navy);
+}
+
+.p-mrp{
+text-decoration:line-through;
+font-size:12px;
+color:#888;
+margin-left:5px;
+}
+
+.rating{
+margin-top:6px;
+font-size:12px;
+color:#ff9800;
+}
+
+/* DETAIL */
+
+#detail-tab{
+display:none;
+position:fixed;
+inset:0;
+background:#f4f7fb;
+z-index:3000;
+overflow-y:auto;
+padding:20px;
+}
+
+.close-tab{
+font-size:34px;
+float:right;
+cursor:pointer;
+color:var(--navy);
+}
+
+/* SLIDER */
+
+.slider-container{
+position:relative;
+overflow:hidden;
+border-radius:22px;
+background:white;
+margin-top:15px;
+}
+
+.slider{
+display:flex;
+transition:transform .4s ease;
+}
+
+.slider img{
+min-width:100%;
+height:320px;
+object-fit:contain;
+padding:15px;
+background:white;
+}
+
+.slider-dots{
+display:flex;
+justify-content:center;
+gap:8px;
+padding:12px;
+}
+
+.dot{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#ccc;
+}
+
+.dot.active{
+background:var(--navy);
+}
+
+.policy-box{
+background:white;
+padding:15px;
+border-radius:18px;
+margin-top:15px;
+box-shadow:0 5px 14px rgba(0,0,0,.06);
+}
+
+.btn-buy{
+width:100%;
+border:none;
+padding:16px;
+border-radius:18px;
+font-size:16px;
+font-weight:bold;
+background:linear-gradient(135deg,#001f3f,#0a4ca0);
+color:white;
+margin-top:15px;
+cursor:pointer;
+}
+
+.page{
+display:none;
+padding:15px;
+}
+
+.page.active{
+display:block;
+}
+
+.cart-item{
+display:flex;
+align-items:center;
+background:white;
+padding:12px;
+border-radius:18px;
+margin-bottom:15px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+.cart-item img{
+width:70px;
+height:70px;
+object-fit:contain;
+margin-right:12px;
+}
+
+.input-field{
+width:100%;
+padding:14px;
+border:2px solid #eee;
+border-radius:14px;
+margin-bottom:12px;
+font-size:14px;
+}
+
+nav{
+position:fixed;
+bottom:0;
+width:100%;
+height:72px;
+background:white;
+display:flex;
+justify-content:space-around;
+align-items:center;
+border-top-left-radius:22px;
+border-top-right-radius:22px;
+box-shadow:0 -4px 14px rgba(0,0,0,.08);
+}
+
+.nav-item{
+border:none;
+background:none;
+display:flex;
+flex-direction:column;
+align-items:center;
+font-size:11px;
+color:#888;
+cursor:pointer;
+}
+
+.nav-item i{
+font-size:20px;
+margin-bottom:3px;
+}
+
+.nav-item.active{
+color:var(--navy);
+font-weight:bold;
+}
+
+.order-card{
+background:white;
+padding:15px;
+border-radius:18px;
+margin-bottom:15px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+</style>
 </head>
+
 <body>
 
-<!-- Updated Header -->
 <div class="top-bar">
-    <div class="header-content">
-        <div style="width: 30px;"></div> <!-- Spacer -->
-        <div class="brand"><span class="go">GO</span><span class="cart-text">CART</span></div>
-        <div class="cart-icon" onclick="changePage('cart-page')">
-            <i class="fas fa-shopping-bag"></i>
-            <div class="badge" id="badge-count">0</div>
-        </div>
-    </div>
-    <div class="tagline"><span>-----</span> SHOP MORE, PAY LESS <span>-----</span></div>
+
+<div class="header-content">
+
+<div style="width:30px;"></div>
+
+<div class="brand">
+<span>GO</span>CART
 </div>
 
-<div class="filters" id="filter-section">
-    <div class="search-box">
-        <i class="fas fa-search" style="color: #aaa;"></i>
-        <input type="text" id="search-input" placeholder="Search products..." oninput="applyFilters()">
-    </div>
-    <select id="price-sort" class="price-select" onchange="applyFilters()">
-        <option value="all">All Prices</option>
-        <option value="1000">Under ₹1000</option>
-        <option value="5000">Under ₹5000</option>
-    </select>
+<div class="cart-icon" onclick="changePage('cart-page')">
+<i class="fas fa-shopping-bag"></i>
+<div class="badge" id="badge-count">0</div>
 </div>
 
-<!-- Home Page -->
+</div>
+
+<div class="tagline">
+SHOP MORE • PAY LESS
+</div>
+
+</div>
+
+<div class="filters">
+
+<div class="search-box">
+<i class="fas fa-search"></i>
+<input type="text" id="search-input" placeholder="Search..." oninput="applyFilters()">
+</div>
+
+<select id="price-sort" class="price-select" onchange="applyFilters()">
+<option value="all">All</option>
+<option value="1000">Under ₹1000</option>
+<option value="5000">Under ₹5000</option>
+</select>
+
+</div>
+
+<!-- HOME -->
+
 <div id="home-page" class="page active">
-    <div class="main-grid" id="main-grid"></div>
+<div class="main-grid" id="main-grid"></div>
 </div>
 
-<!-- Product Detail Tab -->
-<div id="detail-tab">
-    <span class="close-tab" onclick="closeDetail()">&times;</span>
-    <div id="slider-container" style="position: relative; overflow: hidden; width: 100%; border-radius: 12px; background: #fff;">
-    <div id="d-slider" style="display: flex; transition: transform 0.5s ease-in-out;">
-        </div>
+<!-- CART -->
 
-    <h2 id="d-title" style="margin-top:15px; font-size:18px; color: var(--navy);"></h2>
-    <div style="margin:10px 0;">
-        <span id="d-price" class="p-price" style="font-size:24px;"></span>
-        <span id="d-mrp" class="p-mrp" style="font-size:16px;"></span>
-        <span id="d-off" style="color:var(--red); font-weight:bold; margin-left:10px;"></span>
-    </div>
-    
-    <p id="d-desc" style="font-size:14px; color:#666; line-height:1.4; padding: 10px; background: #f4f4f4; border-radius: 8px;"></p>
-
-
-    
-    <div class="policy-box">
-        <p><i class="fas fa-undo" style="color: var(--navy); margin-right: 5px;"></i> 7 Days Replace Policy</p>
-        <p><i class="fas fa-wallet" style="color: var(--navy); margin-right: 5px;"></i> No Cash on Delivery (Prepaid Only)</p>
-        <p><i class="fas fa-shield-alt" style="color: var(--navy); margin-right: 5px;"></i> 100% Guaranteed Product</p>
-         <p><i class="fas fa-truck" style="color: var(--navy); margin-right: 5px;"></i> Free Delivary</p>
-    </div>
-
-    <button class="btn-buy" onclick="addToCart()"><i class="fas fa-cart-plus"></i> Add To Cart </button>
-</div>
-
-<!-- Cart Page -->
 <div id="cart-page" class="page">
-    <h3 style="margin-bottom:15px; color: var(--navy);">Your Shopping 🛒</h3>
-    <div id="cart-list"></div>
-    <div style="font-size:22px; font-weight:bold; margin:20px 0; border-top: 2px solid #ddd; padding-top: 10px;">Total: <span id="cart-total" style="color: var(--red);">₹0</span></div>
-    <button class="btn-buy" onclick="changePage('address-page')">Continue to Payment</button>
+
+<h2 style="margin-bottom:20px;color:var(--navy);">
+Your Cart
+</h2>
+
+<div id="cart-list"></div>
+
+<h2 style="margin-top:20px;">
+Total :
+<span id="cart-total" style="color:var(--red);">
+₹0
+</span>
+</h2>
+
+<button class="btn-buy" onclick="changePage('address-page')">
+Proceed To Checkout
+</button>
+
 </div>
 
-<!-- Address Page -->
+<!-- ADDRESS -->
+
 <div id="address-page" class="page">
-    <h3 style="color: var(--navy);">Delivery Address</h3>
-    <br>
-    <input type="text" id="c-name" class="input-field" placeholder="Full Name">
-    <input type="number" id="c-phone" class="input-field" placeholder="Mobile Number">
-    <textarea id="c-address" class="input-field" placeholder="Complete Address" rows="3"></textarea>
-    <input type="number" id="c-pincode" class="input-field" placeholder="Pincode">
-    <button class="btn-buy" onclick="goToPayment()">Proceed to Payment</button>
+
+<h2 style="margin-bottom:20px;color:var(--navy);">
+Delivery Address
+</h2>
+
+<input type="text" id="c-name" class="input-field" placeholder="Full Name">
+
+<input type="number" id="c-phone" class="input-field" placeholder="Phone Number">
+
+<textarea id="c-address" class="input-field" rows="3" placeholder="Full Address"></textarea>
+
+<input type="number" id="c-pincode" class="input-field" placeholder="Pincode">
+
+<button class="btn-buy" onclick="goPayment()">
+Continue
+</button>
+
 </div>
 
-<!-- Updated Payment Page with QR Code -->
-<div id="payment-page" class="page" style="text-align:center;">
-    <h3 style="color: var(--navy);">Final Payment</h3>
-    <p style="margin:10px 0; color:#666;">Amount to pay: <b id="pay-amt" style="color:var(--red); font-size: 20px;"></b></p>
-    
-    <!-- Dynamic QR Code Container -->
-    <div style="margin: 20px auto; padding: 15px; background: white; border: 2px solid var(--navy); border-radius: 15px; width: fit-content;">
-        <img id="upi-qr" src="" alt="Scan to Pay" style="width: 200px; height: 200px; display: block;">
-        <p style="font-size: 10px; color: #666; margin-top: 10px;">Scan QR with Any UPI App</p>
-    </div>
+<!-- PAYMENT -->
 
-    <div style="background:#fff9c4; padding:15px; border-radius:10px; font-weight:bold; margin-bottom:20px; border:2px dashed var(--navy); font-size: 16px;">
-        UPI ID: varungoyal7910@pnb
-    </div>
+<div id="payment-page" class="page">
 
-    <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Enter the Transaction ID after paying</p>
-    <input type="text" id="c-utr" class="input-field" placeholder="12-digit UTR / Ref Number" style="text-align:center; font-weight: bold;">
-    <button class="btn-buy" style="background:var(--green);" onclick="placeOrder()">Place Order Now</button>
-</div>
-    
-<!-- Status Page -->
-<div id="status-page" class="page" style="text-align:center; padding-top:60px;">
-    <div id="loader">
-        <i class="fas fa-spinner fa-spin" style="font-size: 50px; color: var(--navy);"></i>
-        <h2 style="margin-top: 15px;">Processing...</h2>
-    </div>
-    <div id="success" style="display:none;">
-        <i class="fas fa-check-circle" style="font-size:70px; color:var(--green);"></i>
-        <h2 style="margin-top:20px; color: var(--navy);">Order Confirmed!</h2>
-        <p id="order-id-txt" style="font-weight:bold; color:var(--red); font-size:24px; margin:15px 0;"></p>
-        <p style="color: #666; margin-bottom: 20px;">Screenshot le lo bhai!</p>
-        <button class="btn-buy" onclick="location.reload()">Shop More</button>
-    </div>
+<h2 style="margin-bottom:20px;color:var(--navy);text-align:center;">
+UPI Payment
+</h2>
+
+<div style="background:white;padding:20px;border-radius:22px;text-align:center;">
+
+<img id="upi-qr" style="width:220px;height:220px;border-radius:16px;">
+
+<p style="margin-top:15px;font-weight:bold;">
+UPI ID : varungoyal7910@pnb
+</p>
+
 </div>
 
-<!-- Orders Page -->
-<div id="my-orders-page" class="page">
-    <h3 style="margin-bottom:15px; color: var(--navy);">Order History</h3>
-    <div id="orders-list"></div>
+<input type="text" id="utr" class="input-field" placeholder="Enter UTR / Ref Number" style="margin-top:20px;">
+
+<button class="btn-buy" onclick="placeOrder()">
+Place Order
+</button>
+
 </div>
 
-<!-- Track Page -->
+<!-- STATUS -->
+
+<div id="status-page" class="page" style="text-align:center;padding-top:80px;">
+
+<div id="loader-box">
+
+<i class="fas fa-spinner fa-spin" style="font-size:60px;color:var(--navy);"></i>
+
+<h2 style="margin-top:20px;">
+Processing...
+</h2>
+
+</div>
+
+<div id="success-box" style="display:none;">
+
+<i class="fas fa-check-circle" style="font-size:70px;color:var(--green);"></i>
+
+<h2 style="margin-top:20px;">
+Order Placed Successfully
+</h2>
+
+<p id="order-id-show" style="margin-top:15px;font-size:22px;font-weight:bold;color:var(--red);"></p>
+
+<button class="btn-buy" onclick="changePage('orders-page')">
+Go To My Orders
+</button>
+
+</div>
+
+</div>
+
+<!-- ORDERS -->
+
+<div id="orders-page" class="page">
+
+<h2 style="margin-bottom:20px;color:var(--navy);">
+My Orders
+</h2>
+
+<div id="orders-list"></div>
+
+</div>
+
+<!-- TRACK -->
+
 <div id="track-page" class="page">
-    <h3 style="color: var(--navy);">Track Order</h3>
-    <input type="text" id="track-input" class="input-field" placeholder="Enter Order ID (e.g. VAR1234)" style="margin-top:15px;">
-    <button class="btn-buy" onclick="trackNow()">Check Status</button>
-    <div id="track-res" style="margin-top:30px; text-align:center; font-size: 18px; font-weight:bold;"></div>
+
+<h2 style="margin-bottom:20px;color:var(--navy);">
+Track Order
+</h2>
+
+<input type="text" id="track-id" class="input-field" placeholder="Enter Order ID">
+
+<button class="btn-buy" onclick="trackOrder()">
+Track Now
+</button>
+
+<div id="track-result" style="margin-top:20px;font-weight:bold;"></div>
+
 </div>
 
-<!-- Bottom Nav -->
+<!-- HELP -->
+
+<div id="help-page" class="page">
+
+<h2 style="margin-bottom:20px;color:var(--navy);">
+Help & Support
+</h2>
+
+<div style="background:white;padding:18px;border-radius:18px;line-height:1.8;">
+📧 varungoyal7910@gmail.com
+<br><br>
+📞 9417124082
+</div>
+
+</div>
+
+<!-- DETAIL -->
+
+<div id="detail-tab">
+
+<span class="close-tab" onclick="closeDetail()">
+&times;
+</span>
+
+<div class="slider-container">
+
+<div class="slider" id="slider"></div>
+
+<div class="slider-dots" id="slider-dots"></div>
+
+</div>
+
+<h2 id="d-title" style="margin-top:15px;color:var(--navy);"></h2>
+
+<div style="margin:12px 0;">
+<span id="d-price" class="p-price"></span>
+<span id="d-mrp" class="p-mrp"></span>
+</div>
+
+<p id="d-desc" style="background:white;padding:15px;border-radius:15px;"></p>
+
+<div class="policy-box">
+<p>✅ 7 Days Replace Policy</p>
+<p>✅ Secure Payment</p>
+<p>✅ Premium Quality Product</p>
+</div>
+
+<button class="btn-buy" onclick="addToCart()">
+Add To Cart
+</button>
+
+</div>
+
+<!-- NAV -->
+
 <nav>
-    <button class="nav-item active" id="n-explore" onclick="changePage('home-page')"><i class="fas fa-compass"></i>Explore</button>
-    <button class="nav-item" id="n-orders" onclick="changePage('my-orders-page')"><i class="fas fa-box"></i>My Orders</button>
-    <button class="nav-item" id="n-track" onclick="changePage('track-page')"><i class="fas fa-truck-loading"></i>Track</button>
-    <button class="nav-item" onclick="window.location.href='mailto:varungoyal7910@gmail.com'"><i class="fas fa-headset"></i>Help</button>
+
+<button class="nav-item active" id="n-home" onclick="changePage('home-page')">
+<i class="fas fa-home"></i>
+Home
+</button>
+
+<button class="nav-item" id="n-orders" onclick="changePage('orders-page')">
+<i class="fas fa-box"></i>
+Orders
+</button>
+
+<button class="nav-item" id="n-track" onclick="changePage('track-page')">
+<i class="fas fa-location-dot"></i>
+Track
+</button>
+
+<button class="nav-item" id="n-help" onclick="changePage('help-page')">
+<i class="fas fa-headset"></i>
+Help
+</button>
+
 </nav>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwtOOhWe8LyGHgQwh35RHrDkjFVKE9lEyLFwGGhrjFzl4I8o0GNNUtpXcKRZaSS2a0L/exec';
 
-    // Apne Products
-    const PRODUCTS = [
-        { id: 1, name: 'Professional Vlog Mic Ultra', mrp: 1499, price: 599, rating: '4.8 ★', images: 'https://i.postimg.cc/MGYZH9jR/Untitled-design.jpg', desc: 'Best noise cancellation mic for YouTube vlogging and streaming.' },
-        { id: 2, name: '18" Studio Ring Light', mrp: 2999, price: 1299, rating: '4.5 ★', images: 'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg', desc: '18-inch LED Ring Light with 3 color modes and heavy tripod stand.' },
-        { id: 3, name: 'RGB Studio LED Panel', mrp: 4999, price: 2199, rating: '4.9 ★', images: 'https://m.media-amazon.com/images/I/61y2VVw9DL._SL1000_.jpg', desc: 'Adjustable RGB LED panel for professional background lighting.' },
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtOOhWe8LyGHgQwh35RHrDkjFVKE9lEyLFwGGhrjFzl4I8o0GNNUtpXcKRZaSS2a0L/exec";
 
-  { 
-    id: 4, 
-    name: '18" Studio Ring Light', 
-    mrp: 2999, 
-    price: 1299, 
-    rating: '4.5 ★', 
-    images: 'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg', 
-    desc: '18-inch LED Ring Light with 3 color modes and heavy tripod stand.' 
-  },
-  { 
-    id: 5, 
-    name: 'Wireless Vlogging Mic', 
-    mrp: 1999, 
-    price: 899, 
-    rating: '4.7 ★', 
-    images: 'https://m.media-amazon.com/images/I/61I-S7oZpGL._SL1500_.jpg', 
-    desc: 'Plug and play wireless microphone for smartphones and cameras.' 
-  },
-  { 
-    id: 6, 
-    name: 'Adjustable Phone Tripod', 
-    mrp: 999, 
-    price: 499, 
-    rating: '4.2 ★', 
-    images: 'https://m.media-amazon.com/images/I/61y-2l7-k9L._SL1500_.jpg', 
-    desc: 'Lightweight and portable tripod for stable video recording.' 
-  }
+const PRODUCTS = [
+
+{
+id:1,
+name:'Professional Vlog Mic Ultra',
+mrp:1499,
+price:699,
+rating:'4.8 ★',
+images:[
+'https://m.media-amazon.com/images/I/71Xmbe9Vp1L._SL1500_.jpg',
+'https://m.media-amazon.com/images/I/61qQ9g+0JmL._SL1500_.jpg',
+'https://m.media-amazon.com/images/I/61R7v6K6F6L._SL1500_.jpg'
+],
+desc:'Best noise cancellation mic for YouTube and streaming.'
+},
+
+{
+id:2,
+name:'18 Inch Ring Light',
+mrp:2999,
+price:1299,
+rating:'4.7 ★',
+images:[
+'https://m.media-amazon.com/images/I/61NFT-jv9OL._SL1500_.jpg',
+'https://m.media-amazon.com/images/I/61+zA4O1q-L._SL1500_.jpg'
+],
+desc:'Professional LED Ring Light with stand.'
+}
+
 ];
 
-    let slideIndex = 0;
-    let slideInterval;
+let cart = JSON.parse(localStorage.getItem('varunCart')) || [];
+let orders = JSON.parse(localStorage.getItem('varunOrders')) || [];
+let curProduct = null;
+let slideIndex = 0;
 
-    let cart = JSON.parse(localStorage.getItem('varunCart')) || [];
-    let myOrders = JSON.parse(localStorage.getItem('varunOrders')) || [];
-    let curProduct = null;
+window.onload = () => {
 
-    window.onload = () => { renderHome(PRODUCTS); updateBadge(); };
+renderHome(PRODUCTS);
 
-  function renderHome(items) {
-    const grid = document.getElementById('main-grid');
-    
-    // Agar search mein kuch na mile
-    if (items.length === 0) {
-        grid.innerHTML = `<p style="grid-column: span 2; text-align: center; padding: 20px;">No products found.</p>`;
-        return;
-    }
+updateBadge();
 
-    // Grid ke andar products load ho rahe hain
-    grid.innerHTML = items.map(p => {
-        return `
-        <div class="card" onclick="openDetail(${p.id})">
-            <img src="${p.images[0]}" alt="${p.name}">
-            <div class="card-info">
-                <div class="card-title">${p.name}</div>
-                <div>
-                    <span class="p-price">₹${p.price}</span>
-                    <span class="p-mrp">₹${p.mrp}</span>
-                </div>
-                <div class="rating">${p.rating} (Verified)</div>
-            </div>
-        </div>`;
-    }).join('');
-}
-    
-    
-    function applyFilters() {
-        const q = document.getElementById('search-input').value.toLowerCase();
-        const pL = document.getElementById('price-sort').value;
-        const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) && (pL === 'all' || p.price <= pL));
-        renderHome(filtered);
-    }
+renderOrders();
 
-  function openDetail(id) {
-    // 1. Product dhundo
-    curProduct = PRODUCTS.find(p => p.id === id);
-    if (!curProduct) return;
+};
 
-    // 2. Discount nikalo
-    const off = Math.round(((curProduct.mrp - curProduct.price) / curProduct.mrp) * 100);
+function renderHome(items){
 
-    // 3. Photo load karo (Sirf Pehli Photo)
-    const slider = document.getElementById('d-slider');
-    slider.innerHTML = `<img src="${curProduct.images[0]}" style="width: 100%; height: 300px; object-fit: contain;">`;
+const grid = document.getElementById('main-grid');
 
-    // 4. Baaki Details bharo
-    document.getElementById('d-title').innerText = curProduct.name;
-    document.getElementById('d-price').innerText = "₹" + curProduct.price;
-    document.getElementById('d-mrp').innerText = "₹" + curProduct.mrp;
-    document.getElementById('d-off').innerText = off + "% OFF";
-    document.getElementById('d-desc').innerText = curProduct.desc;
+grid.innerHTML = items.map(p => `
 
-    // 5. Window show karo
-    document.getElementById('detail-tab').style.display = 'block';
-}
-    function closeDetail() {
-    clearInterval(slideInterval); // Ye zaroori hai!
-    document.getElementById('detail-tab').style.display = 'none';
+<div class="card" onclick="openDetail(${p.id})">
+
+<div class="img-wrap">
+
+<div class="loader"></div>
+
+<img
+src="${p.images[0]}"
+loading="lazy"
+
+onload="
+this.previousElementSibling.style.display='none'
+"
+
+onerror="
+this.src='https://via.placeholder.com/300x300?text=No+Image';
+this.previousElementSibling.style.display='none';
+"
+
+>
+
+</div>
+
+<div class="card-info">
+
+<div class="card-title">${p.name}</div>
+
+<div>
+<span class="p-price">₹${p.price}</span>
+<span class="p-mrp">₹${p.mrp}</span>
+</div>
+
+<div class="rating">${p.rating}</div>
+
+</div>
+
+</div>
+
+`).join('');
+
 }
 
-   
+function applyFilters(){
 
-    function addToCart() {
-    // 1. Check karo kaunsa color dot 'active' hai
-    const activeColorEl = document.querySelector('.color-dot.active');
-    
-    // 2. Default color set karo (agar kuch na mile toh Black)
-    let selectedColor = "Black"; 
-    
-    // 3. Agar active dot mil gaya, toh uska data-color uthao
-    if (activeColorEl) {
-        selectedColor = activeColorEl.getAttribute('data-color') || "Black";
-    }
+const q = document.getElementById('search-input').value.toLowerCase();
 
-    // 4. Check karo ki product aur color pehle se cart mein hai ya nahi
-    const exist = cart.find(i => i.id === curProduct.id && i.color === selectedColor);
+const pL = document.getElementById('price-sort').value;
 
-    if (exist) {
-        exist.qty++;
-    } else {
-        // 5. Naya product color ke saath save karo
-        cart.push({...curProduct, color: selectedColor, qty: 1});
-    }
+const filtered = PRODUCTS.filter(p =>
+p.name.toLowerCase().includes(q)
+&&
+(pL === 'all' || p.price <= pL)
+);
 
-    saveCart();
-    alert("Added to Cart Success!");
-    closeDetail();
-    updateBadge(); // Cart icon update karne ke liye
+renderHome(filtered);
+
 }
 
-    function saveCart() {
-        localStorage.setItem('varunCart', JSON.stringify(cart));
-        updateBadge();
-    }
+function openDetail(id){
 
-    function updateBadge() {
-        document.getElementById('badge-count').innerText = cart.reduce((a,b) => a+b.qty, 0);
-    }
+curProduct = PRODUCTS.find(p => p.id === id);
 
-    function renderCart() {
-        const list = document.getElementById('cart-list');
-        let total = 0;
-        if(cart.length === 0) return list.innerHTML = "<p style='text-align:center; padding:30px;'>Your cart is empty!</p>";
-        list.innerHTML = cart.map((item, i) => {
-            total += (item.price * item.qty);
-            return `<div class="cart-item">
-                <img src="${item.img}">
-                <div style="flex:1"><b>${item.name}</b><br><span style="color:var(--red); font-weight:bold;">₹${item.price}</span> x ${item.qty}</div>
-                <button onclick="remCart(${i})" style="border:none; color:red; background:none; font-size:18px;"><i class="fas fa-trash-alt"></i></button>
-            </div>`;
-        }).join('');
-        document.getElementById('cart-total').innerText = "₹" + total;
-        document.getElementById('pay-amt').innerText = "₹" + total;
-    }
+document.getElementById('d-title').innerText = curProduct.name;
 
-    function remCart(i) { cart.splice(i, 1); saveCart(); renderCart(); }
+document.getElementById('d-price').innerText = "₹" + curProduct.price;
 
-    function changePage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('filter-section').style.display = (id === 'home-page') ? 'flex' : 'none';
-        
-        if(id === 'home-page') document.getElementById('n-explore').classList.add('active');
-        if(id === 'my-orders-page') { document.getElementById('n-orders').classList.add('active'); renderOrders(); }
-        if(id === 'track-page') document.getElementById('n-track').classList.add('active');
-        if(id === 'cart-page') renderCart();
-        window.scrollTo(0,0);
-    }
+document.getElementById('d-mrp').innerText = "₹" + curProduct.mrp;
 
-   function goToPayment() {
-    // 1. Validation check
-    if(!document.getElementById('c-name').value || !document.getElementById('c-phone').value) {
-        return alert("Pura Detail Bharo Bhai!");
-    }
+document.getElementById('d-desc').innerText = curProduct.desc;
 
-    // 2. Amount ko clean karna (Sirf number nikalna)
-    let amountRaw = document.getElementById('pay-amt').innerText;
-    let amount = amountRaw.replace(/[^0-9]/g, ''); // Ye ₹ symbol aur space sab hata dega
+const slider = document.getElementById('slider');
 
-    // 3. UPI Details
-    const upiId = "varungoyal7910@pnb";
-    const name = "Varun Goyal";
-    
-    // 4. UPI String banana (Isme symbols ko handle karna zaroori hai)
-    const upiString = `upi://pay?pa=${upiId}&pn=${name}&am=${amount}&cu=INR`;
-    
-    // 5. Final QR URL (Pure upiString ko ek saath encode karna)
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-    
-    // 6. Image set karna aur page badalna
-    const qrImg = document.getElementById('upi-qr');
-    if(qrImg) {
-        qrImg.src = qrUrl;
-    }
-    
-    changePage('payment-page');
-   }
-   
-       function renderOrders() {
-    const list = document.getElementById('orders-list');
-    
-    // Check karein ki myOrders khali toh nahi hai
-    if (!myOrders || myOrders.length === 0) {
-        return list.innerHTML = `
-            <div style="text-align:center; padding:40px;">
-                <p style="color:#666;">Abhi tak koi order nahi hai.</p>
-                <a href="index.html" style="color:var(--navy); font-weight:bold;">Shopping Karein</a>
-            </div>`;
-    }
-    
-    list.innerHTML = myOrders.map(o => {
-        // Tracking ID nikalne ka logic (Object ya String dono handle karega)
-        const displayId = (typeof o === 'object') ? (o.orderId || o.id) : o;
+slider.innerHTML = curProduct.images.map(img => `
+<img src="${img}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+`).join('');
 
-        return `
-            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span style="font-weight:bold; color:var(--navy); font-size:16px;">ID: ${displayId}</span>
-                    <span style="font-size:12px; color:var(--red); font-weight:bold;">Ordered</span>
-                </div>
-                
-                <div style="background:#fff9e6; padding:10px; border-radius:8px; border:1px dashed #ffd966; margin-top:5px;">
-                    <p style="margin:0; font-size:12px; color:#856404; line-height:1.4;">
-                        ⚠️ <b>Note:</b> For <b>Replace</b>, Return, or any other information, please check the <b>Track Section</b> with your Order ID.
-                    </p>
-                </div>
-            </div>
-        `;
-    }).join('');
+const dots = document.getElementById('slider-dots');
+
+dots.innerHTML = curProduct.images.map((_,i)=>`
+<div class="dot ${i===0?'active':''}"></div>
+`).join('');
+
+slideIndex = 0;
+
+updateSlider();
+
+document.getElementById('detail-tab').style.display = 'block';
+
 }
-    
-    async function trackNow() {
-        const id = document.getElementById('track-input').value.toUpperCase();
-        const res = document.getElementById('track-res');
-        if(!id) return;
-        res.innerHTML = "Dhoond rahe hain...";
-        try {
-            const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`);
-            const j = await r.json();
-            res.innerHTML = j.status ? `Order Status: <span style="color:var(--green)">${j.status}</span>` : "❌ ID Not Found! Check again.";
-        } catch(e) { res.innerHTML = "Network problem!"; }
-    }
+
+function updateSlider(){
+
+const slider = document.getElementById('slider');
+
+slider.style.transform = `translateX(-${slideIndex * 100}%)`;
+
+document.querySelectorAll('.dot').forEach((d,i)=>{
+d.classList.toggle('active', i===slideIndex);
+});
+
+}
+
+let startX = 0;
+
+document.addEventListener('touchstart', e=>{
+startX = e.touches[0].clientX;
+});
+
+document.addEventListener('touchend', e=>{
+
+const endX = e.changedTouches[0].clientX;
+
+if(endX < startX - 50){
+
+if(slideIndex < curProduct.images.length - 1){
+slideIndex++;
+updateSlider();
+}
+
+}
+
+if(endX > startX + 50){
+
+if(slideIndex > 0){
+slideIndex--;
+updateSlider();
+}
+
+}
+
+});
+
+function closeDetail(){
+document.getElementById('detail-tab').style.display = 'none';
+}
+
+function addToCart(){
+
+const exist = cart.find(i => i.id === curProduct.id);
+
+if(exist){
+exist.qty++;
+}else{
+cart.push({...curProduct, qty:1});
+}
+
+saveCart();
+
+alert("Added To Cart");
+
+closeDetail();
+
+}
+
+function saveCart(){
+
+localStorage.setItem('varunCart', JSON.stringify(cart));
+
+updateBadge();
+
+renderCart();
+
+}
+
+function updateBadge(){
+
+document.getElementById('badge-count').innerText =
+cart.reduce((a,b)=>a+b.qty,0);
+
+}
+
+function renderCart(){
+
+const list = document.getElementById('cart-list');
+
+let total = 0;
+
+if(cart.length === 0){
+
+list.innerHTML = "<p>Cart Empty</p>";
+
+document.getElementById('cart-total').innerText = "₹0";
+
+return;
+
+}
+
+list.innerHTML = cart.map((item,i)=>{
+
+total += item.price * item.qty;
+
+return `
+
+<div class="cart-item">
+
+<img src="${item.images[0]}">
+
+<div style="flex:1;">
+
+<b>${item.name}</b>
+
+<br>
+
+₹${item.price} x ${item.qty}
+
+</div>
+
+<button onclick="removeCart(${i})" style="border:none;background:none;color:red;font-size:18px;">
+<i class="fas fa-trash"></i>
+</button>
+
+</div>
+
+`;
+
+}).join('');
+
+document.getElementById('cart-total').innerText = "₹" + total;
+
+}
+
+function removeCart(i){
+
+cart.splice(i,1);
+
+saveCart();
+
+}
+
+function goPayment(){
+
+if(cart.length === 0){
+alert("Cart Empty");
+return;
+}
+
+const total = cart.reduce((a,b)=>a + (b.price * b.qty),0);
+
+const upi = `upi://pay?pa=varungoyal7910@pnb&pn=Varun%20Goyal&am=${total}&cu=INR`;
+
+document.getElementById('upi-qr').src =
+`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upi)}`;
+
+changePage('payment-page');
+
+}
+
+async function placeOrder(){
+
+const name = document.getElementById('c-name').value;
+const phone = document.getElementById('c-phone').value;
+const address = document.getElementById('c-address').value;
+const pincode = document.getElementById('c-pincode').value;
+const utr = document.getElementById('utr').value;
+
+if(!name || !phone || !address || !pincode || !utr){
+
+alert("Fill all details");
+
+return;
+
+}
+
+const total = cart.reduce((a,b)=>a + (b.price * b.qty),0);
+
+const productNames = cart.map(i => `${i.name} (${i.qty})`).join(", ");
+
+changePage('status-page');
+
+const data = {
+
+name:name,
+phone:phone,
+address:address,
+pincode:pincode,
+utr:utr,
+amount:total,
+products:productNames
+
+};
+
+try{
+
+const res = await fetch(SCRIPT_URL,{
+method:"POST",
+body:JSON.stringify(data)
+});
+
+const result = await res.json();
+
+document.getElementById('loader-box').style.display = 'none';
+
+document.getElementById('success-box').style.display = 'block';
+
+document.getElementById('order-id-show').innerText = result.orderId;
+
+orders.unshift({
+id:result.orderId,
+status:"Pending"
+});
+
+localStorage.setItem('varunOrders', JSON.stringify(orders));
+
+cart = [];
+
+saveCart();
+
+renderOrders();
+
+}catch(e){
+
+alert("Sheet Error");
+
+changePage('home-page');
+
+}
+
+}
+
+function renderOrders(){
+
+const list = document.getElementById('orders-list');
+
+if(orders.length === 0){
+
+list.innerHTML = "<p>No Orders</p>";
+
+return;
+
+}
+
+list.innerHTML = orders.map(o => `
+
+<div class="order-card">
+
+<b>${o.id}</b>
+
+<br><br>
+
+Status : ${o.status}
+
+<br><br>
+
+<div style="background:#fff4cc;padding:10px;border-radius:12px;font-size:12px;">
+For Other Information Check Tracking Page
+</div>
+
+</div>
+
+`).join('');
+
+}
+
+async function trackOrder(){
+
+const id = document.getElementById('track-id').value;
+
+if(!id){
+return;
+}
+
+document.getElementById('track-result').innerHTML = "Checking...";
+
+try{
+
+const r = await fetch(`${SCRIPT_URL}?mode=track&id=${id}`);
+
+const d = await r.json();
+
+if(d.status){
+
+document.getElementById('track-result').innerHTML =
+`Order Status : <span style='color:green'>${d.status}</span>`;
+
+}else{
+
+document.getElementById('track-result').innerHTML =
+"Order Not Found";
+
+}
+
+}catch(e){
+
+document.getElementById('track-result').innerHTML =
+"Network Error";
+
+}
+
+}
+
+function changePage(id){
+
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+document.getElementById(id).classList.add('active');
+
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+
+if(id === 'home-page'){
+document.getElementById('n-home').classList.add('active');
+}
+
+if(id === 'orders-page'){
+document.getElementById('n-orders').classList.add('active');
+}
+
+if(id === 'track-page'){
+document.getElementById('n-track').classList.add('active');
+}
+
+if(id === 'help-page'){
+document.getElementById('n-help').classList.add('active');
+}
+
+if(id === 'cart-page'){
+renderCart();
+}
+
+window.scrollTo(0,0);
+
+}
+
 </script>
+
 </body>
 </html>
